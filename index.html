@@ -205,6 +205,62 @@ button{font-family:'DM Sans',sans-serif}
 .hol-range{font-size:.72rem;color:var(--text-muted);margin-top:1px}
 .hol-days{font-size:.7rem;color:var(--text-muted);text-align:right;white-space:nowrap}
 .hol-select{padding:6px 10px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-family:'DM Sans',sans-serif;font-size:.82rem;background:var(--bg);color:var(--text);outline:none;cursor:pointer}
+/* ── View selector ── */
+.view-selector{display:flex;gap:2px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-sm);padding:2px}
+.view-btn{padding:4px 10px;border:none;border-radius:6px;background:none;font-size:.72rem;font-weight:500;color:var(--text-muted);cursor:pointer;transition:background .15s,color .15s;white-space:nowrap}
+.view-btn.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow-sm)}
+/* ── Day view ── */
+.day-view{padding:12px 16px;display:flex;flex-direction:column;gap:6px}
+.day-block-row{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:var(--r-sm);background:var(--surface2);border:1px solid var(--border)}
+.day-block-label{width:80px;font-size:.75rem;color:var(--text-muted);flex-shrink:0}
+.day-block-assign{flex:1}
+.day-appts{margin-top:6px;display:flex;flex-direction:column;gap:4px}
+.day-appt-card{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--r-md);border:1.5px solid transparent}
+.day-appt-time-big{font-size:1.4rem;font-weight:700;min-width:54px;text-align:center}
+.day-appt-title{font-size:.9rem;font-weight:500}
+/* ── Week view ── */
+.week-grid{overflow-x:auto;padding:0 6px 8px}
+.week-table{width:100%;border-collapse:collapse;min-width:480px}
+.week-table th{padding:6px 4px;font-size:.7rem;font-weight:600;text-align:center;color:var(--text-muted);border-bottom:2px solid var(--border);background:var(--surface2)}
+.week-table th.today-col{color:var(--today-bg);border-bottom-color:var(--today-bg)}
+.week-table td{padding:2px 3px;border-bottom:1px solid var(--border);vertical-align:middle}
+.week-block-head{font-size:.68rem;color:var(--text-muted);padding:4px 6px;white-space:nowrap;text-align:right;border-right:1px solid var(--border);background:var(--surface2)}
+.week-cell-btn{width:100%;padding:4px 5px;border:none;border-radius:6px;font-size:.68rem;font-weight:500;cursor:pointer;text-align:center;min-height:28px;transition:opacity .15s}
+.week-cell-btn:hover{opacity:.8}
+.week-appt-row td{padding:3px;border-bottom:2px solid var(--border)}
+.week-appt-cell{display:flex;flex-direction:column;gap:2px;min-height:20px}
+.week-appt-pill{font-size:.6rem;padding:1px 5px;border-radius:99px;display:flex;gap:3px;align-items:center;cursor:pointer;border:1px solid transparent}
+.week-appt-time{font-weight:700}
+/* ── Year view ── */
+.year-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:16px}
+@media(max-width:640px){.year-grid{grid-template-columns:repeat(2,1fr);gap:8px;padding:10px}}
+.mini-cal{background:var(--surface2);border-radius:var(--r-md);border:1px solid var(--border);padding:8px;cursor:default}
+.mini-cal-title{font-size:.72rem;font-weight:600;color:var(--text);margin-bottom:5px;text-align:center}
+.mini-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
+.mini-dow{font-size:.48rem;color:var(--text-light);text-align:center;padding:1px 0}
+.mini-day{width:100%;aspect-ratio:1;border-radius:3px;font-size:.42rem;display:flex;align-items:center;justify-content:center;color:var(--text-muted);cursor:pointer;transition:opacity .15s}
+.mini-day:hover{opacity:.75}
+.mini-day.today{outline:2px solid var(--today-bg);outline-offset:1px}
+/* ── Appointments ── */
+.appt-row{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px;padding:3px 4px 4px;border-top:1px dashed var(--border)}
+.appt-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:99px;font-size:.72rem;font-weight:500;cursor:pointer;border:1.5px solid transparent;transition:opacity .15s;max-width:100%}
+.appt-pill:hover{opacity:.8}
+.appt-time{font-size:.85rem;font-weight:700;letter-spacing:-.01em;white-space:nowrap}
+.appt-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appt-add-btn{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:99px;border:1.5px dashed var(--border-strong);background:none;font-size:.68rem;color:var(--text-muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:border-color .15s,color .15s}
+.appt-add-btn:hover{border-color:var(--accent);color:var(--accent)}
+/* appointment modal */
+.appt-modal-backdrop{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;padding:16px}
+.appt-modal{background:var(--surface);border-radius:var(--r-xl);box-shadow:var(--shadow-lg);padding:20px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:12px}
+.appt-modal h3{font-family:'Lora',serif;font-size:1rem;font-weight:600;color:var(--text)}
+.appt-modal label{font-size:.75rem;color:var(--text-muted);display:block;margin-bottom:3px}
+.appt-modal input[type=text],.appt-modal input[type=time]{width:100%;padding:7px 10px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-family:'DM Sans',sans-serif;font-size:.85rem;background:var(--bg);color:var(--text);outline:none}
+.appt-modal input:focus{border-color:var(--accent)}
+.appt-time-big{font-size:1.6rem;font-weight:700;color:var(--text);text-align:center;padding:4px 0}
+.appt-colors{display:flex;gap:6px;flex-wrap:wrap}
+.appt-color-dot{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2.5px solid transparent;transition:transform .1s}
+.appt-color-dot.selected{border-color:var(--text);transform:scale(1.15)}
+.appt-modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
 /* ── Responsive ── */
 @media(max-width:640px){
   .app{padding:12px 8px 70px}
@@ -260,6 +316,13 @@ const HOLIDAY_CALENDARS={
     {name:'Vacances d\'hiver',start:'2026-02-07',end:'2026-02-22'},
     {name:'Vacances de printemps',start:'2026-04-04',end:'2026-04-19'},
     {name:'Été',start:'2026-07-04',end:'2026-08-31'},
+  ]},
+  'be-nl':{label:'België – Vlaanderen',emoji:'🇧🇪',holidays:[
+    {name:'Herfstvakantie',start:'2025-10-27',end:'2025-11-02'},
+    {name:'Kerstvakantie',start:'2025-12-22',end:'2026-01-04'},
+    {name:'Krokusvakantie',start:'2026-02-16',end:'2026-02-22'},
+    {name:'Paasvakantie',start:'2026-04-06',end:'2026-04-19'},
+    {name:'Zomervakantie',start:'2026-07-01',end:'2026-08-31'},
   ]},
   'be-fr':{label:'Belgique (Communauté fr.)',emoji:'🇧🇪',holidays:[
     {name:'Toussaint',start:'2025-10-27',end:'2025-11-02'},
@@ -572,24 +635,89 @@ function BlockCell({dateStr,blockId,blockLabel,assignees,weekTemplate,overrides,
   );
 }
 /* ═══════════════════════════════════════════════
+   APPOINTMENT COLORS
+═══════════════════════════════════════════════ */
+const APPT_COLORS=[
+  {bg:"#fde8c8",fg:"#7a4f10",border:"#f5c87a"},
+  {bg:"#f2d9e0",fg:"#8c3f56",border:"#e8a0b8"},
+  {bg:"#d6e8f5",fg:"#2d6492",border:"#90bfe0"},
+  {bg:"#d5f0e0",fg:"#276645",border:"#80d0a8"},
+  {bg:"#e8d9f5",fg:"#5c3080",border:"#c0a0e0"},
+  {bg:"#fdf0c8",fg:"#6b5a0a",border:"#e8d070"},
+  {bg:"#f5e8d9",fg:"#6b440a",border:"#d4a870"},
+  {bg:"#d9eef5",fg:"#1e6070",border:"#80c8d8"},
+];
+/* ═══════════════════════════════════════════════
+   APPOINTMENT MODAL
+═══════════════════════════════════════════════ */
+function AppointmentModal({dateLabel,appt,onSave,onDelete,onClose}){
+  const [title,setTitle]=useState(appt?.title||"");
+  const [time,setTime]=useState(appt?.time||"");
+  const [colorIdx,setColorIdx]=useState(appt?.colorIdx??0);
+  const c=APPT_COLORS[colorIdx];
+  function handleSave(){
+    if(!title.trim())return;
+    onSave({id:appt?.id||("a_"+Date.now()),title:title.trim(),time,colorIdx});
+    onClose();
+  }
+  return(
+    <div className="appt-modal-backdrop" onClick={onClose}>
+      <div className="appt-modal" onClick={e=>e.stopPropagation()}>
+        <h3>{appt?"Edit appointment":"New appointment"}</h3>
+        <div style={{color:"var(--text-muted)",fontSize:".78rem",marginTop:-6}}>📅 {dateLabel}</div>
+        <div>
+          <label>Title</label>
+          <input type="text" placeholder="e.g. Doctor, School play…"
+            value={title} onChange={e=>setTitle(e.target.value)}
+            onKeyDown={e=>e.key==="Enter"&&handleSave()} autoFocus/>
+        </div>
+        <div>
+          <label>Time (optional)</label>
+          <input type="time" value={time} onChange={e=>setTime(e.target.value)}/>
+          {time&&<div className="appt-time-big" style={{color:c.fg}}>{time}</div>}
+        </div>
+        <div>
+          <label>Color</label>
+          <div className="appt-colors">
+            {APPT_COLORS.map((col,i)=>(
+              <div key={i} className={`appt-color-dot${colorIdx===i?" selected":""}`}
+                style={{background:col.bg,borderColor:colorIdx===i?col.fg:"transparent"}}
+                onClick={()=>setColorIdx(i)}/>
+            ))}
+          </div>
+        </div>
+        <div className="appt-modal-actions">
+          {appt&&<button className="btn btn-danger btn-xs" onClick={()=>{onDelete(appt.id);onClose()}}>Delete</button>}
+          <button className="btn btn-ghost btn-xs" onClick={onClose}>Cancel</button>
+          <button className="btn btn-accent btn-xs" onClick={handleSave} disabled={!title.trim()}>Save</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
    DAY ROW
 ═══════════════════════════════════════════════ */
 function DayRow({year,month,day,timeBlocks,assignees,weekTemplate,overrides,anchorDate,
                  onSetAssignee,onSetNote,activePickerKey,setActivePickerKey,
-                 activeNoteKey,setActiveNoteKey,holidayCalKey}){
+                 activeNoteKey,setActiveNoteKey,holidayCalKey,
+                 appointments,onSaveAppt,onDeleteAppt}){
   const dStr=dateKey(year,month,day);
   const dow=new Date(year,month,day).getDay();
   const wp=getWeekParity(year,month,day,anchorDate);
   const holiday=getHolidayForDate(dStr,holidayCalKey);
+  const [modalAppt,setModalAppt]=useState(null); // null=closed, {}=new, {id,...}=edit
+  const dayAppts=appointments[dStr]||[];
+  const dateLabel=`${DAY_NAMES_FULL[dow]} ${day} ${MONTH_NAMES[month]} ${year}`;
   const classes=["day-row",
     `wk${wp}`,
     isWeekend(year,month,day)?"is-weekend":"",
     isToday(year,month,day)?"is-today":"",
     holiday?"is-holiday":""
   ].filter(Boolean).join(" ");
-  // Dynamic grid
   const cols=`72px repeat(${timeBlocks.length},1fr)`;
   return(
+    <>
     <div className={classes} style={{gridTemplateColumns:cols}}>
       <div className="date-cell">
         <span className="date-num">{day}</span>
@@ -605,7 +733,32 @@ function DayRow({year,month,day,timeBlocks,assignees,weekTemplate,overrides,anch
           activePickerKey={activePickerKey} setActivePickerKey={setActivePickerKey}
           activeNoteKey={activeNoteKey} setActiveNoteKey={setActiveNoteKey}/>
       ))}
+      {(dayAppts.length>0||true)&&(
+        <div className="appt-row">
+          {dayAppts.sort((a,b)=>(a.time||"99:99").localeCompare(b.time||"99:99")).map(ap=>{
+            const c=APPT_COLORS[ap.colorIdx??0];
+            return(
+              <button key={ap.id} className="appt-pill"
+                style={{background:c.bg,color:c.fg,borderColor:c.border}}
+                onClick={()=>setModalAppt(ap)}>
+                {ap.time&&<span className="appt-time">{ap.time}</span>}
+                <span className="appt-title">{ap.title}</span>
+              </button>
+            );
+          })}
+          <button className="appt-add-btn" onClick={()=>setModalAppt({})}>＋ appointment</button>
+        </div>
+      )}
     </div>
+    {modalAppt!==null&&(
+      <AppointmentModal
+        dateLabel={dateLabel}
+        appt={Object.keys(modalAppt).length>0?modalAppt:null}
+        onSave={a=>onSaveAppt(dStr,a)}
+        onDelete={id=>onDeleteAppt(dStr,id)}
+        onClose={()=>setModalAppt(null)}/>
+    )}
+    </>
   );
 }
 /* ═══════════════════════════════════════════════
@@ -652,60 +805,357 @@ function MonthSummary({year,month,timeBlocks,assignees,weekTemplate,overrides,an
   );
 }
 /* ═══════════════════════════════════════════════
-   CALENDAR VIEW
+   DAY VIEW
 ═══════════════════════════════════════════════ */
-function CalendarView({year,month,setYear,setMonth,timeBlocks,assignees,weekTemplate,
-                       overrides,anchorDate,onSetAssignee,onSetNote,holidayCalKey}){
+function DayViewPanel({year,month,day,timeBlocks,assignees,weekTemplate,overrides,anchorDate,
+                       onSetAssignee,onSetNote,holidayCalKey,appointments,onSaveAppt,onDeleteAppt}){
+  const dStr=dateKey(year,month,day);
+  const wp=getWeekParity(year,month,day,anchorDate);
+  const holiday=getHolidayForDate(dStr,holidayCalKey);
+  const dayAppts=(appointments[dStr]||[]).slice().sort((a,b)=>(a.time||"99:99").localeCompare(b.time||"99:99"));
+  const [modalAppt,setModalAppt]=useState(null);
   const [activePickerKey,setActivePickerKey]=useState(null);
   const [activeNoteKey,setActiveNoteKey]=useState(null);
-  const days=getDaysInMonth(year,month);
-  function changeMonth(d){
-    let nm=month+d,ny=year;
-    if(nm<0){nm=11;ny--}if(nm>11){nm=0;ny++}
-    setYear(ny);setMonth(nm);
-    setActivePickerKey(null);setActiveNoteKey(null);
+  const dateLabel=`${DAY_NAMES_FULL[new Date(year,month,day).getDay()]} ${day} ${MONTH_NAMES[month]} ${year}`;
+  return(
+    <div className="day-view">
+      {holiday&&<div style={{background:"#fffcee",border:"1px solid #f0d86a",borderRadius:8,padding:"6px 12px",fontSize:".78rem",color:"#7a5c00"}}>🏖 {holiday.name}</div>}
+      {timeBlocks.map(b=>{
+        const {assigneeId,note}=resolveCell(dStr,b.id,weekTemplate,overrides,wp);
+        const a=assignees[assigneeId]||assignees["none"];
+        const cellKey=dStr+"|"+b.id;
+        return(
+          <div key={b.id} className="day-block-row">
+            <div className="day-block-label">{b.icon} {b.label}</div>
+            <div className="day-block-assign" style={{position:"relative"}}>
+              <BlockCell dateStr={dStr} blockId={b.id} blockLabel={b.label}
+                assignees={assignees} weekTemplate={weekTemplate}
+                overrides={overrides} weekParity={wp}
+                onSetAssignee={onSetAssignee} onSetNote={onSetNote}
+                activePickerKey={activePickerKey} setActivePickerKey={setActivePickerKey}
+                activeNoteKey={activeNoteKey} setActiveNoteKey={setActiveNoteKey}/>
+            </div>
+          </div>
+        );
+      })}
+      <div className="day-appts">
+        {dayAppts.map(ap=>{
+          const c=APPT_COLORS[ap.colorIdx??0];
+          return(
+            <div key={ap.id} className="day-appt-card" style={{background:c.bg,color:c.fg,borderColor:c.border}}
+              onClick={()=>setModalAppt(ap)}>
+              {ap.time&&<div className="day-appt-time-big">{ap.time}</div>}
+              <div className="day-appt-title">{ap.title}</div>
+            </div>
+          );
+        })}
+        <button className="appt-add-btn" style={{alignSelf:"flex-start"}} onClick={()=>setModalAppt({})}>＋ appointment</button>
+      </div>
+      {modalAppt!==null&&(
+        <AppointmentModal dateLabel={dateLabel}
+          appt={Object.keys(modalAppt).length>0?modalAppt:null}
+          onSave={a=>onSaveAppt(dStr,a)} onDelete={id=>onDeleteAppt(dStr,id)}
+          onClose={()=>setModalAppt(null)}/>
+      )}
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
+   WEEK VIEW
+═══════════════════════════════════════════════ */
+function WeekViewPanel({weekStart,timeBlocks,assignees,weekTemplate,overrides,anchorDate,
+                        onSetAssignee,onSetNote,holidayCalKey,appointments,onSaveAppt,onDeleteAppt,
+                        onGoDay,setYear,setMonth}){
+  const [activePickerKey,setActivePickerKey]=useState(null);
+  const [activeNoteKey,setActiveNoteKey]=useState(null);
+  const [modalState,setModalState]=useState(null); // {dStr, appt}
+  // Build 7 days from weekStart
+  const days=Array.from({length:7},(_,i)=>{
+    const d=new Date(weekStart);d.setDate(d.getDate()+i);
+    return{year:d.getFullYear(),month:d.getMonth(),day:d.getDate(),
+           dStr:dateKey(d.getFullYear(),d.getMonth(),d.getDate()),dow:d.getDay()};
+  });
+  const todayStr=dateKey(...(()=>{const t=new Date();return[t.getFullYear(),t.getMonth(),t.getDate()]})());
+  return(
+    <div className="week-grid">
+      <table className="week-table">
+        <thead>
+          <tr>
+            <th style={{width:70}}></th>
+            {days.map(d=>(
+              <th key={d.dStr} className={d.dStr===todayStr?"today-col":""}>
+                <div style={{cursor:"pointer"}} onClick={()=>onGoDay(d.year,d.month,d.day)}>
+                  <div>{DAY_NAMES_SHORT[d.dow]}</div>
+                  <div style={{fontSize:".9rem",fontWeight:700,color:d.dStr===todayStr?"var(--today-bg)":"var(--text)"}}>{d.day}</div>
+                  <div style={{fontSize:".58rem",color:"var(--text-light)"}}>{MONTH_NAMES[d.month].slice(0,3)}</div>
+                </div>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {timeBlocks.map(b=>(
+            <tr key={b.id}>
+              <td className="week-block-head">{b.icon} {b.label}</td>
+              {days.map(d=>{
+                const wp=getWeekParity(d.year,d.month,d.day,anchorDate);
+                const {assigneeId}=resolveCell(d.dStr,b.id,weekTemplate,overrides,wp);
+                const a=assignees[assigneeId]||assignees["none"];
+                const cellKey=d.dStr+"|"+b.id;
+                return(
+                  <td key={d.dStr} style={{position:"relative"}}>
+                    <WeekCell dStr={d.dStr} blockId={b.id} blockLabel={b.label}
+                      assignees={assignees} weekTemplate={weekTemplate}
+                      overrides={overrides} weekParity={wp}
+                      onSetAssignee={onSetAssignee} onSetNote={onSetNote}
+                      activePickerKey={activePickerKey} setActivePickerKey={setActivePickerKey}
+                      activeNoteKey={activeNoteKey} setActiveNoteKey={setActiveNoteKey}/>
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+          <tr className="week-appt-row">
+            <td className="week-block-head">📌 Events</td>
+            {days.map(d=>{
+              const appts=(appointments[d.dStr]||[]).slice().sort((a,b)=>(a.time||"99:99").localeCompare(b.time||"99:99"));
+              return(
+                <td key={d.dStr}>
+                  <div className="week-appt-cell">
+                    {appts.map(ap=>{
+                      const c=APPT_COLORS[ap.colorIdx??0];
+                      return(
+                        <button key={ap.id} className="week-appt-pill"
+                          style={{background:c.bg,color:c.fg,borderColor:c.border}}
+                          onClick={()=>setModalState({dStr:d.dStr,appt:ap})}>
+                          {ap.time&&<span className="week-appt-time">{ap.time}</span>}
+                          <span>{ap.title}</span>
+                        </button>
+                      );
+                    })}
+                    <button className="appt-add-btn" style={{fontSize:".58rem",padding:"1px 5px"}}
+                      onClick={()=>setModalState({dStr:d.dStr,appt:{}})}>＋</button>
+                  </div>
+                </td>
+              );
+            })}
+          </tr>
+        </tbody>
+      </table>
+      {modalState&&(
+        <AppointmentModal
+          dateLabel={modalState.dStr}
+          appt={Object.keys(modalState.appt).length>0?modalState.appt:null}
+          onSave={a=>onSaveAppt(modalState.dStr,a)}
+          onDelete={id=>onDeleteAppt(modalState.dStr,id)}
+          onClose={()=>setModalState(null)}/>
+      )}
+    </div>
+  );
+}
+function WeekCell({dStr,blockId,blockLabel,assignees,weekTemplate,overrides,weekParity,
+                   onSetAssignee,onSetNote,activePickerKey,setActivePickerKey,activeNoteKey,setActiveNoteKey}){
+  const {assigneeId}=resolveCell(dStr,blockId,weekTemplate,overrides,weekParity);
+  const a=assignees[assigneeId]||assignees["none"];
+  const cellKey=dStr+"|"+blockId;
+  const btnRef=useRef(null);
+  const [btnRect,setBtnRect]=useState(null);
+  const [noteRect,setNoteRect]=useState(null);
+  const noteRef=useRef(null);
+  const {note,isOverride,isTemplate}=resolveCell(dStr,blockId,weekTemplate,overrides,weekParity);
+  function openPicker(e){e.stopPropagation();setBtnRect(btnRef.current?.getBoundingClientRect()||null);setActivePickerKey(p=>p===cellKey?null:cellKey);setActiveNoteKey(null);}
+  return(
+    <div style={{position:"relative"}}>
+      <button ref={btnRef} className="week-cell-btn"
+        style={{background:a.bg,color:a.fg}}
+        onClick={openPicker}>
+        {a.label}
+        {note&&<span style={{marginLeft:3,fontSize:".55rem"}}>📝</span>}
+      </button>
+      {activePickerKey===cellKey&&btnRect&&(
+        <>
+          <div className="overlay-backdrop" onClick={()=>setActivePickerKey(null)}/>
+          <AssigneePicker value={assigneeId} assignees={assignees} anchorRect={btnRect}
+            onSelect={id=>onSetAssignee(dStr,blockId,id)}
+            onAddNew={a=>onSetAssignee(dStr,blockId,a.id,a)}
+            onClose={()=>setActivePickerKey(null)}/>
+        </>
+      )}
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
+   YEAR VIEW
+═══════════════════════════════════════════════ */
+function YearViewPanel({year,timeBlocks,assignees,weekTemplate,overrides,anchorDate,onGoMonth}){
+  // Get dominant assignee color for a day
+  function dayColor(y,m,d){
+    const dStr=dateKey(y,m,d);
+    const wp=getWeekParity(y,m,d,anchorDate);
+    const counts={};
+    timeBlocks.forEach(b=>{
+      const {assigneeId}=resolveCell(dStr,b.id,weekTemplate,overrides,wp);
+      if(assigneeId!=="none")counts[assigneeId]=(counts[assigneeId]||0)+1;
+    });
+    const top=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
+    if(!top)return null;
+    return assignees[top[0]]||null;
   }
-  function goToday(){const t=new Date();setYear(t.getFullYear());setMonth(t.getMonth())}
-  const cols=`72px repeat(${timeBlocks.length},1fr)`;
-  // Week badge for month (show parity of first day)
-  const wp1=getWeekParity(year,month,1,anchorDate);
+  const todayStr=dateKey(...(()=>{const t=new Date();return[t.getFullYear(),t.getMonth(),t.getDate()]})());
+  return(
+    <div className="year-grid">
+      {Array.from({length:12},(_,m)=>{
+        const days=getDaysInMonth(year,m);
+        const firstDow=new Date(year,m,1).getDay(); // 0=Sun
+        const offset=(firstDow===0?6:firstDow-1); // Mon-based offset
+        return(
+          <div key={m} className="mini-cal" onClick={()=>onGoMonth(m)} style={{cursor:"pointer"}}>
+            <div className="mini-cal-title">{MONTH_NAMES[m]}</div>
+            <div className="mini-cal-grid">
+              {["M","T","W","T","F","S","S"].map((d,i)=>(
+                <div key={i} className="mini-dow">{d}</div>
+              ))}
+              {Array.from({length:offset},(_,i)=>(
+                <div key={"e"+i}/>
+              ))}
+              {Array.from({length:days},(_,i)=>{
+                const d=i+1;
+                const dStr=dateKey(year,m,d);
+                const col=dayColor(year,m,d);
+                const isToday=dStr===todayStr;
+                return(
+                  <div key={d} className={`mini-day${isToday?" today":""}`}
+                    style={{background:col?col.bg:"transparent",color:col?col.fg:"var(--text-light)"}}>
+                    {d}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
+   CALENDAR VIEW (router)
+═══════════════════════════════════════════════ */
+function CalendarView({year,month,setYear,setMonth,timeBlocks,assignees,weekTemplate,
+                       overrides,anchorDate,onSetAssignee,onSetNote,holidayCalKey,
+                       appointments,onSaveAppt,onDeleteAppt}){
+  const [view,setView]=useState(()=>loadLS("ta_calview","month"));
+  const [day,setDay]=useState(()=>new Date().getDate());
+  const [activePickerKey,setActivePickerKey]=useState(null);
+  const [activeNoteKey,setActiveNoteKey]=useState(null);
+  // Week start (Monday) for week view
+  const weekStart=useMemo(()=>{
+    const d=new Date(year,month,day);
+    const dow=d.getDay();
+    const monday=new Date(d);
+    monday.setDate(d.getDate()-(dow===0?6:dow-1));
+    return monday;
+  },[year,month,day]);
+  function goToday(){
+    const t=new Date();
+    setYear(t.getFullYear());setMonth(t.getMonth());setDay(t.getDate());
+  }
+  function navigate(dir){
+    if(view==="day"){
+      const d=new Date(year,month,day+dir);
+      setYear(d.getFullYear());setMonth(d.getMonth());setDay(d.getDate());
+    }else if(view==="week"){
+      const d=new Date(weekStart);d.setDate(d.getDate()+dir*7);
+      setYear(d.getFullYear());setMonth(d.getMonth());setDay(d.getDate());
+    }else if(view==="month"){
+      let nm=month+dir,ny=year;
+      if(nm<0){nm=11;ny--}if(nm>11){nm=0;ny++}
+      setYear(ny);setMonth(nm);
+    }else if(view==="year"){
+      setYear(y=>y+dir);
+    }
+  }
+  function goDay(y,m,d){setYear(y);setMonth(m);setDay(d);setView("day")}
+  function goMonth(m){setMonth(m);setView("month")}
+  // Title per view
+  function navTitle(){
+    if(view==="day")return`${DAY_NAMES_FULL[new Date(year,month,day).getDay()]} ${day} ${MONTH_NAMES[month]} ${year}`;
+    if(view==="week"){
+      const wEnd=new Date(weekStart);wEnd.setDate(wEnd.getDate()+6);
+      return`${weekStart.getDate()} ${MONTH_NAMES[weekStart.getMonth()].slice(0,3)} – ${wEnd.getDate()} ${MONTH_NAMES[wEnd.getMonth()].slice(0,3)} ${wEnd.getFullYear()}`;
+    }
+    if(view==="month"){
+      const wp1=getWeekParity(year,month,1,anchorDate);
+      return`${MONTH_NAMES[month]} ${year}`;
+    }
+    return`${year}`;
+  }
+  const wp1=view==="month"?getWeekParity(year,month,1,anchorDate):null;
   return(
     <div className="card">
       <div className="cal-nav">
         <div className="cal-nav-left">
-          <h2 className="cal-title">{MONTH_NAMES[month]} {year}</h2>
-          <span className={`week-badge w${wp1}`}>Starts W{wp1}</span>
+          <h2 className="cal-title">{navTitle()}</h2>
+          {wp1&&<span className={`week-badge w${wp1}`}>Starts W{wp1}</span>}
         </div>
-        <div className="cal-nav-right">
-          <button className="btn-icon today-btn btn" style={{width:"auto",padding:"0 10px",fontSize:".73rem"}} onClick={goToday}>Today</button>
-          <button className="btn-icon" onClick={()=>changeMonth(-1)} aria-label="Prev">‹</button>
-          <button className="btn-icon" onClick={()=>changeMonth(1)}  aria-label="Next">›</button>
-        </div>
-      </div>
-      {/* Column headers */}
-      <div className="cal-grid-head" style={{gridTemplateColumns:cols,padding:"0 6px",display:"grid",borderBottom:"2px solid var(--border)",background:"var(--surface2)"}}>
-        <div className="cal-grid-head-cell">Date</div>
-        {timeBlocks.map(b=>(
-          <div key={b.id} className="cal-grid-head-cell">
-            <span>{b.icon}</span>{b.label}
+        <div className="cal-nav-right" style={{gap:6,flexWrap:"wrap"}}>
+          <div className="view-selector">
+            {["day","week","month","year"].map(v=>(
+              <button key={v} className={`view-btn${view===v?" active":""}`}
+                onClick={()=>{setView(v);saveLS("ta_calview",v);}}>{v.charAt(0).toUpperCase()+v.slice(1)}</button>
+            ))}
           </div>
-        ))}
+          <button className="btn-icon today-btn btn" style={{width:"auto",padding:"0 10px",fontSize:".73rem"}} onClick={goToday}>Today</button>
+          <button className="btn-icon" onClick={()=>navigate(-1)} aria-label="Prev">‹</button>
+          <button className="btn-icon" onClick={()=>navigate(1)}  aria-label="Next">›</button>
+        </div>
       </div>
-      <div className="grid-body">
-        {Array.from({length:days},(_,i)=>i+1).map(day=>(
-          <DayRow key={day} year={year} month={month} day={day}
-            timeBlocks={timeBlocks} assignees={assignees}
-            weekTemplate={weekTemplate} overrides={overrides}
-            anchorDate={anchorDate}
-            onSetAssignee={onSetAssignee} onSetNote={onSetNote}
-            activePickerKey={activePickerKey} setActivePickerKey={setActivePickerKey}
-            activeNoteKey={activeNoteKey} setActiveNoteKey={setActiveNoteKey}
-            holidayCalKey={holidayCalKey}/>
-        ))}
-      </div>
-      <MonthSummary year={year} month={month} timeBlocks={timeBlocks}
-        assignees={assignees} weekTemplate={weekTemplate}
-        overrides={overrides} anchorDate={anchorDate}/>
+      {view==="month"&&(<>
+        <div className="cal-grid-head" style={{gridTemplateColumns:`72px repeat(${timeBlocks.length},1fr)`,padding:"0 6px",display:"grid",borderBottom:"2px solid var(--border)",background:"var(--surface2)"}}>
+          <div className="cal-grid-head-cell">Date</div>
+          {timeBlocks.map(b=>(
+            <div key={b.id} className="cal-grid-head-cell"><span>{b.icon}</span>{b.label}</div>
+          ))}
+        </div>
+        <div className="grid-body">
+          {Array.from({length:getDaysInMonth(year,month)},(_,i)=>i+1).map(d=>(
+            <DayRow key={d} year={year} month={month} day={d}
+              timeBlocks={timeBlocks} assignees={assignees}
+              weekTemplate={weekTemplate} overrides={overrides}
+              anchorDate={anchorDate}
+              onSetAssignee={onSetAssignee} onSetNote={onSetNote}
+              activePickerKey={activePickerKey} setActivePickerKey={setActivePickerKey}
+              activeNoteKey={activeNoteKey} setActiveNoteKey={setActiveNoteKey}
+              holidayCalKey={holidayCalKey}
+              appointments={appointments} onSaveAppt={onSaveAppt} onDeleteAppt={onDeleteAppt}/>
+          ))}
+        </div>
+        <MonthSummary year={year} month={month} timeBlocks={timeBlocks}
+          assignees={assignees} weekTemplate={weekTemplate}
+          overrides={overrides} anchorDate={anchorDate}/>
+      </>)}
+      {view==="day"&&(
+        <DayViewPanel year={year} month={month} day={day}
+          timeBlocks={timeBlocks} assignees={assignees}
+          weekTemplate={weekTemplate} overrides={overrides}
+          anchorDate={anchorDate} onSetAssignee={onSetAssignee} onSetNote={onSetNote}
+          holidayCalKey={holidayCalKey}
+          appointments={appointments} onSaveAppt={onSaveAppt} onDeleteAppt={onDeleteAppt}/>
+      )}
+      {view==="week"&&(
+        <WeekViewPanel weekStart={weekStart}
+          timeBlocks={timeBlocks} assignees={assignees}
+          weekTemplate={weekTemplate} overrides={overrides}
+          anchorDate={anchorDate} onSetAssignee={onSetAssignee} onSetNote={onSetNote}
+          holidayCalKey={holidayCalKey}
+          appointments={appointments} onSaveAppt={onSaveAppt} onDeleteAppt={onDeleteAppt}
+          onGoDay={goDay} setYear={setYear} setMonth={setMonth}/>
+      )}
+      {view==="year"&&(
+        <YearViewPanel year={year}
+          timeBlocks={timeBlocks} assignees={assignees}
+          weekTemplate={weekTemplate} overrides={overrides}
+          anchorDate={anchorDate} onGoMonth={goMonth}/>
+      )}
     </div>
   );
 }
@@ -1086,6 +1536,7 @@ function App(){
   const [overrides,setOverrides]=useState(()=>loadLS("ta_overrides2",{}));
   const [anchorDate,setAnchorDate]=useState(()=>loadLS("ta_anchor",defaultAnchor()));
   const [holidayCalKey,setHolidayCalKey]=useState(()=>loadLS("ta_holidayCal","none"));
+  const [appointments,setAppointments]=useState(()=>loadLS("ta_appointments",{}));
   // Build/migrate templates when blocks change
   const safeTemplates=useMemo(()=>{
     if(!templates) return emptyTemplates(timeBlocks);
@@ -1107,6 +1558,22 @@ function App(){
   useEffect(()=>saveLS("ta_overrides2",overrides),[overrides]);
   useEffect(()=>saveLS("ta_anchor",anchorDate),[anchorDate]);
   useEffect(()=>saveLS("ta_holidayCal",holidayCalKey),[holidayCalKey]);
+  useEffect(()=>saveLS("ta_appointments",appointments),[appointments]);
+  function handleSaveAppt(dStr,appt){
+    setAppointments(prev=>{
+      const list=prev[dStr]||[];
+      const exists=list.find(a=>a.id===appt.id);
+      return{...prev,[dStr]:exists?list.map(a=>a.id===appt.id?appt:a):[...list,appt]};
+    });
+  }
+  function handleDeleteAppt(dStr,id){
+    setAppointments(prev=>{
+      const list=(prev[dStr]||[]).filter(a=>a.id!==id);
+      const next={...prev};
+      if(list.length)next[dStr]=list; else delete next[dStr];
+      return next;
+    });
+  }
   function handleSetAssignee(dStr,blockId,id,newA){
     if(newA) setAssignees(prev=>({...prev,[id]:newA}));
     setOverrides(prev=>({
@@ -1157,7 +1624,8 @@ function App(){
           weekTemplate={safeTemplates} overrides={overrides}
           anchorDate={anchorDate}
           onSetAssignee={handleSetAssignee} onSetNote={handleSetNote}
-          holidayCalKey={holidayCalKey}/>
+          holidayCalKey={holidayCalKey}
+          appointments={appointments} onSaveAppt={handleSaveAppt} onDeleteAppt={handleDeleteAppt}/>
       )}
       {tab==="template"&&(
         <TemplateEditor
