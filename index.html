@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Together Apart · Co-Parenting Calendar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+/* ── Reset ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f5f2;--surface:#fff;--surface2:#faf8f6;
+  --border:#e8e3dc;--border-strong:#cec8bf;
+  --text:#332e28;--text-muted:#9b9189;--text-light:#c2bbb2;
+  --accent:#b8956a;--accent-light:#f0e6d8;
+  --w1:#e8f0fb;--w1-text:#2d5fa6;--w1-border:#b5cef5;
+  --w2:#fef3e2;--w2-text:#8a5a0a;--w2-border:#f5d898;
+  --weekend-bg:#f5f2ee;
+  --today-bg:#b8956a;--today-fg:#fff;
+  --r-sm:8px;--r-md:12px;--r-lg:18px;--r-xl:24px;
+  --shadow-sm:0 1px 4px rgba(0,0,0,.06);
+  --shadow-md:0 4px 20px rgba(0,0,0,.09);
+  --shadow-lg:0 8px 40px rgba(0,0,0,.13);
+}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.5}
+button{font-family:'DM Sans',sans-serif}
+/* ── App shell ── */
+.app{max-width:1040px;margin:0 auto;padding:20px 14px 80px}
+.app-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-logo{font-size:1.8rem;line-height:1}
+.brand-title{font-family:'Lora',serif;font-size:1.4rem;font-weight:600;line-height:1.1;color:var(--text)}
+.brand-sub{font-size:.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-top:1px}
+/* ── Tabs ── */
+.tabs{display:flex;gap:3px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:3px;margin-bottom:16px;width:fit-content;flex-wrap:wrap}
+.tab-btn{padding:6px 14px;border:none;border-radius:9px;background:none;font-size:.8rem;font-weight:500;color:var(--text-muted);cursor:pointer;white-space:nowrap;transition:background .15s,color .15s}
+.tab-btn.active{background:var(--bg);color:var(--text);box-shadow:var(--shadow-sm)}
+/* ── Card ── */
+.card{background:var(--surface);border-radius:var(--r-xl);box-shadow:var(--shadow-md);border:1px solid var(--border);overflow:hidden}
+.section-head{padding:16px 18px;border-bottom:1px solid var(--border);background:var(--surface2)}
+.section-title{font-family:'Lora',serif;font-size:1rem;font-weight:600}
+.section-sub{font-size:.75rem;color:var(--text-muted);margin-top:2px}
+.section-body{padding:16px 18px}
+/* ── Btn system ── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border:none;border-radius:var(--r-sm);font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:500;cursor:pointer;transition:opacity .15s,box-shadow .15s}
+.btn:hover{opacity:.88;box-shadow:var(--shadow-sm)}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-ghost{background:var(--bg);border:1px solid var(--border);color:var(--text-muted)}
+.btn-ghost:hover{color:var(--text)}
+.btn-danger{background:#fde8e8;color:#c0392b;border:1px solid #f5c2c2}
+.btn-xs{padding:3px 8px;font-size:.72rem}
+.btn-icon{width:28px;height:28px;padding:0;border-radius:var(--r-sm);display:inline-flex;align-items:center;justify-content:center;background:none;border:1px solid var(--border);cursor:pointer;font-size:.9rem;color:var(--text-muted);transition:background .15s,color .15s}
+.btn-icon:hover{background:var(--border);color:var(--text)}
+/* ── Calendar nav ── */
+.cal-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);background:var(--surface2);flex-wrap:wrap;gap:8px}
+.cal-nav-left{display:flex;align-items:center;gap:10px}
+.cal-title{font-family:'Lora',serif;font-size:1.1rem;font-weight:600}
+.cal-nav-right{display:flex;align-items:center;gap:6px}
+.week-badge{font-size:.7rem;padding:3px 9px;border-radius:99px;font-weight:600;letter-spacing:.03em}
+.week-badge.w1{background:var(--w1);color:var(--w1-text);border:1px solid var(--w1-border)}
+.week-badge.w2{background:var(--w2);color:var(--w2-text);border:1px solid var(--w2-border)}
+/* ── Dynamic grid (CSS vars set inline) ── */
+.cal-grid-head{display:grid;border-bottom:2px solid var(--border);background:var(--surface2);padding:0 6px}
+.cal-grid-head-cell{padding:8px 5px;font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);display:flex;align-items:center;gap:3px;white-space:nowrap}
+.grid-body{padding:2px 6px}
+/* ── Day row ── */
+.day-row{display:grid;padding:2px 0;border-bottom:1px solid var(--border);align-items:stretch;gap:2px}
+.day-row:last-child{border-bottom:none}
+.day-row.is-weekend{background:var(--weekend-bg);border-radius:var(--r-sm)}
+.day-row.is-today .date-cell{background:var(--today-bg);border-radius:var(--r-sm);color:var(--today-fg)}
+.day-row.is-today .date-dow{color:rgba(255,255,255,.65)}
+.date-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 4px;user-select:none}
+.date-num{font-family:'Lora',serif;font-size:.95rem;font-weight:600;line-height:1}
+.date-dow{font-size:.56rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-top:1px}
+/* week stripe on date cell */
+.day-row.wk1 .date-cell{border-left:3px solid var(--w1-border)}
+.day-row.wk2 .date-cell{border-left:3px solid var(--w2-border)}
+.day-row.is-today .date-cell{border-left-color:transparent}
+/* ── Block cell ── */
+.block-cell{display:flex;flex-direction:column;gap:1px;position:relative}
+.assign-btn{
+  flex:1;min-height:34px;padding:4px 5px 4px 7px;
+  border:1.5px solid transparent;border-radius:var(--r-sm);
+  cursor:pointer;font-size:.7rem;font-weight:500;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:3px;transition:transform .1s,box-shadow .1s,filter .15s;
+  position:relative;overflow:hidden
+}
+.assign-btn:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.assign-btn:active{transform:none}
+.assign-btn.is-template{border-style:dashed;border-color:currentColor;filter:opacity(.82)}
+.assign-btn.is-override::before{
+  content:'';position:absolute;top:0;left:0;bottom:0;width:3px;
+  background:currentColor;opacity:.5;border-radius:2px 0 0 2px
+}
+.assign-label{flex:1;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.assign-icons{display:flex;align-items:center;gap:2px;flex-shrink:0}
+.note-dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.6;flex-shrink:0}
+.note-btn-inline{background:none;border:none;cursor:pointer;font-size:.75rem;padding:0;opacity:.45;line-height:1;color:inherit;transition:opacity .1s}
+.note-btn-inline:hover{opacity:1}
+/* ── Picker dropdown ── */
+.picker-wrap{position:relative;flex:1;display:flex;flex-direction:column}
+.picker-dropdown{
+  position:fixed;z-index:500;
+  background:var(--surface);border:1px solid var(--border-strong);
+  border-radius:var(--r-lg);box-shadow:var(--shadow-lg);
+  padding:6px;min-width:170px;max-height:320px;overflow-y:auto
+}
+.picker-item{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:var(--r-sm);cursor:pointer;font-size:.8rem;transition:background .1s}
+.picker-item:hover,.picker-item.active{background:var(--bg)}
+.picker-item.active{font-weight:600}
+.p-swatch{width:11px;height:11px;border-radius:3px;flex-shrink:0}
+.picker-sep{height:1px;background:var(--border);margin:4px 0}
+.picker-muted{color:var(--text-muted);font-size:.75rem}
+/* ── Inline add form ── */
+.add-inline{padding:4px;display:flex;flex-direction:column;gap:6px}
+.add-inline input{width:100%;padding:5px 8px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-size:.8rem;background:var(--bg);outline:none;font-family:'DM Sans',sans-serif;color:var(--text)}
+.add-inline input:focus{border-color:var(--accent)}
+.palette-row{display:flex;gap:4px;flex-wrap:wrap}
+.pal-dot{width:17px;height:17px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .12s}
+.pal-dot.on{transform:scale(1.25)}
+.add-row{display:flex;gap:5px}
+/* ── Note popover ── */
+.note-popover{
+  position:fixed;z-index:600;
+  background:var(--surface);border:1px solid var(--border-strong);
+  border-radius:var(--r-lg);box-shadow:var(--shadow-lg);
+  padding:14px;width:260px
+}
+.note-popover h4{font-family:'Lora',serif;font-size:.9rem;font-weight:600;margin-bottom:8px;color:var(--text)}
+.note-popover textarea{
+  width:100%;height:80px;padding:8px 10px;border:1px solid var(--border-strong);
+  border-radius:var(--r-sm);font-family:'DM Sans',sans-serif;font-size:.8rem;
+  resize:none;outline:none;background:var(--bg);color:var(--text);line-height:1.5
+}
+.note-popover textarea:focus{border-color:var(--accent)}
+.note-actions{display:flex;gap:6px;margin-top:8px;justify-content:flex-end}
+/* ── Summary bar ── */
+.summary{padding:12px 18px 16px;border-top:1px solid var(--border);background:var(--surface2)}
+.summary-bar{height:8px;border-radius:99px;background:var(--border);overflow:hidden;display:flex;margin-bottom:8px}
+.summary-fill{height:100%;transition:width .5s ease}
+.summary-chips{display:flex;gap:6px;flex-wrap:wrap}
+.s-chip{font-size:.7rem;padding:2px 9px;border-radius:99px;font-weight:500}
+/* ── Legend ── */
+.legend{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:.73rem;color:var(--text-muted)}
+.leg-swatch{width:12px;height:12px;border-radius:3px;border:1.5px solid rgba(0,0,0,.1)}
+.leg-sep{color:var(--text-light);font-size:.7rem}
+.leg-hint{font-size:.68rem;color:var(--text-light);display:flex;align-items:center;gap:3px}
+/* ── Template editor ── */
+.tpl-week-tabs{display:flex;gap:3px;margin-bottom:14px}
+.tpl-week-btn{padding:6px 16px;border-radius:99px;border:1.5px solid var(--border);font-size:.8rem;font-weight:600;cursor:pointer;background:none;transition:background .15s,border-color .15s}
+.tpl-week-btn.w1.active{background:var(--w1);color:var(--w1-text);border-color:var(--w1-border)}
+.tpl-week-btn.w2.active{background:var(--w2);color:var(--w2-text);border-color:var(--w2-border)}
+.tpl-week-btn:not(.active){color:var(--text-muted)}
+.tpl-grid{display:grid;gap:2px;margin-bottom:14px}
+.tpl-row-head{padding:5px 4px;font-size:.67rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);display:flex;align-items:center;gap:3px}
+.tpl-day-lbl{font-size:.8rem;font-weight:500;color:var(--text);padding:4px 4px;display:flex;align-items:center}
+.tpl-apply-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-top:4px;border-top:1px solid var(--border);margin-top:6px}
+.tpl-apply-note{font-size:.74rem;color:var(--text-muted)}
+/* ── Week anchor picker ── */
+.anchor-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 18px;border-top:1px solid var(--border);background:var(--surface2)}
+.anchor-label{font-size:.78rem;color:var(--text-muted)}
+.anchor-input{padding:5px 8px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-size:.78rem;font-family:'DM Sans',sans-serif;background:var(--bg);outline:none;color:var(--text)}
+.anchor-input:focus{border-color:var(--accent)}
+/* ── Time blocks manager ── */
+.blocks-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.block-item{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-md);cursor:grab;user-select:none;transition:box-shadow .15s,opacity .15s}
+.block-item:active{cursor:grabbing}
+.block-item.drag-over{box-shadow:0 0 0 2px var(--accent);background:var(--accent-light)}
+.block-item.dragging{opacity:.4}
+.block-drag-handle{color:var(--text-light);font-size:.9rem;cursor:grab}
+.block-icon-pick{font-size:1rem;width:28px;text-align:center}
+.block-name-input{flex:1;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;color:var(--text);outline:none;padding:0}
+.block-name-input:focus{border-bottom:1px solid var(--accent)}
+.add-block-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.add-block-row input{padding:7px 10px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-size:.82rem;background:var(--bg);outline:none;font-family:'DM Sans',sans-serif;color:var(--text);width:170px}
+.add-block-row input:focus{border-color:var(--accent)}
+.icon-pick-row{display:flex;gap:5px;flex-wrap:wrap}
+.icon-opt{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);cursor:pointer;font-size:1rem;border:1.5px solid transparent;transition:border-color .1s,background .1s}
+.icon-opt:hover,.icon-opt.sel{border-color:var(--accent);background:var(--accent-light)}
+/* ── Assignees manager ── */
+.asm-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.asm-chip{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:.77rem;font-weight:500;border:1.5px solid rgba(0,0,0,.1)}
+.asm-del{background:none;border:none;cursor:pointer;font-size:.85rem;opacity:.45;padding:0;line-height:1;color:inherit}
+.asm-del:hover{opacity:1}
+/* ── Scrollable overlay backdrop ── */
+.overlay-backdrop{position:fixed;inset:0;z-index:400;background:transparent}
+/* ── Holiday indicator ── */
+.holiday-pill{display:block;font-size:.5rem;padding:1px 5px;border-radius:99px;background:#fef3cd;color:#7a5c00;border:1px solid #f0d86a;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.5;margin-top:2px}
+.day-row.is-holiday .date-cell{background:linear-gradient(to bottom,#fffdf0,#fffbdc)}
+.day-row.is-weekend.is-holiday .date-cell{background:linear-gradient(to bottom,#fffdf0,#fff8d0)}
+.day-row.is-today.is-holiday .date-cell{background:var(--today-bg)}
+/* ── Holiday list card ── */
+.hol-list{display:flex;flex-direction:column;gap:6px}
+.hol-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:#fffcee;border:1px solid #f0d86a;border-radius:var(--r-md)}
+.hol-item.past{opacity:.45}
+.hol-name{flex:1;font-size:.82rem;font-weight:600;color:var(--text)}
+.hol-range{font-size:.72rem;color:var(--text-muted);margin-top:1px}
+.hol-days{font-size:.7rem;color:var(--text-muted);text-align:right;white-space:nowrap}
+.hol-select{padding:6px 10px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-family:'DM Sans',sans-serif;font-size:.82rem;background:var(--bg);color:var(--text);outline:none;cursor:pointer}
+/* ── Responsive ── */
+@media(max-width:640px){
+  .app{padding:12px 8px 70px}
+  .date-num{font-size:.85rem}
+  .assign-btn{min-height:30px;font-size:.64rem;padding:3px 4px}
+  .cal-nav{padding:10px 12px}
+  .section-body,.section-head{padding:12px}
+  .note-popover{width:220px}
+  .tpl-grid .tpl-day-lbl{font-size:.72rem}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useCallback,useRef,useEffect,useMemo,Fragment}=React;
+/* ═══════════════════════════════════════════════
+   CONSTANTS & DEFAULTS
+═══════════════════════════════════════════════ */
+const MONTH_NAMES=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const DAY_NAMES_SHORT=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const DAY_NAMES_FULL=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const BLOCK_ICONS_OPTS=["🌅","🌤","☀️","🍽️","🌆","🌙","🎒","🏠","⭐","🎯","🏥","🏫","🚗","🎨"];
+const PALETTE=[
+  {bg:"#f2d9e0",fg:"#8c3f56"},{bg:"#d6e8f5",fg:"#2d6492"},
+  {bg:"#d5f0e0",fg:"#276645"},{bg:"#fde8c8",fg:"#7a4f10"},
+  {bg:"#e8d9f5",fg:"#5c3080"},{bg:"#fdf0c8",fg:"#6b5a0a"},
+  {bg:"#d9eef5",fg:"#1e6070"},{bg:"#f5ddd9",fg:"#7a2e1a"},
+  {bg:"#e8f5d9",fg:"#3a6122"},{bg:"#f5e8d9",fg:"#6b440a"},
+];
+/* ═══════════════════════════════════════════════
+   HOLIDAY CALENDARS
+═══════════════════════════════════════════════ */
+const HOLIDAY_CALENDARS={
+  'none':{label:'No holiday calendar',emoji:'',holidays:[]},
+  'fr-a':{label:'France – Zone A',emoji:'🇫🇷',holidays:[
+    {name:'Toussaint',start:'2025-10-18',end:'2025-11-02'},
+    {name:'Noël',start:'2025-12-20',end:'2026-01-04'},
+    {name:'Vacances d\'hiver',start:'2026-02-07',end:'2026-02-22'},
+    {name:'Vacances de printemps',start:'2026-04-04',end:'2026-04-19'},
+    {name:'Été',start:'2026-07-04',end:'2026-08-31'},
+  ]},
+  'fr-b':{label:'France – Zone B',emoji:'🇫🇷',holidays:[
+    {name:'Toussaint',start:'2025-10-18',end:'2025-11-02'},
+    {name:'Noël',start:'2025-12-20',end:'2026-01-04'},
+    {name:'Vacances d\'hiver',start:'2026-02-14',end:'2026-03-01'},
+    {name:'Vacances de printemps',start:'2026-04-11',end:'2026-04-26'},
+    {name:'Été',start:'2026-07-04',end:'2026-08-31'},
+  ]},
+  'fr-c':{label:'France – Zone C',emoji:'🇫🇷',holidays:[
+    {name:'Toussaint',start:'2025-10-18',end:'2025-11-02'},
+    {name:'Noël',start:'2025-12-20',end:'2026-01-04'},
+    {name:'Vacances d\'hiver',start:'2026-02-07',end:'2026-02-22'},
+    {name:'Vacances de printemps',start:'2026-04-04',end:'2026-04-19'},
+    {name:'Été',start:'2026-07-04',end:'2026-08-31'},
+  ]},
+  'be-fr':{label:'Belgique (Communauté fr.)',emoji:'🇧🇪',holidays:[
+    {name:'Toussaint',start:'2025-10-27',end:'2025-11-02'},
+    {name:'Noël',start:'2025-12-22',end:'2026-01-04'},
+    {name:'Carnaval',start:'2026-02-16',end:'2026-02-27'},
+    {name:'Pâques',start:'2026-04-06',end:'2026-04-17'},
+    {name:'Été',start:'2026-07-01',end:'2026-08-31'},
+  ]},
+  'uk-eng':{label:'UK – England',emoji:'🇬🇧',holidays:[
+    {name:'Autumn half-term',start:'2025-10-27',end:'2025-10-31'},
+    {name:'Christmas',start:'2025-12-22',end:'2026-01-02'},
+    {name:'Spring half-term',start:'2026-02-16',end:'2026-02-20'},
+    {name:'Easter',start:'2026-04-03',end:'2026-04-17'},
+    {name:'May half-term',start:'2026-05-25',end:'2026-05-29'},
+    {name:'Summer',start:'2026-07-21',end:'2026-09-04'},
+  ]},
+  'nl':{label:'Nederland',emoji:'🇳🇱',holidays:[
+    {name:'Herfstvakantie',start:'2025-10-18',end:'2025-10-26'},
+    {name:'Kerstvakantie',start:'2025-12-22',end:'2026-01-04'},
+    {name:'Voorjaarsvakantie',start:'2026-02-14',end:'2026-02-22'},
+    {name:'Meivakantie',start:'2026-04-25',end:'2026-05-03'},
+    {name:'Zomervakantie',start:'2026-07-04',end:'2026-08-16'},
+  ]},
+  'lu':{label:'Luxembourg',emoji:'🇱🇺',holidays:[
+    {name:'Toussaint',start:'2025-10-27',end:'2025-11-07'},
+    {name:'Noël',start:'2025-12-22',end:'2026-01-04'},
+    {name:'Carnaval',start:'2026-02-23',end:'2026-02-27'},
+    {name:'Pâques',start:'2026-04-06',end:'2026-04-17'},
+    {name:'Pentecôte',start:'2026-05-25',end:'2026-06-05'},
+    {name:'Été',start:'2026-07-01',end:'2026-08-31'},
+  ]},
+  'ch-vd':{label:'Suisse – Vaud',emoji:'🇨🇭',holidays:[
+    {name:'Automne',start:'2025-10-20',end:'2025-11-02'},
+    {name:'Noël',start:'2025-12-22',end:'2026-01-04'},
+    {name:'Sports',start:'2026-02-07',end:'2026-02-22'},
+    {name:'Pâques',start:'2026-04-02',end:'2026-04-19'},
+    {name:'Ascension',start:'2026-05-14',end:'2026-05-18'},
+    {name:'Été',start:'2026-07-04',end:'2026-08-23'},
+  ]},
+  'de-by':{label:'Deutschland – Bayern',emoji:'🇩🇪',holidays:[
+    {name:'Herbstferien',start:'2025-10-27',end:'2025-11-07'},
+    {name:'Weihnachtsferien',start:'2025-12-23',end:'2026-01-06'},
+    {name:'Winterferien',start:'2026-02-16',end:'2026-02-20'},
+    {name:'Osterferien',start:'2026-03-30',end:'2026-04-11'},
+    {name:'Pfingstferien',start:'2026-06-09',end:'2026-06-19'},
+    {name:'Sommerferien',start:'2026-08-03',end:'2026-09-14'},
+  ]},
+  'tr':{label:'Türkiye',emoji:'🇹🇷',holidays:[
+    {name:'Sömestr Tatili',start:'2026-01-26',end:'2026-02-06'},
+    {name:'Yaz Tatili',start:'2026-06-12',end:'2026-09-13'},
+  ]},
+  'es':{label:'España',emoji:'🇪🇸',holidays:[
+    {name:'Navidad',start:'2025-12-20',end:'2026-01-07'},
+    {name:'Semana Santa',start:'2026-03-30',end:'2026-04-05'},
+    {name:'Verano',start:'2026-06-21',end:'2026-09-09'},
+  ]},
+};
+function getHolidayForDate(dateStr,calKey){
+  if(!calKey||calKey==='none')return null;
+  const cal=HOLIDAY_CALENDARS[calKey];
+  if(!cal)return null;
+  return cal.holidays.find(h=>dateStr>=h.start&&dateStr<=h.end)||null;
+}
+function formatHolidayDate(str){
+  const d=new Date(str+"T00:00:00");
+  return `${d.getDate()} ${MONTH_NAMES[d.getMonth()].slice(0,3)} ${d.getFullYear()}`;
+}
+function getHolidayDuration(start,end){
+  const s=new Date(start+"T00:00:00"),e=new Date(end+"T00:00:00");
+  return Math.round((e-s)/86400000)+1;
+}
+
+const DEFAULT_ASSIGNEES={
+  none: {id:"none",label:"—",bg:"#f0ede8",fg:"#b0a99f",builtIn:true},
+  mommy:{id:"mommy",label:"Mommy",bg:"#f2d9e0",fg:"#8c3f56",builtIn:true},
+  daddy:{id:"daddy",label:"Daddy",bg:"#d6e8f5",fg:"#2d6492",builtIn:true},
+  school:{id:"school",label:"School",bg:"#d5f0e0",fg:"#276645",builtIn:true},
+};
+const DEFAULT_BLOCKS=[
+  {id:"morning",label:"Morning",icon:"🌤"},
+  {id:"daytime",label:"Daytime",icon:"☀️"},
+  {id:"lunch",label:"Lunch",icon:"🍽️"},
+  {id:"evening",label:"Evening",icon:"🌆"},
+  {id:"night",label:"Night",icon:"🌙"},
+];
+// Build empty template row for all blocks + both weeks
+function emptyWeekTpl(blocks){
+  const week={};
+  for(let d=0;d<7;d++){
+    week[d]={};
+    blocks.forEach(b=>{ week[d][b.id]="none" });
+  }
+  return week;
+}
+function emptyTemplates(blocks){
+  return {week1:emptyWeekTpl(blocks),week2:emptyWeekTpl(blocks)};
+}
+/* ═══════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════ */
+function getDaysInMonth(y,m){return new Date(y,m+1,0).getDate()}
+function dateKey(y,m,d){return `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`}
+function isToday(y,m,d){const t=new Date();return t.getFullYear()===y&&t.getMonth()===m&&t.getDate()===d}
+function isWeekend(y,m,d){const w=new Date(y,m,d).getDay();return w===0||w===6}
+// ISO week number for a date
+function isoWeek(date){
+  const d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));
+  d.setUTCDate(d.getUTCDate()+4-(d.getUTCDay()||7));
+  const yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  return Math.ceil((((d-yearStart)/86400000)+1)/7);
+}
+// Determine if a given day is week1 or week2 based on user's anchor date
+// anchorDate (string YYYY-MM-DD) is known to be a Week-1 Monday
+function getWeekParity(y,m,d,anchorStr){
+  try{
+    const anchor=new Date(anchorStr+"T00:00:00");
+    const target=new Date(y,m,d);
+    // get Monday of target week
+    const dow=target.getDay();
+    const mondayTarget=new Date(target);
+    mondayTarget.setDate(target.getDate()-(dow===0?6:dow-1));
+    // diff in weeks
+    const diffMs=mondayTarget-anchor;
+    const diffWeeks=Math.round(diffMs/(7*86400000));
+    return diffWeeks%2===0?1:2;
+  }catch{return 1}
+}
+function loadLS(k,fb){try{const v=localStorage.getItem(k);return v?JSON.parse(v):fb}catch{return fb}}
+function saveLS(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
+// Merge: override > template > none
+function resolveCell(dateStr,blockId,weekTemplate,overrides,weekParity){
+  const tplWeek=weekParity===1?weekTemplate.week1:weekTemplate.week2;
+  const dow=new Date(dateStr+"T00:00:00").getDay();
+  const tplVal=tplWeek?.[dow]?.[blockId]??"none";
+  const ov=overrides[dateStr]?.[blockId];
+  return{
+    assigneeId: ov?.assigneeId??tplVal,
+    note:       ov?.note??"",
+    isOverride: ov!=null,
+    isTemplate: ov==null && tplVal!=="none",
+  };
+}
+/* ═══════════════════════════════════════════════
+   USEOUTSIDECLICK
+═══════════════════════════════════════════════ */
+function useOutsideClick(ref,cb){
+  useEffect(()=>{
+    function h(e){if(ref.current&&!ref.current.contains(e.target))cb()}
+    document.addEventListener("mousedown",h);
+    return()=>document.removeEventListener("mousedown",h);
+  },[cb]);
+}
+/* ═══════════════════════════════════════════════
+   ASSIGNEE PICKER (dropdown)
+═══════════════════════════════════════════════ */
+function AssigneePicker({value,assignees,onSelect,onAddNew,onClose,anchorRect}){
+  const ref=useRef(null);
+  const [adding,setAdding]=useState(false);
+  const [newLabel,setNewLabel]=useState("");
+  const [newPal,setNewPal]=useState(0);
+  // Position fixed dropdown near anchor
+  const style=useMemo(()=>{
+    if(!anchorRect)return{top:100,left:100};
+    const top=anchorRect.bottom+4;
+    let left=anchorRect.left;
+    // prevent overflow right
+    const w=180;
+    if(left+w>window.innerWidth-8)left=window.innerWidth-w-8;
+    return{top,left,width:w};
+  },[anchorRect]);
+  useOutsideClick(ref,onClose);
+  function handleAdd(){
+    if(!newLabel.trim())return;
+    const id="c_"+Date.now();
+    onAddNew({id,label:newLabel.trim(),...PALETTE[newPal],builtIn:false});
+    onSelect(id);
+    onClose();
+  }
+  return(
+    <div ref={ref} className="picker-dropdown" style={{...style,position:"fixed"}}>
+      {!adding?(
+        <>
+          {Object.values(assignees).map(a=>(
+            <div key={a.id} className={`picker-item${a.id===value?" active":""}`}
+              onClick={()=>{onSelect(a.id);onClose()}}>
+              <span className="p-swatch" style={{background:a.bg,border:`1px solid ${a.fg}44`}}/>
+              {a.label}
+            </div>
+          ))}
+          <div className="picker-sep"/>
+          <div className="picker-item picker-muted" onClick={()=>setAdding(true)}>＋ Add custom…</div>
+        </>
+      ):(
+        <div className="add-inline">
+          <input autoFocus placeholder="Label (e.g. Grandma)"
+            value={newLabel} onChange={e=>setNewLabel(e.target.value)}
+            onKeyDown={e=>e.key==="Enter"&&handleAdd()}/>
+          <div className="palette-row">
+            {PALETTE.map((p,i)=>(
+              <div key={i} className={`pal-dot${newPal===i?" on":""}`}
+                style={{background:p.bg,borderColor:newPal===i?p.fg:"transparent"}}
+                onClick={()=>setNewPal(i)}/>
+            ))}
+          </div>
+          <div className="add-row">
+            <button className="btn btn-accent btn-xs" onClick={handleAdd}>Save</button>
+            <button className="btn btn-ghost btn-xs" onClick={()=>setAdding(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
+   NOTE POPOVER
+═══════════════════════════════════════════════ */
+function NotePopover({note,blockLabel,dateLabel,anchorRect,onSave,onClose}){
+  const [val,setVal]=useState(note||"");
+  const ref=useRef(null);
+  useOutsideClick(ref,()=>{onSave(val);onClose()});
+  const style=useMemo(()=>{
+    if(!anchorRect)return{top:100,left:100};
+    let top=anchorRect.bottom+6;
+    let left=anchorRect.left;
+    if(left+260>window.innerWidth-8)left=window.innerWidth-268;
+    if(top+200>window.innerHeight-8)top=anchorRect.top-206;
+    return{top,left};
+  },[anchorRect]);
+  return(
+    <div ref={ref} className="note-popover" style={{...style,position:"fixed"}}>
+      <h4>📝 {blockLabel} · <span style={{fontStyle:"italic",fontWeight:400}}>{dateLabel}</span></h4>
+      <textarea autoFocus placeholder="Add a note… e.g. 'Doctor at 15:00'" value={val}
+        onChange={e=>setVal(e.target.value)}
+        onKeyDown={e=>{if(e.key==="Escape"){onSave(val);onClose()}}}/>
+      <div className="note-actions">
+        {val&&<button className="btn btn-danger btn-xs" onClick={()=>{onSave("");onClose()}}>Clear</button>}
+        <button className="btn btn-ghost btn-xs" onClick={()=>{onSave(val);onClose()}}>Done</button>
+      </div>
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
+   BLOCK CELL
+═══════════════════════════════════════════════ */
+function BlockCell({dateStr,blockId,blockLabel,assignees,weekTemplate,overrides,weekParity,
+                    onSetAssignee,onSetNote,activePickerKey,setActivePickerKey,
+                    activeNoteKey,setActiveNoteKey}){
+  const {assigneeId,note,isOverride,isTemplate}=resolveCell(dateStr,blockId,weekTemplate,overrides,weekParity);
+  const a=assignees[assigneeId]||assignees["none"];
+  const cellKey=dateStr+"|"+blockId;
+  const btnRef=useRef(null);
+  const [btnRect,setBtnRect]=useState(null);
+  const noteRef=useRef(null);
+  const [noteRect,setNoteRect]=useState(null);
+  function openPicker(e){
+    e.stopPropagation();
+    const r=btnRef.current?.getBoundingClientRect();
+    setBtnRect(r||null);
+    setActivePickerKey(prev=>prev===cellKey?null:cellKey);
+    setActiveNoteKey(null);
+  }
+  function openNote(e){
+    e.stopPropagation();
+    const r=noteRef.current?.getBoundingClientRect();
+    setNoteRect(r||null);
+    setActiveNoteKey(prev=>prev===cellKey?null:cellKey);
+    setActivePickerKey(null);
+  }
+  const pickerOpen=activePickerKey===cellKey;
+  const noteOpen=activeNoteKey===cellKey;
+  const dateObj=new Date(dateStr+"T00:00:00");
+  const dateLabel=`${DAY_NAMES_SHORT[dateObj.getDay()]} ${dateObj.getDate()} ${MONTH_NAMES[dateObj.getMonth()].slice(0,3)}`;
+  return(
+    <div className="block-cell">
+      <button ref={btnRef}
+        className={`assign-btn${isTemplate?" is-template":""}${isOverride?" is-override":""}`}
+        style={{background:a.bg,color:a.fg,borderColor:isTemplate?a.fg+"66":"transparent"}}
+        onClick={openPicker}>
+        <span className="assign-label">{a.label}</span>
+        <span className="assign-icons">
+          {note&&<span className="note-dot" title={note}/>}
+          <button ref={noteRef} className="note-btn-inline" onClick={openNote}
+            title={note?"Edit note":"Add note"} onMouseDown={e=>e.stopPropagation()}>
+            {note?"✏️":"＋"}
+          </button>
+        </span>
+      </button>
+      {pickerOpen&&btnRect&&(
+        <>
+          <div className="overlay-backdrop" onClick={()=>setActivePickerKey(null)}/>
+          <AssigneePicker
+            value={assigneeId} assignees={assignees}
+            anchorRect={btnRect}
+            onSelect={id=>onSetAssignee(dateStr,blockId,id)}
+            onAddNew={a=>onSetAssignee(dateStr,blockId,a.id,a)}
+            onClose={()=>setActivePickerKey(null)}/>
+        </>
+      )}
+      {noteOpen&&noteRect&&(
+        <>
+          <div className="overlay-backdrop" onClick={()=>{setActiveNoteKey(null)}}/>
+          <NotePopover
+            note={note} blockLabel={blockLabel} dateLabel={dateLabel}
+            anchorRect={noteRect}
+            onSave={txt=>onSetNote(dateStr,blockId,txt)}
+            onClose={()=>setActiveNoteKey(null)}/>
+        </>
+      )}
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
+   DAY ROW
+═══════════════════════════════════════════════ */
+function DayRow({year,month,day,timeBlocks,assignees,weekTemplate,overrides,anchorDate,
+                 onSetAssignee,onSetNote,activePickerKey,setActivePickerKey,
+                 activeNoteKey,setActiveNoteKey,holidayCalKey}){
+  const dStr=dateKey(year,month,day);
+  const dow=new Date(year,month,day).getDay();
+  const wp=getWeekParity(year,month,day,anchorDate);
+  const holiday=getHolidayForDate(dStr,holidayCalKey);
+  const classes=["day-row",
+    `wk${wp}`,
+    isWeekend(year,month,day)?"is-weekend":"",
+    isToday(year,month,day)?"is-today":"",
+    holiday?"is-holiday":""
+  ].filter(Boolean).join(" ");
+  // Dynamic grid
+  const cols=`72px repeat(${timeBlocks.length},1fr)`;
+  return(
+    <div className={classes} style={{gridTemplateColumns:cols}}>
+      <div className="date-cell">
+        <span className="date-num">{day}</span>
+        <span className="date-dow">{DAY_NAMES_SHORT[dow]}</span>
+        {holiday&&<span className="holiday-pill" title={holiday.name}>🏖 {holiday.name}</span>}
+      </div>
+      {timeBlocks.map(b=>(
+        <BlockCell key={b.id}
+          dateStr={dStr} blockId={b.id} blockLabel={b.label}
+          assignees={assignees} weekTemplate={weekTemplate}
+          overrides={overrides} weekParity={wp}
+          onSetAssignee={onSetAssignee} onSetNote={onSetNote}
+          activePickerKey={activePickerKey} setActivePickerKey={setActivePickerKey}
+          activeNoteKey={activeNoteKey} setActiveNoteKey={setActiveNoteKey}/>
+      ))}
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
+   MONTH SUMMARY
+═══════════════════════════════════════════════ */
+function MonthSummary({year,month,timeBlocks,assignees,weekTemplate,overrides,anchorDate}){
+  const counts=useMemo(()=>{
+    const c={};
+    const days=getDaysInMonth(year,month);
+    for(let d=1;d<=days;d++){
+      const dStr=dateKey(year,month,d);
+      const wp=getWeekParity(year,month,d,anchorDate);
+      timeBlocks.forEach(b=>{
+        const {assigneeId}=resolveCell(dStr,b.id,weekTemplate,overrides,wp);
+        if(assigneeId!=="none")c[assigneeId]=(c[assigneeId]||0)+1;
+      });
+    }
+    return c;
+  },[year,month,timeBlocks,assignees,weekTemplate,overrides,anchorDate]);
+  const total=Object.values(counts).reduce((s,n)=>s+n,0);
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  return(
+    <div className="summary">
+      <div className="summary-bar">
+        {sorted.map(([id,n])=>{
+          const a=assignees[id];
+          if(!a)return null;
+          return<div key={id} className="summary-fill" style={{width:`${(n/total)*100}%`,background:a.fg+"88"}}/>;
+        })}
+      </div>
+      <div className="summary-chips">
+        {sorted.map(([id,n])=>{
+          const a=assignees[id];
+          if(!a)return null;
+          return(
+            <span key={id} className="s-chip" style={{background:a.bg,color:a.fg}}>
+              {a.label} · {n}{total?` (${Math.round(n/total*100)}%)`:""}
+            </span>
+          );
+        })}
+        {total===0&&<span style={{fontSize:".73rem",color:"var(--text-muted)"}}>No blocks assigned yet — try the Weekly Template tab!</span>}
+      </div>
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
+   CALENDAR VIEW
+═══════════════════════════════════════════════ */
+function CalendarView({year,month,setYear,setMonth,timeBlocks,assignees,weekTemplate,
+                       overrides,anchorDate,onSetAssignee,onSetNote,holidayCalKey}){
+  const [activePickerKey,setActivePickerKey]=useState(null);
+  const [activeNoteKey,setActiveNoteKey]=useState(null);
+  const days=getDaysInMonth(year,month);
+  function changeMonth(d){
+    let nm=month+d,ny=year;
+    if(nm<0){nm=11;ny--}if(nm>11){nm=0;ny++}
+    setYear(ny);setMonth(nm);
+    setActivePickerKey(null);setActiveNoteKey(null);
+  }
+  function goToday(){const t=new Date();setYear(t.getFullYear());setMonth(t.getMonth())}
+  const cols=`72px repeat(${timeBlocks.length},1fr)`;
+  // Week badge for month (show parity of first day)
+  const wp1=getWeekParity(year,month,1,anchorDate);
+  return(
+    <div className="card">
+      <div className="cal-nav">
+        <div className="cal-nav-left">
+          <h2 className="cal-title">{MONTH_NAMES[month]} {year}</h2>
+          <span className={`week-badge w${wp1}`}>Starts W{wp1}</span>
+        </div>
+        <div className="cal-nav-right">
+          <button className="btn-icon today-btn btn" style={{width:"auto",padding:"0 10px",fontSize:".73rem"}} onClick={goToday}>Today</button>
+          <button className="btn-icon" onClick={()=>changeMonth(-1)} aria-label="Prev">‹</button>
+          <button className="btn-icon" onClick={()=>changeMonth(1)}  aria-label="Next">›</button>
+        </div>
+      </div>
+      {/* Column headers */}
+      <div className="cal-grid-head" style={{gridTemplateColumns:cols,padding:"0 6px",display:"grid",borderBottom:"2px solid var(--border)",background:"var(--surface2)"}}>
+        <div className="cal-grid-head-cell">Date</div>
+        {timeBlocks.map(b=>(
+          <div key={b.id} className="cal-grid-head-cell">
+            <span>{b.icon}</span>{b.label}
+          </div>
+        ))}
+      </div>
+      <div className="grid-body">
+        {Array.from({length:days},(_,i)=>i+1).map(day=>(
+          <DayRow key={day} year={year} month={month} day={day}
+            timeBlocks={timeBlocks} assignees={assignees}
+            weekTemplate={weekTemplate} overrides={overrides}
+            anchorDate={anchorDate}
+            onSetAssignee={onSetAssignee} onSetNote={onSetNote}
+            activePickerKey={activePickerKey} setActivePickerKey={setActivePickerKey}
+            activeNoteKey={activeNoteKey} setActiveNoteKey={setActiveNoteKey}
+            holidayCalKey={holidayCalKey}/>
+        ))}
+      </div>
+      <MonthSummary year={year} month={month} timeBlocks={timeBlocks}
+        assignees={assignees} weekTemplate={weekTemplate}
+        overrides={overrides} anchorDate={anchorDate}/>
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
+   TEMPLATE EDITOR
+═══════════════════════════════════════════════ */
+function TemplateEditor({timeBlocks,assignees,weekTemplate,setWeekTemplate,
+                         year,month,overrides,setOverrides,
+                         anchorDate,setAnchorDate}){
+  const [activeWeek,setActiveWeek]=useState("week1");
+  const [activePickerKey,setActivePickerKey]=useState(null);
+  function setSlot(dow,blockId,id,newA){
+    if(newA){}// assignees update handled in parent via onAddNew
+    setWeekTemplate(prev=>({
+      ...prev,
+      [activeWeek]:{
+        ...prev[activeWeek],
+        [dow]:{...(prev[activeWeek]?.[dow]||{}), [blockId]:id}
+      }
+    }));
+  }
+  function applyToMonth(){
+    setOverrides(prev=>{
+      const next={...prev};
+      const days=getDaysInMonth(year,month);
+      for(let d=1;d<=days;d++) delete next[dateKey(year,month,d)];
+      return next;
+    });
+  }
+  const cols=`76px repeat(${timeBlocks.length},1fr)`;
+  return(
+    <div className="card">
+      <div className="section-head">
+        <div className="section-title">Bi-Weekly Template</div>
+        <div className="section-sub">Define Week 1 and Week 2 default schedules. The calendar auto-alternates between them.</div>
+      </div>
+      <div className="section-body">
+        <div className="tpl-week-tabs">
+          <button className={`tpl-week-btn w1${activeWeek==="week1"?" active":""}`}
+            onClick={()=>setActiveWeek("week1")}>Week 1</button>
+          <button className={`tpl-week-btn w2${activeWeek==="week2"?" active":""}`}
+            onClick={()=>setActiveWeek("week2")}>Week 2</button>
+        </div>
+        <div className="tpl-grid" style={{gridTemplateColumns:cols}}>
+          {/* Header */}
+          <div className="tpl-row-head"/>
+          {timeBlocks.map(b=>(
+            <div key={b.id} className="tpl-row-head"><span>{b.icon}</span>{b.label}</div>
+          ))}
+          {/* Rows Mon–Sun */}
+          {[1,2,3,4,5,6,0].map(dow=>(
+            <Fragment key={dow}>
+              <div className="tpl-day-lbl">{DAY_NAMES_FULL[dow].slice(0,3)}<span style={{fontSize:".6rem",color:"var(--text-light)",marginLeft:3}}>{DAY_NAMES_FULL[dow].slice(3)}</span></div>
+              {timeBlocks.map(b=>{
+                const val=weekTemplate[activeWeek]?.[dow]?.[b.id]??"none";
+                const a=assignees[val]||assignees["none"];
+                const cellKey=`tpl_${activeWeek}_${dow}_${b.id}`;
+                const [btnRect,setBtnRect]=useState(null);
+                const btnRef=useRef(null);
+                function openPicker(e){
+                  e.stopPropagation();
+                  setBtnRect(btnRef.current?.getBoundingClientRect()||null);
+                  setActivePickerKey(p=>p===cellKey?null:cellKey);
+                }
+                return(
+                  <div key={b.id} className="block-cell" style={{position:"relative"}}>
+                    <button ref={btnRef}
+                      className="assign-btn"
+                      style={{background:a.bg,color:a.fg,minHeight:30,fontSize:".7rem"}}
+                      onClick={openPicker}>
+                      <span className="assign-label">{a.label}</span>
+                    </button>
+                    {activePickerKey===cellKey&&btnRect&&(
+                      <>
+                        <div className="overlay-backdrop" onClick={()=>setActivePickerKey(null)}/>
+                        <AssigneePicker
+                          value={val} assignees={assignees}
+                          anchorRect={btnRect}
+                          onSelect={id=>{ setSlot(dow,b.id,id); setActivePickerKey(null); }}
+                          onAddNew={()=>{}}
+                          onClose={()=>setActivePickerKey(null)}/>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </Fragment>
+          ))}
+        </div>
+        <div className="tpl-apply-row">
+          <button className="btn btn-accent" onClick={applyToMonth}>
+            Apply to {MONTH_NAMES[month]} {year}
+          </button>
+          <span className="tpl-apply-note">Clears manual overrides for this month so the template shows through.</span>
+        </div>
+      </div>
+      {/* Week anchor */}
+      <div className="anchor-row">
+        <span className="anchor-label">📅 Week 1 starts on (any Monday):</span>
+        <input type="date" className="anchor-input" value={anchorDate}
+          onChange={e=>setAnchorDate(e.target.value)}/>
+        <span className="anchor-label" style={{fontSize:".7rem"}}>The calendar will alternate W1/W2 from this date.</span>
+      </div>
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
+   TIME BLOCKS EDITOR (with drag-and-drop)
+═══════════════════════════════════════════════ */
+function TimeBlocksEditor({timeBlocks,setTimeBlocks}){
+  const [newLabel,setNewLabel]=useState("");
+  const [newIcon,setNewIcon]=useState("⭐");
+  const dragIdx=useRef(null);
+  const [dragOver,setDragOver]=useState(null);
+  function addBlock(){
+    if(!newLabel.trim())return;
+    const id="blk_"+Date.now();
+    setTimeBlocks(prev=>[...prev,{id,label:newLabel.trim(),icon:newIcon}]);
+    setNewLabel("");setNewIcon("⭐");
+  }
+  function removeBlock(id){ setTimeBlocks(prev=>prev.filter(b=>b.id!==id)) }
+  function updateLabel(id,val){ setTimeBlocks(prev=>prev.map(b=>b.id===id?{...b,label:val}:b)) }
+  function updateIcon(id,icon){ setTimeBlocks(prev=>prev.map(b=>b.id===id?{...b,icon}:b)) }
+  // Drag handlers
+  function onDragStart(i){dragIdx.current=i}
+  function onDragOver(e,i){e.preventDefault();setDragOver(i)}
+  function onDrop(i){
+    const from=dragIdx.current;
+    if(from==null||from===i)return;
+    setTimeBlocks(prev=>{
+      const arr=[...prev];
+      const [item]=arr.splice(from,1);
+      arr.splice(i,0,item);
+      return arr;
+    });
+    dragIdx.current=null;setDragOver(null);
+  }
+  function onDragEnd(){dragIdx.current=null;setDragOver(null)}
+  return(
+    <div className="card">
+      <div className="section-head">
+        <div className="section-title">Time Blocks</div>
+        <div className="section-sub">Define, reorder (drag), and rename the time blocks shown in the calendar.</div>
+      </div>
+      <div className="section-body">
+        <div className="blocks-list">
+          {timeBlocks.map((b,i)=>(
+            <div key={b.id}
+              className={`block-item${dragOver===i?" drag-over":""}${dragIdx.current===i?" dragging":""}`}
+              draggable
+              onDragStart={()=>onDragStart(i)}
+              onDragOver={e=>onDragOver(e,i)}
+              onDrop={()=>onDrop(i)}
+              onDragEnd={onDragEnd}>
+              <span className="block-drag-handle">⠿</span>
+              {/* Icon picker inline */}
+              <div style={{position:"relative"}}>
+                <span className="block-icon-pick" title="Click to change icon"
+                  style={{cursor:"pointer"}} onClick={e=>{
+                    // toggle a small icon picker below
+                    e.currentTarget.nextSibling.style.display=
+                      e.currentTarget.nextSibling.style.display==="flex"?"none":"flex";
+                  }}>{b.icon}</span>
+                <div style={{display:"none",position:"absolute",top:"100%",left:0,zIndex:300,
+                  background:"var(--surface)",border:"1px solid var(--border-strong)",
+                  borderRadius:"var(--r-md)",padding:6,boxShadow:"var(--shadow-md)",flexWrap:"wrap",gap:3,width:160}}>
+                  {BLOCK_ICONS_OPTS.map(ic=>(
+                    <div key={ic} className={`icon-opt${b.icon===ic?" sel":""}`}
+                      onClick={e=>{updateIcon(b.id,ic);e.currentTarget.closest("[style*='flex']").style.display="none"}}>
+                      {ic}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <input className="block-name-input" value={b.label}
+                onChange={e=>updateLabel(b.id,e.target.value)}/>
+              {timeBlocks.length>1&&(
+                <button className="btn btn-ghost btn-xs" onClick={()=>removeBlock(b.id)}>✕</button>
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="add-block-row">
+          <span style={{fontSize:"1.1rem"}}>{newIcon}</span>
+          <input placeholder="New block name…" value={newLabel}
+            onChange={e=>setNewLabel(e.target.value)}
+            onKeyDown={e=>e.key==="Enter"&&addBlock()}/>
+          <div className="icon-pick-row">
+            {BLOCK_ICONS_OPTS.slice(0,7).map(ic=>(
+              <div key={ic} className={`icon-opt${newIcon===ic?" sel":""}`}
+                onClick={()=>setNewIcon(ic)}>{ic}</div>
+            ))}
+          </div>
+          <button className="btn btn-accent" onClick={addBlock}>Add</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
+   ASSIGNEES MANAGER
+═══════════════════════════════════════════════ */
+function AssigneesManager({assignees,setAssignees}){
+  const [newLabel,setNewLabel]=useState("");
+  const [newPal,setNewPal]=useState(0);
+  function add(){
+    if(!newLabel.trim())return;
+    const id="c_"+Date.now();
+    setAssignees(prev=>({...prev,[id]:{id,label:newLabel.trim(),...PALETTE[newPal],builtIn:false}}));
+    setNewLabel("");setNewPal(0);
+  }
+  function remove(id){
+    setAssignees(prev=>{const n={...prev};delete n[id];return n});
+  }
+  return(
+    <div className="card" style={{marginTop:14}}>
+      <div className="section-head">
+        <div className="section-title">Assignment Types</div>
+        <div className="section-sub">Add or remove custom people and categories.</div>
+      </div>
+      <div className="section-body">
+        <div className="asm-grid">
+          {Object.values(assignees).filter(a=>a.id!=="none").map(a=>(
+            <span key={a.id} className="asm-chip" style={{background:a.bg,color:a.fg}}>
+              {a.label}
+              {!a.builtIn&&<button className="asm-del" onClick={()=>remove(a.id)} title="Remove">×</button>}
+            </span>
+          ))}
+        </div>
+        <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
+          <input style={{padding:"6px 10px",border:"1px solid var(--border-strong)",borderRadius:"var(--r-sm)",
+            fontFamily:"'DM Sans',sans-serif",fontSize:".82rem",background:"var(--bg)",outline:"none",width:160,color:"var(--text)"}}
+            placeholder="New label…" value={newLabel}
+            onChange={e=>setNewLabel(e.target.value)}
+            onKeyDown={e=>e.key==="Enter"&&add()}/>
+          <div className="palette-row" style={{display:"flex",gap:4,flexWrap:"wrap"}}>
+            {PALETTE.map((p,i)=>(
+              <div key={i} className={`pal-dot${newPal===i?" on":""}`}
+                style={{background:p.bg,borderColor:newPal===i?p.fg:"transparent",
+                  width:17,height:17,borderRadius:"50%",cursor:"pointer",border:"2px solid transparent"}}
+                onClick={()=>setNewPal(i)}/>
+            ))}
+          </div>
+          <button className="btn btn-accent" onClick={add}>Add</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
+   LEGEND
+═══════════════════════════════════════════════ */
+function Legend({assignees}){
+  return(
+    <div className="legend">
+      {Object.values(assignees).filter(a=>a.id!=="none").map(a=>(
+        <div key={a.id} className="leg-item">
+          <span className="leg-swatch" style={{background:a.bg,borderColor:a.fg+"55"}}/>
+          {a.label}
+        </div>
+      ))}
+      <span className="leg-sep">·</span>
+      <span className="leg-hint" title="Dashed border = from template">╌ template</span>
+      <span className="leg-hint" title="Left bar = manual override">▎override</span>
+      <span className="leg-hint">● note</span>
+      <span className="leg-hint" style={{display:"flex",gap:3}}>
+        <span style={{fontSize:".65rem",padding:"1px 5px",borderRadius:99,background:"var(--w1)",color:"var(--w1-text)",border:"1px solid var(--w1-border)"}}>W1</span>
+        <span style={{fontSize:".65rem",padding:"1px 5px",borderRadius:99,background:"var(--w2)",color:"var(--w2-text)",border:"1px solid var(--w2-border)"}}>W2</span>
+      </span>
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
+   HOLIDAY SETTINGS VIEW
+═══════════════════════════════════════════════ */
+function HolidaySettingsView({holidayCalKey,setHolidayCalKey}){
+  const now=new Date().toISOString().slice(0,10);
+  const cal=HOLIDAY_CALENDARS[holidayCalKey]||HOLIDAY_CALENDARS['none'];
+  const allHols=cal.holidays;
+  const upcoming=allHols.filter(h=>h.end>=now);
+  const past=allHols.filter(h=>h.end<now);
+  return(
+    <div className="card">
+      <div className="section-head">
+        <div className="section-title">🗓 School Holiday Calendar</div>
+        <div className="section-sub">Pick your region — school holiday periods will automatically appear highlighted in the calendar.</div>
+      </div>
+      <div className="section-body">
+        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:18,flexWrap:"wrap"}}>
+          <span style={{fontSize:".8rem",color:"var(--text-muted)",fontWeight:500}}>Region:</span>
+          <select className="hol-select" value={holidayCalKey}
+            onChange={e=>setHolidayCalKey(e.target.value)}>
+            {Object.entries(HOLIDAY_CALENDARS).map(([k,v])=>(
+              <option key={k} value={k}>{v.emoji} {v.label}</option>
+            ))}
+          </select>
+        </div>
+        {holidayCalKey==='none'?(
+          <div style={{fontSize:".82rem",color:"var(--text-muted)",padding:"12px 0"}}>
+            Select a region above to auto-fill school holidays in the calendar view.
+          </div>
+        ):(
+          <>
+            {upcoming.length>0&&(
+              <>
+                <div style={{fontSize:".75rem",fontWeight:600,color:"var(--text-muted)",textTransform:"uppercase",letterSpacing:".06em",marginBottom:8}}>Upcoming</div>
+                <div className="hol-list" style={{marginBottom:14}}>
+                  {upcoming.map((h,i)=>(
+                    <div key={i} className="hol-item">
+                      <span style={{fontSize:"1.1rem"}}>🏖</span>
+                      <div style={{flex:1}}>
+                        <div className="hol-name">{h.name}</div>
+                        <div className="hol-range">{formatHolidayDate(h.start)} → {formatHolidayDate(h.end)}</div>
+                      </div>
+                      <div className="hol-days">{getHolidayDuration(h.start,h.end)} days</div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+            {past.length>0&&(
+              <>
+                <div style={{fontSize:".75rem",fontWeight:600,color:"var(--text-muted)",textTransform:"uppercase",letterSpacing:".06em",marginBottom:8}}>Past</div>
+                <div className="hol-list">
+                  {past.map((h,i)=>(
+                    <div key={i} className="hol-item past">
+                      <span style={{fontSize:"1.1rem"}}>🏖</span>
+                      <div style={{flex:1}}>
+                        <div className="hol-name">{h.name}</div>
+                        <div className="hol-range">{formatHolidayDate(h.start)} → {formatHolidayDate(h.end)}</div>
+                      </div>
+                      <div className="hol-days">{getHolidayDuration(h.start,h.end)} days</div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+            {allHols.length===0&&(
+              <div style={{fontSize:".82rem",color:"var(--text-muted)"}}>No holiday data available for this region yet.</div>
+            )}
+            <div style={{marginTop:14,fontSize:".68rem",color:"var(--text-light)",borderTop:"1px solid var(--border)",paddingTop:10}}>
+              ⚠️ Dates are approximate for the 2025–2026 school year. Always verify with your official school calendar.
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
+   ROOT APP
+═══════════════════════════════════════════════ */
+function App(){
+  const today=new Date();
+  const [tab,setTab]=useState("calendar");
+  const [year,setYear]=useState(today.getFullYear());
+  const [month,setMonth]=useState(today.getMonth());
+  // Get last Monday on or before today as default anchor
+  function defaultAnchor(){
+    const d=new Date(today);
+    const dow=d.getDay();
+    d.setDate(d.getDate()-(dow===0?6:dow-1));
+    return d.toISOString().slice(0,10);
+  }
+  const [timeBlocks,setTimeBlocks]=useState(()=>loadLS("ta_blocks",DEFAULT_BLOCKS));
+  const [assignees,setAssignees]=useState(()=>loadLS("ta_assignees",DEFAULT_ASSIGNEES));
+  const [templates,setTemplates]=useState(()=>loadLS("ta_templates2",null));
+  const [overrides,setOverrides]=useState(()=>loadLS("ta_overrides2",{}));
+  const [anchorDate,setAnchorDate]=useState(()=>loadLS("ta_anchor",defaultAnchor()));
+  const [holidayCalKey,setHolidayCalKey]=useState(()=>loadLS("ta_holidayCal","none"));
+  // Build/migrate templates when blocks change
+  const safeTemplates=useMemo(()=>{
+    if(!templates) return emptyTemplates(timeBlocks);
+    // ensure all block ids exist in template
+    const t=JSON.parse(JSON.stringify(templates));
+    ["week1","week2"].forEach(wk=>{
+      if(!t[wk])t[wk]=emptyWeekTpl(timeBlocks);
+      for(let d=0;d<7;d++){
+        if(!t[wk][d])t[wk][d]={};
+        timeBlocks.forEach(b=>{if(t[wk][d][b.id]==null)t[wk][d][b.id]="none"});
+      }
+    });
+    return t;
+  },[templates,timeBlocks]);
+  // Persist
+  useEffect(()=>saveLS("ta_blocks",timeBlocks),[timeBlocks]);
+  useEffect(()=>saveLS("ta_assignees",assignees),[assignees]);
+  useEffect(()=>saveLS("ta_templates2",safeTemplates),[safeTemplates]);
+  useEffect(()=>saveLS("ta_overrides2",overrides),[overrides]);
+  useEffect(()=>saveLS("ta_anchor",anchorDate),[anchorDate]);
+  useEffect(()=>saveLS("ta_holidayCal",holidayCalKey),[holidayCalKey]);
+  function handleSetAssignee(dStr,blockId,id,newA){
+    if(newA) setAssignees(prev=>({...prev,[id]:newA}));
+    setOverrides(prev=>({
+      ...prev,
+      [dStr]:{...(prev[dStr]||{}), [blockId]:{...(prev[dStr]?.[blockId]||{}), assigneeId:id}}
+    }));
+  }
+  function handleSetNote(dStr,blockId,note){
+    setOverrides(prev=>{
+      const existing=prev[dStr]?.[blockId]||{};
+      // Only store note; if assignee not overridden, don't create override entry for it
+      const blockEntry=note?{...existing,note}:{...existing};
+      if(!note)delete blockEntry.note;
+      const dayEntry={...(prev[dStr]||{}),[blockId]:blockEntry};
+      // clean up empty block entry
+      if(Object.keys(dayEntry[blockId]).length===0)delete dayEntry[blockId];
+      return {...prev,[dStr]:dayEntry};
+    });
+  }
+  const TABS=[
+    {id:"calendar",label:"📅 Calendar"},
+    {id:"template",label:"🗂 Templates"},
+    {id:"blocks",label:"⏱ Time Blocks"},
+    {id:"holidays",label:"🏖 Holidays"},
+  ];
+  return(
+    <div className="app">
+      <header className="app-header">
+        <div className="brand">
+          <span className="brand-logo">🤝</span>
+          <div>
+            <h1 className="brand-title">Together Apart</h1>
+            <p className="brand-sub">Co-parenting calendar</p>
+          </div>
+        </div>
+        <Legend assignees={assignees}/>
+      </header>
+      <div className="tabs">
+        {TABS.map(t=>(
+          <button key={t.id} className={`tab-btn${tab===t.id?" active":""}`}
+            onClick={()=>setTab(t.id)}>{t.label}</button>
+        ))}
+      </div>
+      {tab==="calendar"&&(
+        <CalendarView
+          year={year} month={month} setYear={setYear} setMonth={setMonth}
+          timeBlocks={timeBlocks} assignees={assignees}
+          weekTemplate={safeTemplates} overrides={overrides}
+          anchorDate={anchorDate}
+          onSetAssignee={handleSetAssignee} onSetNote={handleSetNote}
+          holidayCalKey={holidayCalKey}/>
+      )}
+      {tab==="template"&&(
+        <TemplateEditor
+          timeBlocks={timeBlocks} assignees={assignees}
+          weekTemplate={safeTemplates} setWeekTemplate={setTemplates}
+          year={year} month={month}
+          overrides={overrides} setOverrides={setOverrides}
+          anchorDate={anchorDate} setAnchorDate={setAnchorDate}/>
+      )}
+      {tab==="blocks"&&(
+        <>
+          <TimeBlocksEditor timeBlocks={timeBlocks} setTimeBlocks={setTimeBlocks}/>
+          <AssigneesManager assignees={assignees} setAssignees={setAssignees}/>
+        </>
+      )}
+      {tab==="holidays"&&(
+        <HolidaySettingsView holidayCalKey={holidayCalKey} setHolidayCalKey={setHolidayCalKey}/>
+      )}
+      <footer style={{textAlign:"center",marginTop:20,fontSize:".7rem",color:"var(--text-light)"}}>
+        All data saved locally · Together Apart v3
+      </footer>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
