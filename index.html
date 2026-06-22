@@ -4,12 +4,20 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Together Apart · Co-Parenting Calendar</title>
+<!-- PWA -->
+<link rel="manifest" href="/manifest.json"/>
+<meta name="theme-color" content="#b8956a"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="Together Apart"/>
+<link rel="apple-touch-icon" href="/icon-192.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone@7.23.10/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 /* ── Reset ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -261,6 +269,23 @@ button{font-family:'DM Sans',sans-serif}
 .appt-color-dot{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2.5px solid transparent;transition:transform .1s}
 .appt-color-dot.selected{border-color:var(--text);transform:scale(1.15)}
 .appt-modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
+/* ── Share / sync tab ── */
+.share-card{background:var(--surface);border-radius:var(--r-xl);box-shadow:var(--shadow-md);border:1px solid var(--border);overflow:hidden;display:flex;flex-direction:column;gap:0}
+.share-section{padding:16px 18px;border-bottom:1px solid var(--border)}
+.share-section:last-child{border-bottom:none}
+.share-title{font-family:'Lora',serif;font-size:.95rem;font-weight:600;margin-bottom:4px}
+.share-sub{font-size:.75rem;color:var(--text-muted);margin-bottom:12px}
+.sync-status{display:inline-flex;align-items:center;gap:5px;font-size:.72rem;padding:3px 8px;border-radius:99px;border:1px solid var(--border)}
+.sync-status.ok{background:#d5f0e0;color:#276645;border-color:#80d0a8}
+.sync-status.pending{background:#fef3e2;color:#8a5a0a;border-color:#f5d898}
+.sync-status.error{background:#fee;color:#c0392b;border-color:#f5b7b1}
+.filter-checks{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.filter-check{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;border:1.5px solid var(--border);cursor:pointer;font-size:.75rem;user-select:none;transition:border-color .15s}
+.filter-check input{accent-color:var(--accent)}
+.webcal-box{display:flex;gap:6px;align-items:center}
+.webcal-url{flex:1;padding:7px 10px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-size:.7rem;font-family:monospace;background:var(--bg);color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cal-instructions{margin-top:10px;font-size:.72rem;color:var(--text-muted);line-height:1.6}
+.cal-instructions strong{color:var(--text)}
 /* ── Responsive ── */
 @media(max-width:640px){
   .app{padding:12px 8px 70px}
@@ -1074,19 +1099,15 @@ function CalendarView({year,month,setYear,setMonth,timeBlocks,assignees,weekTemp
       setYear(y=>y+dir);
     }
   }
-  function goDay(y,m,d){setYear(y);setMonth(m);setDay(d);setView("day")}
-  function goMonth(m){setMonth(m);setView("month")}
-  // Title per view
+  function goDay(y,m,d){setYear(y);setMonth(m);setDay(d);setView("day");saveLS("ta_calview","day")}
+  function goMonth(m){setMonth(m);setView("month");saveLS("ta_calview","month")}
   function navTitle(){
     if(view==="day")return`${DAY_NAMES_FULL[new Date(year,month,day).getDay()]} ${day} ${MONTH_NAMES[month]} ${year}`;
     if(view==="week"){
       const wEnd=new Date(weekStart);wEnd.setDate(wEnd.getDate()+6);
       return`${weekStart.getDate()} ${MONTH_NAMES[weekStart.getMonth()].slice(0,3)} – ${wEnd.getDate()} ${MONTH_NAMES[wEnd.getMonth()].slice(0,3)} ${wEnd.getFullYear()}`;
     }
-    if(view==="month"){
-      const wp1=getWeekParity(year,month,1,anchorDate);
-      return`${MONTH_NAMES[month]} ${year}`;
-    }
+    if(view==="month")return`${MONTH_NAMES[month]} ${year}`;
     return`${year}`;
   }
   const wp1=view==="month"?getWeekParity(year,month,1,anchorDate):null;
@@ -1106,7 +1127,7 @@ function CalendarView({year,month,setYear,setMonth,timeBlocks,assignees,weekTemp
           </div>
           <button className="btn-icon today-btn btn" style={{width:"auto",padding:"0 10px",fontSize:".73rem"}} onClick={goToday}>Today</button>
           <button className="btn-icon" onClick={()=>navigate(-1)} aria-label="Prev">‹</button>
-          <button className="btn-icon" onClick={()=>navigate(1)}  aria-label="Next">›</button>
+          <button className="btn-icon" onClick={()=>navigate(1)} aria-label="Next">›</button>
         </div>
       </div>
       {view==="month"&&(<>
@@ -1160,7 +1181,7 @@ function CalendarView({year,month,setYear,setMonth,timeBlocks,assignees,weekTemp
   );
 }
 /* ═══════════════════════════════════════════════
-   TPL CELL (extracted to follow Rules of Hooks)
+   TPL CELL
 ═══════════════════════════════════════════════ */
 function TplCell({activeWeek,dow,block,assignees,weekTemplate,activePickerKey,setActivePickerKey,onSetSlot}){
   const val=weekTemplate[activeWeek]?.[dow]?.[block.id]??"none";
@@ -1175,8 +1196,7 @@ function TplCell({activeWeek,dow,block,assignees,weekTemplate,activePickerKey,se
   }
   return(
     <div className="block-cell" style={{position:"relative"}}>
-      <button ref={btnRef}
-        className="assign-btn"
+      <button ref={btnRef} className="assign-btn"
         style={{background:a.bg,color:a.fg,minHeight:30,fontSize:".7rem"}}
         onClick={openPicker}>
         <span className="assign-label">{a.label}</span>
@@ -1184,12 +1204,9 @@ function TplCell({activeWeek,dow,block,assignees,weekTemplate,activePickerKey,se
       {activePickerKey===cellKey&&btnRect&&(
         <>
           <div className="overlay-backdrop" onClick={()=>setActivePickerKey(null)}/>
-          <AssigneePicker
-            value={val} assignees={assignees}
-            anchorRect={btnRect}
-            onSelect={id=>{ onSetSlot(dow,block.id,id); setActivePickerKey(null); }}
-            onAddNew={()=>{}}
-            onClose={()=>setActivePickerKey(null)}/>
+          <AssigneePicker value={val} assignees={assignees} anchorRect={btnRect}
+            onSelect={id=>{onSetSlot(dow,block.id,id);setActivePickerKey(null);}}
+            onAddNew={()=>{}} onClose={()=>setActivePickerKey(null)}/>
         </>
       )}
     </div>
@@ -1198,20 +1215,11 @@ function TplCell({activeWeek,dow,block,assignees,weekTemplate,activePickerKey,se
 /* ═══════════════════════════════════════════════
    TEMPLATE EDITOR
 ═══════════════════════════════════════════════ */
-function TemplateEditor({timeBlocks,assignees,weekTemplate,setWeekTemplate,
-                         year,month,overrides,setOverrides,
-                         anchorDate,setAnchorDate}){
+function TemplateEditor({timeBlocks,assignees,weekTemplate,setWeekTemplate,year,month,overrides,setOverrides,anchorDate,setAnchorDate}){
   const [activeWeek,setActiveWeek]=useState("week1");
   const [activePickerKey,setActivePickerKey]=useState(null);
-  function setSlot(dow,blockId,id,newA){
-    if(newA){}// assignees update handled in parent via onAddNew
-    setWeekTemplate(prev=>({
-      ...prev,
-      [activeWeek]:{
-        ...prev[activeWeek],
-        [dow]:{...(prev[activeWeek]?.[dow]||{}), [blockId]:id}
-      }
-    }));
+  function setSlot(dow,blockId,id){
+    setWeekTemplate(prev=>({...prev,[activeWeek]:{...prev[activeWeek],[dow]:{...(prev[activeWeek]?.[dow]||{}),[blockId]:id}}}));
   }
   function applyToMonth(){
     setOverrides(prev=>{
@@ -1226,28 +1234,21 @@ function TemplateEditor({timeBlocks,assignees,weekTemplate,setWeekTemplate,
     <div className="card">
       <div className="section-head">
         <div className="section-title">Bi-Weekly Template</div>
-        <div className="section-sub">Define Week 1 and Week 2 default schedules. The calendar auto-alternates between them.</div>
+        <div className="section-sub">Define Week 1 and Week 2 default schedules. The calendar auto-alternates.</div>
       </div>
       <div className="section-body">
         <div className="tpl-week-tabs">
-          <button className={`tpl-week-btn w1${activeWeek==="week1"?" active":""}`}
-            onClick={()=>setActiveWeek("week1")}>Week 1</button>
-          <button className={`tpl-week-btn w2${activeWeek==="week2"?" active":""}`}
-            onClick={()=>setActiveWeek("week2")}>Week 2</button>
+          <button className={`tpl-week-btn w1${activeWeek==="week1"?" active":""}`} onClick={()=>setActiveWeek("week1")}>Week 1</button>
+          <button className={`tpl-week-btn w2${activeWeek==="week2"?" active":""}`} onClick={()=>setActiveWeek("week2")}>Week 2</button>
         </div>
         <div className="tpl-grid" style={{gridTemplateColumns:cols}}>
-          {/* Header */}
           <div className="tpl-row-head"/>
-          {timeBlocks.map(b=>(
-            <div key={b.id} className="tpl-row-head"><span>{b.icon}</span>{b.label}</div>
-          ))}
-          {/* Rows Mon–Sun */}
+          {timeBlocks.map(b=>(<div key={b.id} className="tpl-row-head"><span>{b.icon}</span>{b.label}</div>))}
           {[1,2,3,4,5,6,0].map(dow=>(
             <Fragment key={dow}>
               <div className="tpl-day-lbl">{DAY_NAMES_FULL[dow].slice(0,3)}<span style={{fontSize:".6rem",color:"var(--text-light)",marginLeft:3}}>{DAY_NAMES_FULL[dow].slice(3)}</span></div>
               {timeBlocks.map(b=>(
-                <TplCell key={b.id}
-                  activeWeek={activeWeek} dow={dow} block={b}
+                <TplCell key={b.id} activeWeek={activeWeek} dow={dow} block={b}
                   assignees={assignees} weekTemplate={weekTemplate}
                   activePickerKey={activePickerKey} setActivePickerKey={setActivePickerKey}
                   onSetSlot={setSlot}/>
@@ -1256,24 +1257,20 @@ function TemplateEditor({timeBlocks,assignees,weekTemplate,setWeekTemplate,
           ))}
         </div>
         <div className="tpl-apply-row">
-          <button className="btn btn-accent" onClick={applyToMonth}>
-            Apply to {MONTH_NAMES[month]} {year}
-          </button>
+          <button className="btn btn-accent" onClick={applyToMonth}>Apply to {MONTH_NAMES[month]} {year}</button>
           <span className="tpl-apply-note">Clears manual overrides for this month so the template shows through.</span>
         </div>
       </div>
-      {/* Week anchor */}
       <div className="anchor-row">
         <span className="anchor-label">📅 Week 1 starts on (any Monday):</span>
-        <input type="date" className="anchor-input" value={anchorDate}
-          onChange={e=>setAnchorDate(e.target.value)}/>
+        <input type="date" className="anchor-input" value={anchorDate} onChange={e=>setAnchorDate(e.target.value)}/>
         <span className="anchor-label" style={{fontSize:".7rem"}}>The calendar will alternate W1/W2 from this date.</span>
       </div>
     </div>
   );
 }
 /* ═══════════════════════════════════════════════
-   TIME BLOCKS EDITOR (with drag-and-drop)
+   TIME BLOCKS EDITOR
 ═══════════════════════════════════════════════ */
 function TimeBlocksEditor({timeBlocks,setTimeBlocks}){
   const [newLabel,setNewLabel]=useState("");
@@ -1286,131 +1283,126 @@ function TimeBlocksEditor({timeBlocks,setTimeBlocks}){
     setTimeBlocks(prev=>[...prev,{id,label:newLabel.trim(),icon:newIcon}]);
     setNewLabel("");setNewIcon("⭐");
   }
-  function removeBlock(id){ setTimeBlocks(prev=>prev.filter(b=>b.id!==id)) }
-  function updateLabel(id,val){ setTimeBlocks(prev=>prev.map(b=>b.id===id?{...b,label:val}:b)) }
-  function updateIcon(id,icon){ setTimeBlocks(prev=>prev.map(b=>b.id===id?{...b,icon}:b)) }
-  // Drag handlers
+  function removeBlock(id){setTimeBlocks(prev=>prev.filter(b=>b.id!==id))}
+  function updateLabel(id,val){setTimeBlocks(prev=>prev.map(b=>b.id===id?{...b,label:val}:b))}
+  function updateIcon(id,icon){setTimeBlocks(prev=>prev.map(b=>b.id===id?{...b,icon}:b))}
   function onDragStart(i){dragIdx.current=i}
   function onDragOver(e,i){e.preventDefault();setDragOver(i)}
   function onDrop(i){
     const from=dragIdx.current;
     if(from==null||from===i)return;
-    setTimeBlocks(prev=>{
-      const arr=[...prev];
-      const [item]=arr.splice(from,1);
-      arr.splice(i,0,item);
-      return arr;
-    });
+    setTimeBlocks(prev=>{const arr=[...prev];const[item]=arr.splice(from,1);arr.splice(i,0,item);return arr});
     dragIdx.current=null;setDragOver(null);
   }
-  function onDragEnd(){dragIdx.current=null;setDragOver(null)}
   return(
     <div className="card">
-      <div className="section-head">
-        <div className="section-title">Time Blocks</div>
-        <div className="section-sub">Define, reorder (drag), and rename the time blocks shown in the calendar.</div>
-      </div>
+      <div className="section-head"><div className="section-title">Time Blocks</div><div className="section-sub">Drag to reorder · click icon to change · edit name inline.</div></div>
       <div className="section-body">
-        <div className="blocks-list">
-          {timeBlocks.map((b,i)=>(
-            <div key={b.id}
-              className={`block-item${dragOver===i?" drag-over":""}${dragIdx.current===i?" dragging":""}`}
-              draggable
-              onDragStart={()=>onDragStart(i)}
-              onDragOver={e=>onDragOver(e,i)}
-              onDrop={()=>onDrop(i)}
-              onDragEnd={onDragEnd}>
-              <span className="block-drag-handle">⠿</span>
-              {/* Icon picker inline */}
-              <div style={{position:"relative"}}>
-                <span className="block-icon-pick" title="Click to change icon"
-                  style={{cursor:"pointer"}} onClick={e=>{
-                    // toggle a small icon picker below
-                    e.currentTarget.nextSibling.style.display=
-                      e.currentTarget.nextSibling.style.display==="flex"?"none":"flex";
-                  }}>{b.icon}</span>
-                <div style={{display:"none",position:"absolute",top:"100%",left:0,zIndex:300,
-                  background:"var(--surface)",border:"1px solid var(--border-strong)",
-                  borderRadius:"var(--r-md)",padding:6,boxShadow:"var(--shadow-md)",flexWrap:"wrap",gap:3,width:160}}>
-                  {BLOCK_ICONS_OPTS.map(ic=>(
-                    <div key={ic} className={`icon-opt${b.icon===ic?" sel":""}`}
-                      onClick={e=>{updateIcon(b.id,ic);e.currentTarget.closest("[style*='flex']").style.display="none"}}>
-                      {ic}
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <input className="block-name-input" value={b.label}
-                onChange={e=>updateLabel(b.id,e.target.value)}/>
-              {timeBlocks.length>1&&(
-                <button className="btn btn-ghost btn-xs" onClick={()=>removeBlock(b.id)}>✕</button>
-              )}
-            </div>
-          ))}
-        </div>
-        <div className="add-block-row">
-          <span style={{fontSize:"1.1rem"}}>{newIcon}</span>
-          <input placeholder="New block name…" value={newLabel}
-            onChange={e=>setNewLabel(e.target.value)}
-            onKeyDown={e=>e.key==="Enter"&&addBlock()}/>
-          <div className="icon-pick-row">
-            {BLOCK_ICONS_OPTS.slice(0,7).map(ic=>(
-              <div key={ic} className={`icon-opt${newIcon===ic?" sel":""}`}
-                onClick={()=>setNewIcon(ic)}>{ic}</div>
-            ))}
+        {timeBlocks.map((b,i)=>(
+          <div key={b.id} className={`tbl-row${dragOver===i?" drag-over":""}`}
+            draggable onDragStart={()=>onDragStart(i)} onDragOver={e=>onDragOver(e,i)} onDrop={()=>onDrop(i)} onDragLeave={()=>setDragOver(null)}>
+            <span className="drag-handle">⠿</span>
+            <span className="icon-pick" title="Change icon" onClick={()=>{
+              const icons=BLOCK_ICONS_OPTS;const cur=icons.indexOf(b.icon);
+              updateIcon(b.id,icons[(cur+1)%icons.length]);
+            }}>{b.icon}</span>
+            <input className="tbl-label-input" value={b.label} onChange={e=>updateLabel(b.id,e.target.value)}/>
+            <button className="btn btn-danger btn-xs" onClick={()=>removeBlock(b.id)} disabled={timeBlocks.length<=1}>✕</button>
           </div>
-          <button className="btn btn-accent" onClick={addBlock}>Add</button>
+        ))}
+        <div className="tbl-add-row">
+          <span className="icon-pick" onClick={()=>{
+            const icons=BLOCK_ICONS_OPTS;const cur=icons.indexOf(newIcon);
+            setNewIcon(icons[(cur+1)%icons.length]);
+          }}>{newIcon}</span>
+          <input className="tbl-label-input" placeholder="New block name…" value={newLabel}
+            onChange={e=>setNewLabel(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addBlock()}/>
+          <button className="btn btn-accent btn-xs" onClick={addBlock}>Add</button>
         </div>
       </div>
     </div>
   );
 }
 /* ═══════════════════════════════════════════════
-   ASSIGNEES MANAGER
+   ASSIGNEES EDITOR
 ═══════════════════════════════════════════════ */
-function AssigneesManager({assignees,setAssignees}){
+function AssigneesEditor({assignees,setAssignees}){
   const [newLabel,setNewLabel]=useState("");
   const [newPal,setNewPal]=useState(0);
-  function add(){
+  function addAssignee(){
     if(!newLabel.trim())return;
     const id="c_"+Date.now();
     setAssignees(prev=>({...prev,[id]:{id,label:newLabel.trim(),...PALETTE[newPal],builtIn:false}}));
-    setNewLabel("");setNewPal(0);
+    setNewLabel("");
   }
-  function remove(id){
-    setAssignees(prev=>{const n={...prev};delete n[id];return n});
-  }
+  function removeAssignee(id){setAssignees(prev=>{const n={...prev};delete n[id];return n})}
+  function updateLabel(id,val){setAssignees(prev=>({...prev,[id]:{...prev[id],label:val}}))}
+  const custom=Object.values(assignees).filter(a=>!a.builtIn);
+  const builtin=Object.values(assignees).filter(a=>a.builtIn);
   return(
-    <div className="card" style={{marginTop:14}}>
-      <div className="section-head">
-        <div className="section-title">Assignment Types</div>
-        <div className="section-sub">Add or remove custom people and categories.</div>
-      </div>
+    <div className="card">
+      <div className="section-head"><div className="section-title">People</div><div className="section-sub">Built-in people are always available. Add custom people (grandparents, etc.).</div></div>
       <div className="section-body">
-        <div className="asm-grid">
-          {Object.values(assignees).filter(a=>a.id!=="none").map(a=>(
-            <span key={a.id} className="asm-chip" style={{background:a.bg,color:a.fg}}>
-              {a.label}
-              {!a.builtIn&&<button className="asm-del" onClick={()=>remove(a.id)} title="Remove">×</button>}
-            </span>
+        <div style={{marginBottom:10}}>
+          {builtin.map(a=>(
+            <div key={a.id} className="tbl-row" style={{opacity:.7}}>
+              <span className="p-swatch" style={{background:a.bg,border:`1px solid ${a.fg}44`,width:14,height:14,borderRadius:"50%",display:"inline-block",marginRight:6}}/>
+              <span style={{fontSize:".8rem"}}>{a.label}</span>
+              <span style={{fontSize:".68rem",color:"var(--text-muted)",marginLeft:6}}>(built-in)</span>
+            </div>
           ))}
         </div>
-        <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
-          <input style={{padding:"6px 10px",border:"1px solid var(--border-strong)",borderRadius:"var(--r-sm)",
-            fontFamily:"'DM Sans',sans-serif",fontSize:".82rem",background:"var(--bg)",outline:"none",width:160,color:"var(--text)"}}
-            placeholder="New label…" value={newLabel}
-            onChange={e=>setNewLabel(e.target.value)}
-            onKeyDown={e=>e.key==="Enter"&&add()}/>
-          <div className="palette-row" style={{display:"flex",gap:4,flexWrap:"wrap"}}>
-            {PALETTE.map((p,i)=>(
-              <div key={i} className={`pal-dot${newPal===i?" on":""}`}
-                style={{background:p.bg,borderColor:newPal===i?p.fg:"transparent",
-                  width:17,height:17,borderRadius:"50%",cursor:"pointer",border:"2px solid transparent"}}
-                onClick={()=>setNewPal(i)}/>
+        {custom.map(a=>(
+          <div key={a.id} className="tbl-row">
+            <span className="p-swatch" style={{background:a.bg,border:`1px solid ${a.fg}44`,width:14,height:14,borderRadius:"50%",display:"inline-block"}}/>
+            <input className="tbl-label-input" value={a.label} onChange={e=>updateLabel(a.id,e.target.value)}/>
+            <button className="btn btn-danger btn-xs" onClick={()=>removeAssignee(a.id)}>✕</button>
+          </div>
+        ))}
+        <div className="tbl-add-row" style={{marginTop:10}}>
+          <input className="tbl-label-input" placeholder="Name (e.g. Grandma)…" value={newLabel}
+            onChange={e=>setNewLabel(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addAssignee()}/>
+          <div className="palette-row" style={{display:"flex",gap:4}}>
+            {PALETTE.map((p,i)=>(<div key={i} className={`pal-dot${newPal===i?" on":""}`} style={{background:p.bg,borderColor:newPal===i?p.fg:"transparent"}} onClick={()=>setNewPal(i)}/>))}
+          </div>
+          <button className="btn btn-accent btn-xs" onClick={addAssignee}>Add</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
+   HOLIDAY SETTINGS VIEW
+═══════════════════════════════════════════════ */
+function HolidaySettingsView({holidayCalKey,setHolidayCalKey}){
+  const cal=HOLIDAY_CALENDARS[holidayCalKey];
+  const today=new Date().toISOString().slice(0,10);
+  return(
+    <div className="card">
+      <div className="section-head">
+        <div className="section-title">Holiday Calendar</div>
+        <div className="section-sub">School holidays shown as indicators on calendar days.</div>
+      </div>
+      <div className="section-body">
+        <select className="hol-select" value={holidayCalKey} onChange={e=>setHolidayCalKey(e.target.value)}>
+          {Object.entries(HOLIDAY_CALENDARS).map(([k,v])=>(
+            <option key={k} value={k}>{v.emoji} {v.label}</option>
+          ))}
+        </select>
+        {cal&&cal.holidays.length>0&&(
+          <div className="hol-list" style={{marginTop:14}}>
+            {cal.holidays.map((h,i)=>(
+              <div key={i} className={`hol-item${h.end<today?" past":""}`}>
+                <span style={{fontSize:"1.2rem"}}>🏖</span>
+                <div style={{flex:1}}>
+                  <div className="hol-name">{h.name}</div>
+                  <div className="hol-range">{formatHolidayDate(h.start)} – {formatHolidayDate(h.end)}</div>
+                </div>
+                <div className="hol-days">{getHolidayDuration(h.start,h.end)}d</div>
+              </div>
             ))}
           </div>
-          <button className="btn btn-accent" onClick={add}>Add</button>
-        </div>
+        )}
       </div>
     </div>
   );
@@ -1420,113 +1412,95 @@ function AssigneesManager({assignees,setAssignees}){
 ═══════════════════════════════════════════════ */
 function Legend({assignees}){
   return(
-    <div className="legend">
+    <div style={{display:"flex",gap:6,flexWrap:"wrap",alignItems:"center"}}>
       {Object.values(assignees).filter(a=>a.id!=="none").map(a=>(
-        <div key={a.id} className="leg-item">
-          <span className="leg-swatch" style={{background:a.bg,borderColor:a.fg+"55"}}/>
-          {a.label}
-        </div>
+        <span key={a.id} style={{background:a.bg,color:a.fg,fontSize:".7rem",padding:"2px 8px",borderRadius:99,border:`1px solid ${a.fg}44`}}>{a.label}</span>
       ))}
-      <span className="leg-sep">·</span>
-      <span className="leg-hint" title="Dashed border = from template">╌ template</span>
-      <span className="leg-hint" title="Left bar = manual override">▎override</span>
-      <span className="leg-hint">● note</span>
-      <span className="leg-hint" style={{display:"flex",gap:3}}>
-        <span style={{fontSize:".65rem",padding:"1px 5px",borderRadius:99,background:"var(--w1)",color:"var(--w1-text)",border:"1px solid var(--w1-border)"}}>W1</span>
-        <span style={{fontSize:".65rem",padding:"1px 5px",borderRadius:99,background:"var(--w2)",color:"var(--w2-text)",border:"1px solid var(--w2-border)"}}>W2</span>
-      </span>
     </div>
   );
 }
 /* ═══════════════════════════════════════════════
-   HOLIDAY SETTINGS VIEW
+   SHARE VIEW
 ═══════════════════════════════════════════════ */
-function HolidaySettingsView({holidayCalKey,setHolidayCalKey}){
-  const now=new Date().toISOString().slice(0,10);
-  const cal=HOLIDAY_CALENDARS[holidayCalKey]||HOLIDAY_CALENDARS['none'];
-  const allHols=cal.holidays;
-  const upcoming=allHols.filter(h=>h.end>=now);
-  const past=allHols.filter(h=>h.end<now);
+const SUPABASE_URL="https://niujbgjfumehoswcodpw.supabase.co";
+const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pdWpiZ2pmdW1laG9zd2NvZHB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNTIyMTksImV4cCI6MjA5NzcyODIxOX0.X8lOXLRkdwm8TQR5U2LYsZXyZtbhOuap8A7eHg98AjU";
+const sbClient=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+function ShareView({assignees,syncStatus,calendarId}){
+  const [selected,setSelected]=useState(()=>{
+    const saved=loadLS("ta_share_filter",null);
+    if(saved)return saved;
+    const def={appointments:true};
+    Object.values(assignees).filter(a=>a.id!=="none").forEach(a=>{def[a.id]=true});
+    return def;
+  });
+  const [copied,setCopied]=useState(false);
+  useEffect(()=>saveLS("ta_share_filter",selected),[selected]);
+  function toggle(key){setSelected(p=>({...p,[key]:!p[key]}))}
+  const includeParam=Object.entries(selected).filter(([,v])=>v).map(([k])=>k).join(",");
+  const webcalUrl=calendarId&&includeParam
+    ?`webcal://niujbgjfumehoswcodpw.supabase.co/functions/v1/ics-feed?calendar_id=${calendarId}&include=${includeParam}&months=6`
+    :"";
+  function copyUrl(){
+    if(!webcalUrl)return;
+    navigator.clipboard.writeText(webcalUrl).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),2000)});
+  }
+  function openUrl(){if(webcalUrl)window.open(webcalUrl.replace("webcal://","https://"),"_blank")}
   return(
-    <div className="card">
-      <div className="section-head">
-        <div className="section-title">🗓 School Holiday Calendar</div>
-        <div className="section-sub">Pick your region — school holiday periods will automatically appear highlighted in the calendar.</div>
+    <div className="share-card">
+      <div className="share-section">
+        <div className="share-title">☁️ Cloud Sync</div>
+        <div className="share-sub">Your calendar data is automatically synced so it can be shared with other calendar apps.</div>
+        <span className={`sync-status ${syncStatus}`}>
+          {syncStatus==="ok"?"✅ Synced":syncStatus==="pending"?"⏳ Syncing…":"❌ Sync error"}
+        </span>
+        {calendarId&&<div style={{marginTop:8,fontSize:".68rem",color:"var(--text-muted)",fontFamily:"monospace"}}>ID: {calendarId}</div>}
       </div>
-      <div className="section-body">
-        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:18,flexWrap:"wrap"}}>
-          <span style={{fontSize:".8rem",color:"var(--text-muted)",fontWeight:500}}>Region:</span>
-          <select className="hol-select" value={holidayCalKey}
-            onChange={e=>setHolidayCalKey(e.target.value)}>
-            {Object.entries(HOLIDAY_CALENDARS).map(([k,v])=>(
-              <option key={k} value={k}>{v.emoji} {v.label}</option>
-            ))}
-          </select>
+      <div className="share-section">
+        <div className="share-title">📅 Subscribe in your calendar app</div>
+        <div className="share-sub">Choose what to include, then add the link to Outlook, Google Calendar, or Apple Calendar.</div>
+        <div className="filter-checks">
+          {Object.values(assignees).filter(a=>a.id!=="none").map(a=>(
+            <label key={a.id} className="filter-check" style={{borderColor:selected[a.id]?a.fg:"var(--border)"}}>
+              <input type="checkbox" checked={!!selected[a.id]} onChange={()=>toggle(a.id)}/>
+              <span style={{color:a.fg}}>{a.label}</span>
+            </label>
+          ))}
+          <label className="filter-check" style={{borderColor:selected.appointments?"var(--accent)":"var(--border)"}}>
+            <input type="checkbox" checked={!!selected.appointments} onChange={()=>toggle("appointments")}/>
+            📌 Appointments
+          </label>
         </div>
-        {holidayCalKey==='none'?(
-          <div style={{fontSize:".82rem",color:"var(--text-muted)",padding:"12px 0"}}>
-            Select a region above to auto-fill school holidays in the calendar view.
-          </div>
-        ):(
+        {webcalUrl?(
           <>
-            {upcoming.length>0&&(
-              <>
-                <div style={{fontSize:".75rem",fontWeight:600,color:"var(--text-muted)",textTransform:"uppercase",letterSpacing:".06em",marginBottom:8}}>Upcoming</div>
-                <div className="hol-list" style={{marginBottom:14}}>
-                  {upcoming.map((h,i)=>(
-                    <div key={i} className="hol-item">
-                      <span style={{fontSize:"1.1rem"}}>🏖</span>
-                      <div style={{flex:1}}>
-                        <div className="hol-name">{h.name}</div>
-                        <div className="hol-range">{formatHolidayDate(h.start)} → {formatHolidayDate(h.end)}</div>
-                      </div>
-                      <div className="hol-days">{getHolidayDuration(h.start,h.end)} days</div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-            {past.length>0&&(
-              <>
-                <div style={{fontSize:".75rem",fontWeight:600,color:"var(--text-muted)",textTransform:"uppercase",letterSpacing:".06em",marginBottom:8}}>Past</div>
-                <div className="hol-list">
-                  {past.map((h,i)=>(
-                    <div key={i} className="hol-item past">
-                      <span style={{fontSize:"1.1rem"}}>🏖</span>
-                      <div style={{flex:1}}>
-                        <div className="hol-name">{h.name}</div>
-                        <div className="hol-range">{formatHolidayDate(h.start)} → {formatHolidayDate(h.end)}</div>
-                      </div>
-                      <div className="hol-days">{getHolidayDuration(h.start,h.end)} days</div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-            {allHols.length===0&&(
-              <div style={{fontSize:".82rem",color:"var(--text-muted)"}}>No holiday data available for this region yet.</div>
-            )}
-            <div style={{marginTop:14,fontSize:".68rem",color:"var(--text-light)",borderTop:"1px solid var(--border)",paddingTop:10}}>
-              ⚠️ Dates are approximate for the 2025–2026 school year. Always verify with your official school calendar.
+            <div className="webcal-box">
+              <div className="webcal-url">{webcalUrl}</div>
+              <button className="btn btn-accent btn-xs" onClick={copyUrl}>{copied?"Copied!":"Copy"}</button>
+              <button className="btn btn-ghost btn-xs" onClick={openUrl}>Test</button>
+            </div>
+            <div className="cal-instructions">
+              <strong>Outlook:</strong> Add calendar → From internet → paste URL<br/>
+              <strong>Google:</strong> Other calendars → From URL → paste URL<br/>
+              <strong>Apple:</strong> File → New Calendar Subscription → paste URL
             </div>
           </>
+        ):(
+          <div style={{fontSize:".75rem",color:"var(--text-muted)"}}>Waiting for first sync… make a change in the calendar to trigger it.</div>
         )}
       </div>
     </div>
   );
 }
 /* ═══════════════════════════════════════════════
-   ROOT APP
+   APP
 ═══════════════════════════════════════════════ */
 function App(){
   const today=new Date();
   const [tab,setTab]=useState("calendar");
   const [year,setYear]=useState(today.getFullYear());
   const [month,setMonth]=useState(today.getMonth());
-  // Get last Monday on or before today as default anchor
   function defaultAnchor(){
-    const d=new Date(today);
-    const dow=d.getDay();
+    const d=new Date(today);const dow=d.getDay();
     d.setDate(d.getDate()-(dow===0?6:dow-1));
     return d.toISOString().slice(0,10);
   }
@@ -1537,10 +1511,15 @@ function App(){
   const [anchorDate,setAnchorDate]=useState(()=>loadLS("ta_anchor",defaultAnchor()));
   const [holidayCalKey,setHolidayCalKey]=useState(()=>loadLS("ta_holidayCal","none"));
   const [appointments,setAppointments]=useState(()=>loadLS("ta_appointments",{}));
-  // Build/migrate templates when blocks change
+  // Supabase sync
+  const [calendarId,setCalendarId]=useState(()=>{
+    let id=loadLS("ta_calendar_id",null);
+    if(!id){id=crypto.randomUUID();saveLS("ta_calendar_id",id);}
+    return id;
+  });
+  const [syncStatus,setSyncStatus]=useState("ok");
   const safeTemplates=useMemo(()=>{
-    if(!templates) return emptyTemplates(timeBlocks);
-    // ensure all block ids exist in template
+    if(!templates)return emptyTemplates(timeBlocks);
     const t=JSON.parse(JSON.stringify(templates));
     ["week1","week2"].forEach(wk=>{
       if(!t[wk])t[wk]=emptyWeekTpl(timeBlocks);
@@ -1551,7 +1530,7 @@ function App(){
     });
     return t;
   },[templates,timeBlocks]);
-  // Persist
+  // Persist to localStorage
   useEffect(()=>saveLS("ta_blocks",timeBlocks),[timeBlocks]);
   useEffect(()=>saveLS("ta_assignees",assignees),[assignees]);
   useEffect(()=>saveLS("ta_templates2",safeTemplates),[safeTemplates]);
@@ -1559,6 +1538,42 @@ function App(){
   useEffect(()=>saveLS("ta_anchor",anchorDate),[anchorDate]);
   useEffect(()=>saveLS("ta_holidayCal",holidayCalKey),[holidayCalKey]);
   useEffect(()=>saveLS("ta_appointments",appointments),[appointments]);
+  // Sync to Supabase (debounced 2s)
+  const syncTimer=useRef(null);
+  useEffect(()=>{
+    setSyncStatus("pending");
+    clearTimeout(syncTimer.current);
+    syncTimer.current=setTimeout(async()=>{
+      try{
+        const payload={
+          calendar_id:calendarId,
+          overrides,appointments,
+          assignees,
+          time_blocks:timeBlocks,
+          week_template:safeTemplates,
+          anchor_date:anchorDate,
+          updated_at:new Date().toISOString()
+        };
+        const{error}=await sbClient.from("calendar_data").upsert(payload,{onConflict:"calendar_id"});
+        setSyncStatus(error?"error":"ok");
+      }catch{setSyncStatus("error")}
+    },2000);
+    return()=>clearTimeout(syncTimer.current);
+  },[overrides,appointments,assignees,timeBlocks,safeTemplates,anchorDate]);
+  function handleSetAssignee(dStr,blockId,id,newA){
+    if(newA)setAssignees(prev=>({...prev,[id]:newA}));
+    setOverrides(prev=>({...prev,[dStr]:{...(prev[dStr]||{}),[blockId]:{...(prev[dStr]?.[blockId]||{}),assigneeId:id}}}));
+  }
+  function handleSetNote(dStr,blockId,note){
+    setOverrides(prev=>{
+      const existing=prev[dStr]?.[blockId]||{};
+      const blockEntry=note?{...existing,note}:{...existing};
+      if(!note)delete blockEntry.note;
+      const dayEntry={...(prev[dStr]||{}),[blockId]:blockEntry};
+      if(Object.keys(dayEntry[blockId]).length===0)delete dayEntry[blockId];
+      return{...prev,[dStr]:dayEntry};
+    });
+  }
   function handleSaveAppt(dStr,appt){
     setAppointments(prev=>{
       const list=prev[dStr]||[];
@@ -1570,34 +1585,17 @@ function App(){
     setAppointments(prev=>{
       const list=(prev[dStr]||[]).filter(a=>a.id!==id);
       const next={...prev};
-      if(list.length)next[dStr]=list; else delete next[dStr];
+      if(list.length)next[dStr]=list;else delete next[dStr];
       return next;
-    });
-  }
-  function handleSetAssignee(dStr,blockId,id,newA){
-    if(newA) setAssignees(prev=>({...prev,[id]:newA}));
-    setOverrides(prev=>({
-      ...prev,
-      [dStr]:{...(prev[dStr]||{}), [blockId]:{...(prev[dStr]?.[blockId]||{}), assigneeId:id}}
-    }));
-  }
-  function handleSetNote(dStr,blockId,note){
-    setOverrides(prev=>{
-      const existing=prev[dStr]?.[blockId]||{};
-      // Only store note; if assignee not overridden, don't create override entry for it
-      const blockEntry=note?{...existing,note}:{...existing};
-      if(!note)delete blockEntry.note;
-      const dayEntry={...(prev[dStr]||{}),[blockId]:blockEntry};
-      // clean up empty block entry
-      if(Object.keys(dayEntry[blockId]).length===0)delete dayEntry[blockId];
-      return {...prev,[dStr]:dayEntry};
     });
   }
   const TABS=[
     {id:"calendar",label:"📅 Calendar"},
     {id:"template",label:"🗂 Templates"},
     {id:"blocks",label:"⏱ Time Blocks"},
+    {id:"people",label:"👥 People"},
     {id:"holidays",label:"🏖 Holidays"},
+    {id:"share",label:"🔗 Share"},
   ];
   return(
     <div className="app">
@@ -1618,8 +1616,7 @@ function App(){
         ))}
       </div>
       {tab==="calendar"&&(
-        <CalendarView
-          year={year} month={month} setYear={setYear} setMonth={setMonth}
+        <CalendarView year={year} month={month} setYear={setYear} setMonth={setMonth}
           timeBlocks={timeBlocks} assignees={assignees}
           weekTemplate={safeTemplates} overrides={overrides}
           anchorDate={anchorDate}
@@ -1628,24 +1625,18 @@ function App(){
           appointments={appointments} onSaveAppt={handleSaveAppt} onDeleteAppt={handleDeleteAppt}/>
       )}
       {tab==="template"&&(
-        <TemplateEditor
-          timeBlocks={timeBlocks} assignees={assignees}
+        <TemplateEditor timeBlocks={timeBlocks} assignees={assignees}
           weekTemplate={safeTemplates} setWeekTemplate={setTemplates}
           year={year} month={month}
           overrides={overrides} setOverrides={setOverrides}
           anchorDate={anchorDate} setAnchorDate={setAnchorDate}/>
       )}
-      {tab==="blocks"&&(
-        <>
-          <TimeBlocksEditor timeBlocks={timeBlocks} setTimeBlocks={setTimeBlocks}/>
-          <AssigneesManager assignees={assignees} setAssignees={setAssignees}/>
-        </>
-      )}
-      {tab==="holidays"&&(
-        <HolidaySettingsView holidayCalKey={holidayCalKey} setHolidayCalKey={setHolidayCalKey}/>
-      )}
+      {tab==="blocks"&&<TimeBlocksEditor timeBlocks={timeBlocks} setTimeBlocks={setTimeBlocks}/>}
+      {tab==="people"&&<AssigneesEditor assignees={assignees} setAssignees={setAssignees}/>}
+      {tab==="holidays"&&<HolidaySettingsView holidayCalKey={holidayCalKey} setHolidayCalKey={setHolidayCalKey}/>}
+      {tab==="share"&&<ShareView assignees={assignees} syncStatus={syncStatus} calendarId={calendarId}/>}
       <footer style={{textAlign:"center",marginTop:20,fontSize:".7rem",color:"var(--text-light)"}}>
-        All data saved locally · Together Apart v3
+        All data synced · Together Apart v6
       </footer>
     </div>
   );
@@ -1656,7 +1647,7 @@ class ErrorBoundary extends React.Component{
   render(){
     if(this.state.err)return(
       <div style={{padding:20,fontFamily:"monospace",background:"#fee",border:"1px solid red",margin:20,borderRadius:8}}>
-        <strong>App Error:</strong><br/>{String(this.state.err)}<br/><br/>
+        <strong>Error:</strong><br/>{String(this.state.err)}<br/>
         <pre style={{fontSize:12,whiteSpace:"pre-wrap"}}>{this.state.err?.stack}</pre>
       </div>
     );
@@ -1664,11 +1655,16 @@ class ErrorBoundary extends React.Component{
   }
 }
 try{
-  ReactDOM.createRoot(document.getElementById("root")).render(
-    <ErrorBoundary><App/></ErrorBoundary>
-  );
+  ReactDOM.createRoot(document.getElementById("root")).render(<ErrorBoundary><App/></ErrorBoundary>);
 }catch(e){
-  document.getElementById("root").innerHTML='<div style="padding:20px;font-family:monospace;background:#fee;border:1px solid red;margin:20px;border-radius:8px"><strong>Startup Error:</strong><br/>'+String(e)+'<br/><pre>'+e.stack+'</pre></div>';
+  document.getElementById("root").innerHTML='<div style="padding:20px;font-family:monospace;background:#fee;border:1px solid red;margin:20px;border-radius:8px"><strong>Startup Error:</strong><br/>'+String(e)+'</div>';
+}
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('/sw.js').catch(()=>{});
+  });
 }
 </script>
 </body>
