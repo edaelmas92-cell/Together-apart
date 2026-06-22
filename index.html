@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.23.10/babel.min.js"></script>
 <style>
 /* ── Reset ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -219,7 +219,7 @@ button{font-family:'DM Sans',sans-serif}
 </head>
 <body>
 <div id="root"></div>
-<script type="text/babel">
+<script type="text/babel" data-presets="react" data-type="module">
 const {useState,useCallback,useRef,useEffect,useMemo,Fragment}=React;
 /* ═══════════════════════════════════════════════
    CONSTANTS & DEFAULTS
@@ -1182,7 +1182,26 @@ function App(){
     </div>
   );
 }
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+class ErrorBoundary extends React.Component{
+  constructor(p){super(p);this.state={err:null}}
+  static getDerivedStateFromError(e){return{err:e}}
+  render(){
+    if(this.state.err)return(
+      <div style={{padding:20,fontFamily:"monospace",background:"#fee",border:"1px solid red",margin:20,borderRadius:8}}>
+        <strong>App Error:</strong><br/>{String(this.state.err)}<br/><br/>
+        <pre style={{fontSize:12,whiteSpace:"pre-wrap"}}>{this.state.err?.stack}</pre>
+      </div>
+    );
+    return this.props.children;
+  }
+}
+try{
+  ReactDOM.createRoot(document.getElementById("root")).render(
+    <ErrorBoundary><App/></ErrorBoundary>
+  );
+}catch(e){
+  document.getElementById("root").innerHTML='<div style="padding:20px;font-family:monospace;background:#fee;border:1px solid red;margin:20px;border-radius:8px"><strong>Startup Error:</strong><br/>'+String(e)+'<br/><pre>'+e.stack+'</pre></div>';
+}
 </script>
 </body>
 </html>
