@@ -710,6 +710,42 @@ function CalendarView({year,month,setYear,setMonth,timeBlocks,assignees,weekTemp
   );
 }
 /* ═══════════════════════════════════════════════
+   TPL CELL (extracted to follow Rules of Hooks)
+═══════════════════════════════════════════════ */
+function TplCell({activeWeek,dow,block,assignees,weekTemplate,activePickerKey,setActivePickerKey,onSetSlot}){
+  const val=weekTemplate[activeWeek]?.[dow]?.[block.id]??"none";
+  const a=assignees[val]||assignees["none"];
+  const cellKey=`tpl_${activeWeek}_${dow}_${block.id}`;
+  const [btnRect,setBtnRect]=useState(null);
+  const btnRef=useRef(null);
+  function openPicker(e){
+    e.stopPropagation();
+    setBtnRect(btnRef.current?.getBoundingClientRect()||null);
+    setActivePickerKey(p=>p===cellKey?null:cellKey);
+  }
+  return(
+    <div className="block-cell" style={{position:"relative"}}>
+      <button ref={btnRef}
+        className="assign-btn"
+        style={{background:a.bg,color:a.fg,minHeight:30,fontSize:".7rem"}}
+        onClick={openPicker}>
+        <span className="assign-label">{a.label}</span>
+      </button>
+      {activePickerKey===cellKey&&btnRect&&(
+        <>
+          <div className="overlay-backdrop" onClick={()=>setActivePickerKey(null)}/>
+          <AssigneePicker
+            value={val} assignees={assignees}
+            anchorRect={btnRect}
+            onSelect={id=>{ onSetSlot(dow,block.id,id); setActivePickerKey(null); }}
+            onAddNew={()=>{}}
+            onClose={()=>setActivePickerKey(null)}/>
+        </>
+      )}
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
    TEMPLATE EDITOR
 ═══════════════════════════════════════════════ */
 function TemplateEditor({timeBlocks,assignees,weekTemplate,setWeekTemplate,
@@ -759,39 +795,13 @@ function TemplateEditor({timeBlocks,assignees,weekTemplate,setWeekTemplate,
           {[1,2,3,4,5,6,0].map(dow=>(
             <Fragment key={dow}>
               <div className="tpl-day-lbl">{DAY_NAMES_FULL[dow].slice(0,3)}<span style={{fontSize:".6rem",color:"var(--text-light)",marginLeft:3}}>{DAY_NAMES_FULL[dow].slice(3)}</span></div>
-              {timeBlocks.map(b=>{
-                const val=weekTemplate[activeWeek]?.[dow]?.[b.id]??"none";
-                const a=assignees[val]||assignees["none"];
-                const cellKey=`tpl_${activeWeek}_${dow}_${b.id}`;
-                const [btnRect,setBtnRect]=useState(null);
-                const btnRef=useRef(null);
-                function openPicker(e){
-                  e.stopPropagation();
-                  setBtnRect(btnRef.current?.getBoundingClientRect()||null);
-                  setActivePickerKey(p=>p===cellKey?null:cellKey);
-                }
-                return(
-                  <div key={b.id} className="block-cell" style={{position:"relative"}}>
-                    <button ref={btnRef}
-                      className="assign-btn"
-                      style={{background:a.bg,color:a.fg,minHeight:30,fontSize:".7rem"}}
-                      onClick={openPicker}>
-                      <span className="assign-label">{a.label}</span>
-                    </button>
-                    {activePickerKey===cellKey&&btnRect&&(
-                      <>
-                        <div className="overlay-backdrop" onClick={()=>setActivePickerKey(null)}/>
-                        <AssigneePicker
-                          value={val} assignees={assignees}
-                          anchorRect={btnRect}
-                          onSelect={id=>{ setSlot(dow,b.id,id); setActivePickerKey(null); }}
-                          onAddNew={()=>{}}
-                          onClose={()=>setActivePickerKey(null)}/>
-                      </>
-                    )}
-                  </div>
-                );
-              })}
+              {timeBlocks.map(b=>(
+                <TplCell key={b.id}
+                  activeWeek={activeWeek} dow={dow} block={b}
+                  assignees={assignees} weekTemplate={weekTemplate}
+                  activePickerKey={activePickerKey} setActivePickerKey={setActivePickerKey}
+                  onSetSlot={setSlot}/>
+              ))}
             </Fragment>
           ))}
         </div>
