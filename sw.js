@@ -1,4 +1,4 @@
-const CACHE = "ta-v6";
+const CACHE = "ta-v7";
 const ASSETS = ["/", "/index.html", "/manifest.json"];
 
 self.addEventListener("install", e => {
@@ -17,10 +17,23 @@ self.addEventListener("activate", e => {
 
 self.addEventListener("fetch", e => {
   if (e.request.method !== "GET") return;
-  // Network-first for Supabase calls, cache-first for app shell
-  if (e.request.url.includes("supabase.co")) {
+  const url = e.request.url;
+  if (url.includes("supabase.co")) {
+    // Never serve stale Supabase API responses
     e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+  } else if (e.request.mode === "navigate" || url.endsWith("/index.html")) {
+    // Network-first for the app shell so new versions arrive immediately
+    e.respondWith(
+      fetch(e.request).then(res => {
+        const clone = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
+        return res;
+      }).catch(() =>
+        caches.match(e.request).then(c => c || caches.match("/"))
+      )
+    );
   } else {
+    // Cache-first for static assets
     e.respondWith(
       caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
         const clone = res.clone();

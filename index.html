@@ -178,19 +178,28 @@ button{font-family:'DM Sans',sans-serif}
 .anchor-input{padding:5px 8px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-size:.78rem;font-family:'DM Sans',sans-serif;background:var(--bg);outline:none;color:var(--text)}
 .anchor-input:focus{border-color:var(--accent)}
 /* ── Time blocks manager ── */
-.blocks-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
-.block-item{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-md);cursor:grab;user-select:none;transition:box-shadow .15s,opacity .15s}
-.block-item:active{cursor:grabbing}
-.block-item.drag-over{box-shadow:0 0 0 2px var(--accent);background:var(--accent-light)}
-.block-item.dragging{opacity:.4}
-.block-drag-handle{color:var(--text-light);font-size:.9rem;cursor:grab}
-.block-icon-pick{font-size:1rem;width:28px;text-align:center}
-.block-name-input{flex:1;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;color:var(--text);outline:none;padding:0}
-.block-name-input:focus{border-bottom:1px solid var(--accent)}
-.add-block-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.add-block-row input{padding:7px 10px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-size:.82rem;background:var(--bg);outline:none;font-family:'DM Sans',sans-serif;color:var(--text);width:170px}
-.add-block-row input:focus{border-color:var(--accent)}
+.tbl-list{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.tbl-row{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-md);transition:box-shadow .15s,background .15s;margin-bottom:6px}
+.tbl-row.drag-over{box-shadow:0 0 0 2px var(--accent);background:var(--accent-light)}
+.drag-handle{color:var(--text-light);font-size:1rem;cursor:grab;user-select:none;padding:0 2px}
+.drag-handle:active{cursor:grabbing}
+.icon-pick{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:border-color .15s}
+.icon-pick:hover{border-color:var(--accent)}
+.tbl-label-input{flex:1;min-width:0;padding:7px 10px;border:1px solid transparent;border-radius:var(--r-sm);background:transparent;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;color:var(--text);outline:none;transition:border-color .15s,background .15s}
+.tbl-label-input:hover{border-color:var(--border)}
+.tbl-label-input:focus{border-color:var(--accent);background:var(--surface)}
+.tbl-add-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 10px;border:1px dashed var(--border-strong);border-radius:var(--r-md)}
+.tbl-add-row .tbl-label-input{border-color:var(--border);background:var(--surface);min-width:140px}
+.move-btns{display:flex;flex-direction:column;gap:1px}
+.move-btn{width:22px;height:16px;border:none;background:none;color:var(--text-muted);font-size:.6rem;cursor:pointer;border-radius:4px;padding:0;line-height:1}
+.move-btn:hover:not(:disabled){background:var(--accent-light);color:var(--text)}
+.move-btn:disabled{opacity:.25;cursor:default}
+.icon-pop-wrap{position:relative}
+.icon-pop{position:absolute;top:40px;left:0;z-index:50;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--shadow-lg);padding:8px;display:grid;grid-template-columns:repeat(6,32px);gap:4px}
 .icon-pick-row{display:flex;gap:5px;flex-wrap:wrap}
+/* ── Undo toast ── */
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:200;background:#332e28;color:#fff;padding:10px 14px;border-radius:var(--r-md);box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:14px;font-size:.82rem;max-width:calc(100vw - 32px)}
+.toast button{background:none;border:none;color:#f0c890;font-weight:600;font-family:'DM Sans',sans-serif;font-size:.82rem;cursor:pointer;padding:0}
 .icon-opt{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);cursor:pointer;font-size:1rem;border:1.5px solid transparent;transition:border-color .1s,background .1s}
 .icon-opt:hover,.icon-opt.sel{border-color:var(--accent);background:var(--accent-light)}
 /* ── Assignees manager ── */
@@ -279,6 +288,20 @@ button{font-family:'DM Sans',sans-serif}
 .sync-status.ok{background:#d5f0e0;color:#276645;border-color:#80d0a8}
 .sync-status.pending{background:#fef3e2;color:#8a5a0a;border-color:#f5d898}
 .sync-status.error{background:#fee;color:#c0392b;border-color:#f5b7b1}
+.sync-status.offline{background:#f0efed;color:#6b645c;border-color:#cec8bf}
+/* ── Auth ── */
+.auth-wrap{max-width:420px;margin:40px auto 0}
+.auth-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);box-shadow:var(--shadow-md);padding:28px 24px;text-align:center}
+.auth-title{font-family:'Lora',serif;font-size:1.15rem;font-weight:600;margin-bottom:6px}
+.auth-sub{font-size:.8rem;color:var(--text-muted);margin-bottom:18px;line-height:1.5}
+.auth-input{width:100%;padding:10px 12px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-size:.9rem;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none;margin-bottom:10px;text-align:center}
+.auth-err{font-size:.75rem;color:#c0392b;margin-top:8px}
+.auth-note{font-size:.7rem;color:var(--text-muted);margin-top:14px;line-height:1.5}
+/* ── Invite / members ── */
+.invite-box{display:flex;gap:8px;align-items:center;background:var(--bg);border:1px dashed var(--border-strong);border-radius:var(--r-sm);padding:8px 10px}
+.invite-url{flex:1;font-size:.72rem;font-family:monospace;word-break:break-all;color:var(--text)}
+.member-row{display:flex;justify-content:space-between;gap:10px;font-size:.78rem;padding:6px 0;border-bottom:1px solid var(--border)}
+.member-row:last-child{border-bottom:none}
 .filter-checks{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
 .filter-check{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;border:1.5px solid var(--border);cursor:pointer;font-size:.75rem;user-select:none;transition:border-color .15s}
 .filter-check input{accent-color:var(--accent)}
@@ -327,6 +350,12 @@ const HOLIDAY_CALENDARS={
     {name:'Vacances d\'hiver',start:'2026-02-07',end:'2026-02-22'},
     {name:'Vacances de printemps',start:'2026-04-04',end:'2026-04-19'},
     {name:'Été',start:'2026-07-04',end:'2026-08-31'},
+    // 2026-2027 (source: onisep.fr)
+    {name:'Toussaint',start:'2026-10-17',end:'2026-11-01'},
+    {name:'Noël',start:'2026-12-19',end:'2027-01-03'},
+    {name:'Vacances d\'hiver',start:'2027-02-13',end:'2027-02-28'},
+    {name:'Vacances de printemps',start:'2027-04-10',end:'2027-04-25'},
+    {name:'Été',start:'2027-07-03',end:'2027-08-31'},
   ]},
   'fr-b':{label:'France – Zone B',emoji:'🇫🇷',holidays:[
     {name:'Toussaint',start:'2025-10-18',end:'2025-11-02'},
@@ -334,6 +363,12 @@ const HOLIDAY_CALENDARS={
     {name:'Vacances d\'hiver',start:'2026-02-14',end:'2026-03-01'},
     {name:'Vacances de printemps',start:'2026-04-11',end:'2026-04-26'},
     {name:'Été',start:'2026-07-04',end:'2026-08-31'},
+    // 2026-2027
+    {name:'Toussaint',start:'2026-10-17',end:'2026-11-01'},
+    {name:'Noël',start:'2026-12-19',end:'2027-01-03'},
+    {name:'Vacances d\'hiver',start:'2027-02-20',end:'2027-03-07'},
+    {name:'Vacances de printemps',start:'2027-04-17',end:'2027-05-02'},
+    {name:'Été',start:'2027-07-03',end:'2027-08-31'},
   ]},
   'fr-c':{label:'France – Zone C',emoji:'🇫🇷',holidays:[
     {name:'Toussaint',start:'2025-10-18',end:'2025-11-02'},
@@ -341,6 +376,12 @@ const HOLIDAY_CALENDARS={
     {name:'Vacances d\'hiver',start:'2026-02-07',end:'2026-02-22'},
     {name:'Vacances de printemps',start:'2026-04-04',end:'2026-04-19'},
     {name:'Été',start:'2026-07-04',end:'2026-08-31'},
+    // 2026-2027
+    {name:'Toussaint',start:'2026-10-17',end:'2026-11-01'},
+    {name:'Noël',start:'2026-12-19',end:'2027-01-03'},
+    {name:'Vacances d\'hiver',start:'2027-02-06',end:'2027-02-21'},
+    {name:'Vacances de printemps',start:'2027-04-03',end:'2027-04-18'},
+    {name:'Été',start:'2027-07-03',end:'2027-08-31'},
   ]},
   'be-nl':{label:'België – Vlaanderen',emoji:'🇧🇪',holidays:[
     {name:'Herfstvakantie',start:'2025-10-27',end:'2025-11-02'},
@@ -348,13 +389,31 @@ const HOLIDAY_CALENDARS={
     {name:'Krokusvakantie',start:'2026-02-16',end:'2026-02-22'},
     {name:'Paasvakantie',start:'2026-04-06',end:'2026-04-19'},
     {name:'Zomervakantie',start:'2026-07-01',end:'2026-08-31'},
+    // 2026-2027 (source: vlaanderen.be)
+    {name:'Herfstvakantie',start:'2026-11-02',end:'2026-11-08'},
+    {name:'Kerstvakantie',start:'2026-12-21',end:'2027-01-03'},
+    {name:'Krokusvakantie',start:'2027-02-08',end:'2027-02-14'},
+    {name:'Paasvakantie',start:'2027-03-29',end:'2027-04-11'},
+    {name:'Zomervakantie',start:'2027-07-01',end:'2027-08-31'},
+    // 2027-2028
+    {name:'Herfstvakantie',start:'2027-11-01',end:'2027-11-07'},
+    {name:'Kerstvakantie',start:'2027-12-27',end:'2028-01-09'},
+    {name:'Krokusvakantie',start:'2028-02-28',end:'2028-03-05'},
+    {name:'Paasvakantie',start:'2028-04-03',end:'2028-04-17'},
+    {name:'Zomervakantie',start:'2028-07-01',end:'2028-08-31'},
   ]},
   'be-fr':{label:'Belgique (Communauté fr.)',emoji:'🇧🇪',holidays:[
-    {name:'Toussaint',start:'2025-10-27',end:'2025-11-02'},
-    {name:'Noël',start:'2025-12-22',end:'2026-01-04'},
-    {name:'Carnaval',start:'2026-02-16',end:'2026-02-27'},
-    {name:'Pâques',start:'2026-04-06',end:'2026-04-17'},
-    {name:'Été',start:'2026-07-01',end:'2026-08-31'},
+    // Reformed calendar (source: enseignement.be / jeminforme.be)
+    {name:'Congé d\'automne',start:'2025-10-20',end:'2025-11-02'},
+    {name:'Vacances d\'hiver',start:'2025-12-22',end:'2026-01-04'},
+    {name:'Congé de détente',start:'2026-02-16',end:'2026-03-01'},
+    {name:'Vacances de printemps',start:'2026-04-27',end:'2026-05-10'},
+    {name:'Été',start:'2026-07-04',end:'2026-08-23'},
+    {name:'Congé d\'automne',start:'2026-10-19',end:'2026-11-02'},
+    {name:'Vacances d\'hiver',start:'2026-12-21',end:'2027-01-03'},
+    {name:'Congé de détente',start:'2027-02-22',end:'2027-03-07'},
+    {name:'Vacances de printemps',start:'2027-04-26',end:'2027-05-09'},
+    {name:'Été',start:'2027-07-03',end:'2027-08-22'},
   ]},
   'uk-eng':{label:'UK – England',emoji:'🇬🇧',holidays:[
     {name:'Autumn half-term',start:'2025-10-27',end:'2025-10-31'},
@@ -364,12 +423,18 @@ const HOLIDAY_CALENDARS={
     {name:'May half-term',start:'2026-05-25',end:'2026-05-29'},
     {name:'Summer',start:'2026-07-21',end:'2026-09-04'},
   ]},
-  'nl':{label:'Nederland',emoji:'🇳🇱',holidays:[
+  'nl':{label:'Nederland – Regio Midden',emoji:'🇳🇱',holidays:[
     {name:'Herfstvakantie',start:'2025-10-18',end:'2025-10-26'},
     {name:'Kerstvakantie',start:'2025-12-22',end:'2026-01-04'},
     {name:'Voorjaarsvakantie',start:'2026-02-14',end:'2026-02-22'},
     {name:'Meivakantie',start:'2026-04-25',end:'2026-05-03'},
     {name:'Zomervakantie',start:'2026-07-04',end:'2026-08-16'},
+    // 2026-2027 Regio Midden (source: rijksoverheid.nl)
+    {name:'Herfstvakantie',start:'2026-10-17',end:'2026-10-25'},
+    {name:'Kerstvakantie',start:'2026-12-19',end:'2027-01-03'},
+    {name:'Voorjaarsvakantie',start:'2027-02-20',end:'2027-02-28'},
+    {name:'Meivakantie',start:'2027-04-24',end:'2027-05-02'},
+    {name:'Zomervakantie',start:'2027-07-17',end:'2027-08-29'},
   ]},
   'lu':{label:'Luxembourg',emoji:'🇱🇺',holidays:[
     {name:'Toussaint',start:'2025-10-27',end:'2025-11-07'},
@@ -1272,7 +1337,24 @@ function TemplateEditor({timeBlocks,assignees,weekTemplate,setWeekTemplate,year,
 /* ═══════════════════════════════════════════════
    TIME BLOCKS EDITOR
 ═══════════════════════════════════════════════ */
-function TimeBlocksEditor({timeBlocks,setTimeBlocks}){
+function IconPicker({value,onChange}){
+  const [open,setOpen]=useState(false);
+  const ref=useRef(null);
+  useOutsideClick(ref,()=>setOpen(false));
+  return(
+    <div className="icon-pop-wrap" ref={ref}>
+      <button type="button" className="icon-pick" title="Change icon" onClick={()=>setOpen(o=>!o)}>{value}</button>
+      {open&&(
+        <div className="icon-pop">
+          {BLOCK_ICONS_OPTS.map(ic=>(
+            <div key={ic} className={`icon-opt${ic===value?" sel":""}`} onClick={()=>{onChange(ic);setOpen(false)}}>{ic}</div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+function TimeBlocksEditor({timeBlocks,setTimeBlocks,notify}){
   const [newLabel,setNewLabel]=useState("");
   const [newIcon,setNewIcon]=useState("⭐");
   const dragIdx=useRef(null);
@@ -1283,7 +1365,17 @@ function TimeBlocksEditor({timeBlocks,setTimeBlocks}){
     setTimeBlocks(prev=>[...prev,{id,label:newLabel.trim(),icon:newIcon}]);
     setNewLabel("");setNewIcon("⭐");
   }
-  function removeBlock(id){setTimeBlocks(prev=>prev.filter(b=>b.id!==id))}
+  function removeBlock(id){
+    const before=timeBlocks;
+    const b=timeBlocks.find(x=>x.id===id);
+    setTimeBlocks(prev=>prev.filter(x=>x.id!==id));
+    notify(`“${b?b.label:"Block"}” removed`,()=>setTimeBlocks(before));
+  }
+  function move(i,dir){
+    const j=i+dir;
+    if(j<0||j>=timeBlocks.length)return;
+    setTimeBlocks(prev=>{const arr=[...prev];[arr[i],arr[j]]=[arr[j],arr[i]];return arr});
+  }
   function updateLabel(id,val){setTimeBlocks(prev=>prev.map(b=>b.id===id?{...b,label:val}:b))}
   function updateIcon(id,icon){setTimeBlocks(prev=>prev.map(b=>b.id===id?{...b,icon}:b))}
   function onDragStart(i){dragIdx.current=i}
@@ -1296,25 +1388,23 @@ function TimeBlocksEditor({timeBlocks,setTimeBlocks}){
   }
   return(
     <div className="card">
-      <div className="section-head"><div className="section-title">Time Blocks</div><div className="section-sub">Drag to reorder · click icon to change · edit name inline.</div></div>
+      <div className="section-head"><div className="section-title">Time Blocks</div><div className="section-sub">Use ▲▼ (or drag on desktop) to reorder · tap the icon to change it · edit the name inline.</div></div>
       <div className="section-body">
         {timeBlocks.map((b,i)=>(
           <div key={b.id} className={`tbl-row${dragOver===i?" drag-over":""}`}
             draggable onDragStart={()=>onDragStart(i)} onDragOver={e=>onDragOver(e,i)} onDrop={()=>onDrop(i)} onDragLeave={()=>setDragOver(null)}>
-            <span className="drag-handle">⠿</span>
-            <span className="icon-pick" title="Change icon" onClick={()=>{
-              const icons=BLOCK_ICONS_OPTS;const cur=icons.indexOf(b.icon);
-              updateIcon(b.id,icons[(cur+1)%icons.length]);
-            }}>{b.icon}</span>
+            <span className="drag-handle" title="Drag to reorder">⠿</span>
+            <div className="move-btns">
+              <button className="move-btn" title="Move up" disabled={i===0} onClick={()=>move(i,-1)}>▲</button>
+              <button className="move-btn" title="Move down" disabled={i===timeBlocks.length-1} onClick={()=>move(i,1)}>▼</button>
+            </div>
+            <IconPicker value={b.icon} onChange={ic=>updateIcon(b.id,ic)}/>
             <input className="tbl-label-input" value={b.label} onChange={e=>updateLabel(b.id,e.target.value)}/>
-            <button className="btn btn-danger btn-xs" onClick={()=>removeBlock(b.id)} disabled={timeBlocks.length<=1}>✕</button>
+            <button className="btn btn-danger btn-xs" title="Remove" onClick={()=>removeBlock(b.id)} disabled={timeBlocks.length<=1}>✕</button>
           </div>
         ))}
         <div className="tbl-add-row">
-          <span className="icon-pick" onClick={()=>{
-            const icons=BLOCK_ICONS_OPTS;const cur=icons.indexOf(newIcon);
-            setNewIcon(icons[(cur+1)%icons.length]);
-          }}>{newIcon}</span>
+          <IconPicker value={newIcon} onChange={setNewIcon}/>
           <input className="tbl-label-input" placeholder="New block name…" value={newLabel}
             onChange={e=>setNewLabel(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addBlock()}/>
           <button className="btn btn-accent btn-xs" onClick={addBlock}>Add</button>
@@ -1326,7 +1416,7 @@ function TimeBlocksEditor({timeBlocks,setTimeBlocks}){
 /* ═══════════════════════════════════════════════
    ASSIGNEES EDITOR
 ═══════════════════════════════════════════════ */
-function AssigneesEditor({assignees,setAssignees}){
+function AssigneesEditor({assignees,setAssignees,notify}){
   const [newLabel,setNewLabel]=useState("");
   const [newPal,setNewPal]=useState(0);
   function addAssignee(){
@@ -1335,7 +1425,12 @@ function AssigneesEditor({assignees,setAssignees}){
     setAssignees(prev=>({...prev,[id]:{id,label:newLabel.trim(),...PALETTE[newPal],builtIn:false}}));
     setNewLabel("");
   }
-  function removeAssignee(id){setAssignees(prev=>{const n={...prev};delete n[id];return n})}
+  function removeAssignee(id){
+    const before=assignees;
+    const a=assignees[id];
+    setAssignees(prev=>{const n={...prev};delete n[id];return n});
+    notify(`“${a?a.label:"Person"}” removed`,()=>setAssignees(before));
+  }
   function updateLabel(id,val){setAssignees(prev=>({...prev,[id]:{...prev[id],label:val}}))}
   const custom=Object.values(assignees).filter(a=>!a.builtIn);
   const builtin=Object.values(assignees).filter(a=>a.builtIn);
@@ -1345,18 +1440,18 @@ function AssigneesEditor({assignees,setAssignees}){
       <div className="section-body">
         <div style={{marginBottom:10}}>
           {builtin.map(a=>(
-            <div key={a.id} className="tbl-row" style={{opacity:.7}}>
-              <span className="p-swatch" style={{background:a.bg,border:`1px solid ${a.fg}44`,width:14,height:14,borderRadius:"50%",display:"inline-block",marginRight:6}}/>
-              <span style={{fontSize:".8rem"}}>{a.label}</span>
-              <span style={{fontSize:".68rem",color:"var(--text-muted)",marginLeft:6}}>(built-in)</span>
+            <div key={a.id} className="tbl-row" style={{opacity:.75,padding:"10px 12px"}}>
+              <span style={{background:a.bg,border:`1px solid ${a.fg}44`,width:16,height:16,borderRadius:"50%",display:"inline-block",flexShrink:0}}/>
+              <span style={{fontSize:".88rem",fontWeight:500,flex:1}}>{a.label}</span>
+              <span style={{fontSize:".7rem",color:"var(--text-muted)"}}>built-in</span>
             </div>
           ))}
         </div>
         {custom.map(a=>(
           <div key={a.id} className="tbl-row">
-            <span className="p-swatch" style={{background:a.bg,border:`1px solid ${a.fg}44`,width:14,height:14,borderRadius:"50%",display:"inline-block"}}/>
+            <span style={{background:a.bg,border:`1px solid ${a.fg}44`,width:16,height:16,borderRadius:"50%",display:"inline-block",flexShrink:0,marginLeft:2}}/>
             <input className="tbl-label-input" value={a.label} onChange={e=>updateLabel(a.id,e.target.value)}/>
-            <button className="btn btn-danger btn-xs" onClick={()=>removeAssignee(a.id)}>✕</button>
+            <button className="btn btn-danger btn-xs" title="Remove" onClick={()=>removeAssignee(a.id)}>✕</button>
           </div>
         ))}
         <div className="tbl-add-row" style={{marginTop:10}}>
@@ -1389,9 +1484,14 @@ function HolidaySettingsView({holidayCalKey,setHolidayCalKey}){
             <option key={k} value={k}>{v.emoji} {v.label}</option>
           ))}
         </select>
-        {cal&&cal.holidays.length>0&&(
+        {cal&&cal.holidays.length>0&&!cal.holidays.some(h=>h.end>=today)&&(
+          <div style={{marginTop:14,padding:"10px 12px",borderRadius:"var(--r-sm)",background:"#fef3e2",color:"#8a5a0a",fontSize:".78rem",border:"1px solid #f5d898"}}>
+            ⚠️ This holiday calendar has no upcoming dates yet. Holidays won't show on the calendar until it's updated.
+          </div>
+        )}
+        {cal&&cal.holidays.some(h=>h.end>=today)&&(
           <div className="hol-list" style={{marginTop:14}}>
-            {cal.holidays.map((h,i)=>(
+            {cal.holidays.filter(h=>h.end>=today).map((h,i)=>(
               <div key={i} className={`hol-item${h.end<today?" past":""}`}>
                 <span style={{fontSize:"1.2rem"}}>🏖</span>
                 <div style={{flex:1}}>
@@ -1425,8 +1525,68 @@ function Legend({assignees}){
 const SUPABASE_URL="https://niujbgjfumehoswcodpw.supabase.co";
 const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pdWpiZ2pmdW1laG9zd2NvZHB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNTIyMTksImV4cCI6MjA5NzcyODIxOX0.X8lOXLRkdwm8TQR5U2LYsZXyZtbhOuap8A7eHg98AjU";
 const sbClient=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const DEVICE_ID=(()=>{
+  let id=null;try{id=localStorage.getItem("ta_device_id")}catch{}
+  if(!id){id=crypto.randomUUID();try{localStorage.setItem("ta_device_id",id)}catch{}}
+  return id;
+})();
+const HAD_INVITE=!!new URLSearchParams(location.search).get("cal");
+/* ═══════════════════════════════════════════════
+   SIGN-IN VIEW
+═══════════════════════════════════════════════ */
+function SignInView(){
+  const [email,setEmail]=useState("");
+  const [code,setCode]=useState("");
+  const [stage,setStage]=useState("email");
+  const [busy,setBusy]=useState(false);
+  const [err,setErr]=useState("");
+  async function sendCode(e){
+    e.preventDefault();
+    if(!email.trim()||busy)return;
+    setBusy(true);setErr("");
+    const{error}=await sbClient.auth.signInWithOtp({email:email.trim().toLowerCase(),options:{shouldCreateUser:true}});
+    setBusy(false);
+    if(error)setErr(error.message);else setStage("code");
+  }
+  async function verify(e){
+    e.preventDefault();
+    if(!code.trim()||busy)return;
+    setBusy(true);setErr("");
+    const{error}=await sbClient.auth.verifyOtp({email:email.trim().toLowerCase(),token:code.trim(),type:"email"});
+    setBusy(false);
+    if(error)setErr(error.message==="Token has expired or is invalid"?"That code isn't right or has expired — check the email or request a new code.":error.message);
+  }
+  return(
+    <div className="auth-wrap">
+      <div className="auth-card">
+        <div style={{fontSize:"2rem",marginBottom:8}}>🤝</div>
+        <div className="auth-title">Together Apart</div>
+        <div className="auth-sub">
+          {HAD_INVITE
+            ?"You've been invited to a shared co-parenting calendar. Sign in with your email to join."
+            :"Sign in with your email so your calendar syncs safely between you and your co-parent."}
+        </div>
+        {stage==="email"?(
+          <form onSubmit={sendCode}>
+            <input className="auth-input" type="email" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)} autoFocus/>
+            <button className="btn btn-accent" style={{width:"100%",justifyContent:"center"}} disabled={busy}>{busy?"Sending…":"Email me a code"}</button>
+          </form>
+        ):(
+          <form onSubmit={verify}>
+            <div className="auth-sub">We sent a 6-digit code to <strong>{email}</strong>. Enter it below.</div>
+            <input className="auth-input" inputMode="numeric" autoComplete="one-time-code" placeholder="123456" value={code} onChange={e=>setCode(e.target.value)} autoFocus/>
+            <button className="btn btn-accent" style={{width:"100%",justifyContent:"center"}} disabled={busy}>{busy?"Checking…":"Sign in"}</button>
+            <button type="button" className="btn btn-ghost btn-xs" style={{marginTop:8}} onClick={()=>{setStage("email");setCode("");setErr("")}}>Use a different email</button>
+          </form>
+        )}
+        {err&&<div className="auth-err">{err}</div>}
+        <div className="auth-note">No password needed — we email you a one-time code each time you sign in.</div>
+      </div>
+    </div>
+  );
+}
 
-function ShareView({assignees,syncStatus,calendarId}){
+function ShareView({assignees,syncStatus,calendarId,session,members,lastSync,onSignOut,onExport,onImport}){
   const [selected,setSelected]=useState(()=>{
     const saved=loadLS("ta_share_filter",null);
     if(saved)return saved;
@@ -1435,8 +1595,14 @@ function ShareView({assignees,syncStatus,calendarId}){
     return def;
   });
   const [copied,setCopied]=useState(false);
+  const [copiedInvite,setCopiedInvite]=useState(false);
+  const fileRef=useRef(null);
   useEffect(()=>saveLS("ta_share_filter",selected),[selected]);
   function toggle(key){setSelected(p=>({...p,[key]:!p[key]}))}
+  const inviteUrl=`${location.origin}${location.pathname}?cal=${calendarId}`;
+  function copyInvite(){
+    navigator.clipboard.writeText(inviteUrl).then(()=>{setCopiedInvite(true);setTimeout(()=>setCopiedInvite(false),2000)});
+  }
   const includeParam=Object.entries(selected).filter(([,v])=>v).map(([k])=>k).join(",");
   const webcalUrl=calendarId&&includeParam
     ?`webcal://niujbgjfumehoswcodpw.supabase.co/functions/v1/ics-feed?calendar_id=${calendarId}&include=${includeParam}&months=6`
@@ -1450,11 +1616,30 @@ function ShareView({assignees,syncStatus,calendarId}){
     <div className="share-card">
       <div className="share-section">
         <div className="share-title">☁️ Cloud Sync</div>
-        <div className="share-sub">Your calendar data is automatically synced so it can be shared with other calendar apps.</div>
+        <div className="share-sub">Changes sync live between everyone in this calendar — edits appear on the other phone within seconds.</div>
         <span className={`sync-status ${syncStatus}`}>
-          {syncStatus==="ok"?"✅ Synced":syncStatus==="pending"?"⏳ Syncing…":"❌ Sync error"}
+          {syncStatus==="ok"?"✅ Synced":syncStatus==="pending"?"⏳ Syncing…":syncStatus==="offline"?"📴 Offline — will sync when back online":"❌ Sync error — retrying"}
         </span>
-        {calendarId&&<div style={{marginTop:8,fontSize:".68rem",color:"var(--text-muted)",fontFamily:"monospace"}}>ID: {calendarId}</div>}
+        {lastSync&&<span style={{marginLeft:8,fontSize:".68rem",color:"var(--text-muted)"}}>Last synced {new Date(lastSync).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}</span>}
+      </div>
+      <div className="share-section">
+        <div className="share-title">👨‍👩‍👧 Invite your co-parent</div>
+        <div className="share-sub">Send this link to your co-parent. When they open it and sign in, you'll both see and edit the same calendar.</div>
+        <div className="invite-box">
+          <div className="invite-url">{inviteUrl}</div>
+          <button className="btn btn-accent btn-xs" onClick={copyInvite}>{copiedInvite?"Copied!":"Copy"}</button>
+        </div>
+        {members.length>0&&(
+          <div style={{marginTop:12}}>
+            <div style={{fontSize:".72rem",fontWeight:600,color:"var(--text-muted)",textTransform:"uppercase",letterSpacing:".05em",marginBottom:4}}>In this calendar</div>
+            {members.map((m,i)=>(
+              <div key={i} className="member-row">
+                <span>{m.email}{session&&m.email===session.user.email?" (you)":""}</span>
+                <span style={{color:"var(--text-muted)"}}>joined {new Date(m.joined_at).toLocaleDateString()}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
       <div className="share-section">
         <div className="share-title">📅 Subscribe in your calendar app</div>
@@ -1488,6 +1673,21 @@ function ShareView({assignees,syncStatus,calendarId}){
           <div style={{fontSize:".75rem",color:"var(--text-muted)"}}>Waiting for first sync… make a change in the calendar to trigger it.</div>
         )}
       </div>
+      <div className="share-section">
+        <div className="share-title">💾 Backup</div>
+        <div className="share-sub">Download a copy of all your calendar data, or restore from a previous backup.</div>
+        <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+          <button className="btn btn-accent btn-xs" onClick={onExport}>⬇ Export backup</button>
+          <button className="btn btn-ghost btn-xs" onClick={()=>fileRef.current&&fileRef.current.click()}>⬆ Restore from file</button>
+          <input ref={fileRef} type="file" accept="application/json,.json" style={{display:"none"}}
+            onChange={e=>{const f=e.target.files[0];if(f)onImport(f);e.target.value="";}}/>
+        </div>
+      </div>
+      <div className="share-section">
+        <div className="share-title">👤 Account</div>
+        <div className="share-sub">Signed in as <strong>{session?session.user.email:"…"}</strong></div>
+        <button className="btn btn-ghost btn-xs" onClick={onSignOut}>Sign out</button>
+      </div>
     </div>
   );
 }
@@ -1513,11 +1713,48 @@ function App(){
   const [appointments,setAppointments]=useState(()=>loadLS("ta_appointments",{}));
   // Supabase sync
   const [calendarId,setCalendarId]=useState(()=>{
+    const p=new URLSearchParams(location.search).get("cal");
+    if(p&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(p)){
+      const prev=loadLS("ta_calendar_id",null);
+      if(prev!==p){
+        // Joining someone else's calendar: adopt it and let the cloud copy win
+        saveLS("ta_calendar_id",p);
+        saveLS("ta_updated_at",null);
+      }
+      history.replaceState(null,"",location.pathname);
+      return p;
+    }
     let id=loadLS("ta_calendar_id",null);
     if(!id){id=crypto.randomUUID();saveLS("ta_calendar_id",id);}
     return id;
   });
-  const [syncStatus,setSyncStatus]=useState("ok");
+  const [syncStatus,setSyncStatus]=useState("pending");
+  const [session,setSession]=useState(undefined); // undefined = loading, null = signed out
+  const [remoteReady,setRemoteReady]=useState(false);
+  const [members,setMembers]=useState([]);
+  const [lastSync,setLastSync]=useState(null);
+  const [retryTick,setRetryTick]=useState(0);
+  const lastRemoteRef=useRef(null);
+  const retryTimer=useRef(null);
+  const [toast,setToast]=useState(null);
+  const toastTimer=useRef(null);
+  function notify(msg,undo){
+    clearTimeout(toastTimer.current);
+    setToast({msg,undo});
+    toastTimer.current=setTimeout(()=>setToast(null),7000);
+  }
+  function snap(o,ap,as,tb,wt,ad){return JSON.stringify([o,ap,as,tb,wt,ad])}
+  function applyRemote(row){
+    lastRemoteRef.current=snap(row.overrides??{},row.appointments??{},row.assignees??assignees,row.time_blocks??timeBlocks,row.week_template??safeTemplates,row.anchor_date??anchorDate);
+    if(row.overrides)setOverrides(row.overrides);
+    if(row.appointments)setAppointments(row.appointments);
+    if(row.assignees)setAssignees(row.assignees);
+    if(row.time_blocks)setTimeBlocks(row.time_blocks);
+    if(row.week_template)setTemplates(row.week_template);
+    if(row.anchor_date)setAnchorDate(row.anchor_date);
+    if(row.updated_at){saveLS("ta_updated_at",row.updated_at);setLastSync(row.updated_at);}
+    setSyncStatus("ok");
+  }
   const safeTemplates=useMemo(()=>{
     if(!templates)return emptyTemplates(timeBlocks);
     const t=JSON.parse(JSON.stringify(templates));
@@ -1538,12 +1775,49 @@ function App(){
   useEffect(()=>saveLS("ta_anchor",anchorDate),[anchorDate]);
   useEffect(()=>saveLS("ta_holidayCal",holidayCalKey),[holidayCalKey]);
   useEffect(()=>saveLS("ta_appointments",appointments),[appointments]);
-  // Sync to Supabase (debounced 2s)
+  // Auth session + online/offline detection
+  useEffect(()=>{
+    sbClient.auth.getSession().then(({data})=>setSession(data.session??null));
+    const{data:sub}=sbClient.auth.onAuthStateChange((_e,s)=>setSession(s));
+    const onOnline=()=>setRetryTick(t=>t+1);
+    window.addEventListener("online",onOnline);
+    return()=>{sub.subscription.unsubscribe();window.removeEventListener("online",onOnline);};
+  },[]);
+  // On sign-in: join calendar, pull cloud copy, subscribe to live changes
+  useEffect(()=>{
+    if(!session){setRemoteReady(false);return;}
+    let cancelled=false;
+    (async()=>{
+      try{
+        await sbClient.rpc("join_calendar",{cal:calendarId});
+        const{data,error}=await sbClient.from("calendar_data").select("*").eq("calendar_id",calendarId).maybeSingle();
+        if(cancelled)return;
+        if(error)throw error;
+        const localTs=loadLS("ta_updated_at",null);
+        if(data&&(!localTs||new Date(data.updated_at)>=new Date(localTs)))applyRemote(data);
+        setRemoteReady(true);
+        const{data:m}=await sbClient.from("calendar_members").select("email,joined_at").eq("calendar_id",calendarId).order("joined_at");
+        if(!cancelled&&m)setMembers(m);
+      }catch{
+        if(!cancelled){setRemoteReady(true);setSyncStatus(navigator.onLine?"error":"offline");}
+      }
+    })();
+    const ch=sbClient.channel("cal-"+calendarId)
+      .on("postgres_changes",{event:"*",schema:"public",table:"calendar_data",filter:"calendar_id=eq."+calendarId},
+        p=>{if(p.new&&p.new.device_id!==DEVICE_ID)applyRemote(p.new)})
+      .subscribe();
+    return()=>{cancelled=true;sbClient.removeChannel(ch);};
+  },[session?.user?.id,calendarId]);
+  // Push local changes to Supabase (debounced 2s, retries when offline)
   const syncTimer=useRef(null);
   useEffect(()=>{
+    if(!session||!remoteReady)return;
+    const current=snap(overrides,appointments,assignees,timeBlocks,safeTemplates,anchorDate);
+    if(current===lastRemoteRef.current)return; // change came from the cloud — nothing to push
     setSyncStatus("pending");
     clearTimeout(syncTimer.current);
     syncTimer.current=setTimeout(async()=>{
+      const now=new Date().toISOString();
       try{
         const payload={
           calendar_id:calendarId,
@@ -1552,14 +1826,51 @@ function App(){
           time_blocks:timeBlocks,
           week_template:safeTemplates,
           anchor_date:anchorDate,
-          updated_at:new Date().toISOString()
+          updated_at:now,
+          updated_by:session.user.email,
+          device_id:DEVICE_ID
         };
         const{error}=await sbClient.from("calendar_data").upsert(payload,{onConflict:"calendar_id"});
-        setSyncStatus(error?"error":"ok");
-      }catch{setSyncStatus("error")}
+        if(error)throw error;
+        saveLS("ta_updated_at",now);setLastSync(now);setSyncStatus("ok");
+      }catch{
+        setSyncStatus(navigator.onLine?"error":"offline");
+        clearTimeout(retryTimer.current);
+        retryTimer.current=setTimeout(()=>setRetryTick(t=>t+1),30000);
+      }
     },2000);
     return()=>clearTimeout(syncTimer.current);
-  },[overrides,appointments,assignees,timeBlocks,safeTemplates,anchorDate]);
+  },[overrides,appointments,assignees,timeBlocks,safeTemplates,anchorDate,session,remoteReady,retryTick]);
+  // Backup: export / import
+  function exportData(){
+    const data={app:"together-apart",version:7,exported_at:new Date().toISOString(),calendar_id:calendarId,
+      time_blocks:timeBlocks,assignees,week_template:safeTemplates,overrides,anchor_date:anchorDate,
+      holiday_cal:holidayCalKey,appointments};
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download=`together-apart-backup-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  }
+  function importData(file){
+    const reader=new FileReader();
+    reader.onload=()=>{
+      try{
+        const d=JSON.parse(reader.result);
+        if(d.app!=="together-apart")throw new Error("not a backup");
+        if(d.time_blocks)setTimeBlocks(d.time_blocks);
+        if(d.assignees)setAssignees(d.assignees);
+        if(d.week_template)setTemplates(d.week_template);
+        if(d.overrides)setOverrides(d.overrides);
+        if(d.anchor_date)setAnchorDate(d.anchor_date);
+        if(d.holiday_cal)setHolidayCalKey(d.holiday_cal);
+        if(d.appointments)setAppointments(d.appointments);
+        alert("Backup restored ✔ It will sync automatically.");
+      }catch{alert("Sorry, that file doesn't look like a Together Apart backup.")}
+    };
+    reader.readAsText(file);
+  }
   function handleSetAssignee(dStr,blockId,id,newA){
     if(newA)setAssignees(prev=>({...prev,[id]:newA}));
     setOverrides(prev=>({...prev,[dStr]:{...(prev[dStr]||{}),[blockId]:{...(prev[dStr]?.[blockId]||{}),assigneeId:id}}}));
@@ -1597,6 +1908,14 @@ function App(){
     {id:"holidays",label:"🏖 Holidays"},
     {id:"share",label:"🔗 Share"},
   ];
+  if(session===undefined)return(
+    <div className="app">
+      <div style={{textAlign:"center",padding:"80px 20px",color:"var(--text-muted)",fontSize:".85rem"}}>Loading…</div>
+    </div>
+  );
+  if(!session)return(
+    <div className="app"><SignInView/></div>
+  );
   return(
     <div className="app">
       <header className="app-header">
@@ -1631,12 +1950,20 @@ function App(){
           overrides={overrides} setOverrides={setOverrides}
           anchorDate={anchorDate} setAnchorDate={setAnchorDate}/>
       )}
-      {tab==="blocks"&&<TimeBlocksEditor timeBlocks={timeBlocks} setTimeBlocks={setTimeBlocks}/>}
-      {tab==="people"&&<AssigneesEditor assignees={assignees} setAssignees={setAssignees}/>}
+      {tab==="blocks"&&<TimeBlocksEditor timeBlocks={timeBlocks} setTimeBlocks={setTimeBlocks} notify={notify}/>}
+      {tab==="people"&&<AssigneesEditor assignees={assignees} setAssignees={setAssignees} notify={notify}/>}
+      {toast&&(
+        <div className="toast" role="status">
+          <span>{toast.msg}</span>
+          {toast.undo&&<button onClick={()=>{toast.undo();setToast(null);clearTimeout(toastTimer.current)}}>Undo</button>}
+        </div>
+      )}
       {tab==="holidays"&&<HolidaySettingsView holidayCalKey={holidayCalKey} setHolidayCalKey={setHolidayCalKey}/>}
-      {tab==="share"&&<ShareView assignees={assignees} syncStatus={syncStatus} calendarId={calendarId}/>}
+      {tab==="share"&&<ShareView assignees={assignees} syncStatus={syncStatus} calendarId={calendarId}
+        session={session} members={members} lastSync={lastSync}
+        onSignOut={()=>sbClient.auth.signOut()} onExport={exportData} onImport={importData}/>}
       <footer style={{textAlign:"center",marginTop:20,fontSize:".7rem",color:"var(--text-light)"}}>
-        All data synced · Together Apart v6
+        Synced as {session.user.email} · Together Apart v7
       </footer>
     </div>
   );
