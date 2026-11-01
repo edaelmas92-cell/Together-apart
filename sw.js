@@ -1,4 +1,4 @@
-const CACHE = "ta-v7";
+const CACHE = "ta-v8";
 const ASSETS = ["/", "/index.html", "/manifest.json"];
 
 self.addEventListener("install", e => {

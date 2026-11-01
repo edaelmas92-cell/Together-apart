@@ -302,6 +302,25 @@ button{font-family:'DM Sans',sans-serif}
 .invite-url{flex:1;font-size:.72rem;font-family:monospace;word-break:break-all;color:var(--text)}
 .member-row{display:flex;justify-content:space-between;gap:10px;font-size:.78rem;padding:6px 0;border-bottom:1px solid var(--border)}
 .member-row:last-child{border-bottom:none}
+/* ── v8: onboarding, access & roles ── */
+.onb-wrap{max-width:760px;margin:30px auto 0}
+.onb-head{text-align:center;margin-bottom:18px}
+.onb-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.onb-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);box-shadow:var(--shadow-md);padding:20px 18px;margin-bottom:14px}
+.onb-msg{margin-top:10px;font-size:.78rem;color:#276645;background:#d5f0e0;border:1px solid #80d0a8;border-radius:var(--r-sm);padding:8px 10px}
+.code-input{font-family:monospace;font-size:1.15rem;letter-spacing:.15em;text-transform:uppercase}
+.code-box{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--bg);border:1px dashed var(--border-strong);border-radius:var(--r-md);padding:10px 12px}
+.code-big{font-family:monospace;font-size:1.35rem;font-weight:600;letter-spacing:.12em;flex:1;min-width:140px}
+.req-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--border);font-size:.82rem}
+.req-row:last-child{border-bottom:none}
+.role-select{padding:5px 8px;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:.76rem;color:var(--text)}
+.role-badge{font-size:.68rem;padding:2px 8px;border-radius:99px;border:1px solid var(--border);color:var(--text-muted)}
+.role-badge.owner{background:var(--accent-light);color:#7a5a2e;border-color:#e2cba8}
+.role-badge.parent{background:#e8f0fb;color:#2d5fa6;border-color:#b5cef5}
+.role-badge.caregiver{background:#f0efed;color:#6b645c}
+.cal-switch{margin-top:2px;max-width:260px;border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:.72rem;color:var(--text-muted);padding:0;cursor:pointer;text-transform:uppercase;letter-spacing:.06em}
+.role-banner{font-size:.76rem;background:#f0efed;border:1px solid var(--border);border-radius:var(--r-md);padding:8px 12px;margin-bottom:12px;color:#6b645c}
+.tab-dot{display:inline-block;margin-left:5px;min-width:16px;height:16px;line-height:16px;border-radius:99px;background:#c0392b;color:#fff;font-size:.62rem;text-align:center;padding:0 4px}
 .filter-checks{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
 .filter-check{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;border:1.5px solid var(--border);cursor:pointer;font-size:.75rem;user-select:none;transition:border-color .15s}
 .filter-check input{accent-color:var(--accent)}
@@ -629,10 +648,10 @@ function AssigneePicker({value,assignees,onSelect,onAddNew,onClose,anchorRect}){
 /* ═══════════════════════════════════════════════
    NOTE POPOVER
 ═══════════════════════════════════════════════ */
-function NotePopover({note,blockLabel,dateLabel,anchorRect,onSave,onClose}){
+function NotePopover({note,blockLabel,dateLabel,anchorRect,onSave,onClose,readOnly}){
   const [val,setVal]=useState(note||"");
   const ref=useRef(null);
-  useOutsideClick(ref,()=>{onSave(val);onClose()});
+  useOutsideClick(ref,()=>{if(!readOnly)onSave(val);onClose()});
   const style=useMemo(()=>{
     if(!anchorRect)return{top:100,left:100};
     let top=anchorRect.bottom+6;
@@ -644,12 +663,12 @@ function NotePopover({note,blockLabel,dateLabel,anchorRect,onSave,onClose}){
   return(
     <div ref={ref} className="note-popover" style={{...style,position:"fixed"}}>
       <h4>📝 {blockLabel} · <span style={{fontStyle:"italic",fontWeight:400}}>{dateLabel}</span></h4>
-      <textarea autoFocus placeholder="Add a note… e.g. 'Doctor at 15:00'" value={val}
+      <textarea autoFocus={!readOnly} readOnly={!!readOnly} placeholder="Add a note… e.g. 'Doctor at 15:00'" value={val}
         onChange={e=>setVal(e.target.value)}
-        onKeyDown={e=>{if(e.key==="Escape"){onSave(val);onClose()}}}/>
+        onKeyDown={e=>{if(e.key==="Escape"){if(!readOnly)onSave(val);onClose()}}}/>
       <div className="note-actions">
-        {val&&<button className="btn btn-danger btn-xs" onClick={()=>{onSave("");onClose()}}>Clear</button>}
-        <button className="btn btn-ghost btn-xs" onClick={()=>{onSave(val);onClose()}}>Done</button>
+        {!readOnly&&val&&<button className="btn btn-danger btn-xs" onClick={()=>{onSave("");onClose()}}>Clear</button>}
+        <button className="btn btn-ghost btn-xs" onClick={()=>{if(!readOnly)onSave(val);onClose()}}>{readOnly?"Close":"Done"}</button>
       </div>
     </div>
   );
@@ -667,8 +686,10 @@ function BlockCell({dateStr,blockId,blockLabel,assignees,weekTemplate,overrides,
   const [btnRect,setBtnRect]=useState(null);
   const noteRef=useRef(null);
   const [noteRect,setNoteRect]=useState(null);
+  const readOnly=!onSetAssignee;
   function openPicker(e){
     e.stopPropagation();
+    if(readOnly)return;
     const r=btnRef.current?.getBoundingClientRect();
     setBtnRect(r||null);
     setActivePickerKey(prev=>prev===cellKey?null:cellKey);
@@ -689,15 +710,17 @@ function BlockCell({dateStr,blockId,blockLabel,assignees,weekTemplate,overrides,
     <div className="block-cell">
       <button ref={btnRef}
         className={`assign-btn${isTemplate?" is-template":""}${isOverride?" is-override":""}`}
-        style={{background:a.bg,color:a.fg,borderColor:isTemplate?a.fg+"66":"transparent"}}
+        style={{background:a.bg,color:a.fg,borderColor:isTemplate?a.fg+"66":"transparent",cursor:readOnly?"default":undefined}}
         onClick={openPicker}>
         <span className="assign-label">{a.label}</span>
         <span className="assign-icons">
           {note&&<span className="note-dot" title={note}/>}
-          <button ref={noteRef} className="note-btn-inline" onClick={openNote}
-            title={note?"Edit note":"Add note"} onMouseDown={e=>e.stopPropagation()}>
-            {note?"✏️":"＋"}
-          </button>
+          {(!readOnly||note)&&(
+            <button ref={noteRef} className="note-btn-inline" onClick={openNote}
+              title={readOnly?"View note":note?"Edit note":"Add note"} onMouseDown={e=>e.stopPropagation()}>
+              {readOnly?"📝":note?"✏️":"＋"}
+            </button>
+          )}
         </span>
       </button>
       {pickerOpen&&btnRect&&(
@@ -717,7 +740,7 @@ function BlockCell({dateStr,blockId,blockLabel,assignees,weekTemplate,overrides,
           <NotePopover
             note={note} blockLabel={blockLabel} dateLabel={dateLabel}
             anchorRect={noteRect}
-            onSave={txt=>onSetNote(dateStr,blockId,txt)}
+            onSave={txt=>{if(onSetNote)onSetNote(dateStr,blockId,txt)}} readOnly={readOnly}
             onClose={()=>setActiveNoteKey(null)}/>
         </>
       )}
@@ -1053,7 +1076,7 @@ function WeekCell({dStr,blockId,blockLabel,assignees,weekTemplate,overrides,week
   const [noteRect,setNoteRect]=useState(null);
   const noteRef=useRef(null);
   const {note,isOverride,isTemplate}=resolveCell(dStr,blockId,weekTemplate,overrides,weekParity);
-  function openPicker(e){e.stopPropagation();setBtnRect(btnRef.current?.getBoundingClientRect()||null);setActivePickerKey(p=>p===cellKey?null:cellKey);setActiveNoteKey(null);}
+  function openPicker(e){e.stopPropagation();if(!onSetAssignee)return;setBtnRect(btnRef.current?.getBoundingClientRect()||null);setActivePickerKey(p=>p===cellKey?null:cellKey);setActiveNoteKey(null);}
   return(
     <div style={{position:"relative"}}>
       <button ref={btnRef} className="week-cell-btn"
@@ -1530,9 +1553,20 @@ const DEVICE_ID=(()=>{
   if(!id){id=crypto.randomUUID();try{localStorage.setItem("ta_device_id",id)}catch{}}
   return id;
 })();
-const HAD_INVITE=!!new URLSearchParams(location.search).get("cal");
+const ROLE_LABEL={owner:"Owner",parent:"Parent",caregiver:"Caregiver"};
+function friendlyError(e){
+  const m=String(e&&e.message||e||"");
+  if(/rate limit|too many/i.test(m))return"Too many requests — please wait a few minutes and try again.";
+  if(/fetch|network|load failed|timeout/i.test(m)||!navigator.onLine)return"Can't reach the server right now. Check your connection and try again.";
+  if(/invalid code/i.test(m))return"That code doesn't match any schedule. Check it with the person who shared it.";
+  if(/expired|invalid/i.test(m))return"That code isn't right or has expired — request a new email.";
+  return m||"Something went wrong.";
+}
+function copyText(t,done){
+  try{navigator.clipboard.writeText(t).then(done,()=>{})}catch{}
+}
 /* ═══════════════════════════════════════════════
-   SIGN-IN VIEW
+   SIGN-IN VIEW  (email link, with 6-digit code as backup)
 ═══════════════════════════════════════════════ */
 function SignInView(){
   const [email,setEmail]=useState("");
@@ -1540,53 +1574,154 @@ function SignInView(){
   const [stage,setStage]=useState("email");
   const [busy,setBusy]=useState(false);
   const [err,setErr]=useState("");
-  async function sendCode(e){
-    e.preventDefault();
+  async function sendLink(e){
+    e&&e.preventDefault();
     if(!email.trim()||busy)return;
     setBusy(true);setErr("");
-    const{error}=await sbClient.auth.signInWithOtp({email:email.trim().toLowerCase(),options:{shouldCreateUser:true}});
-    setBusy(false);
-    if(error)setErr(error.message);else setStage("code");
+    try{
+      const{error}=await sbClient.auth.signInWithOtp({
+        email:email.trim().toLowerCase(),
+        options:{shouldCreateUser:true,emailRedirectTo:location.origin+location.pathname}
+      });
+      if(error)throw error;
+      setStage("sent");
+    }catch(e){setErr(friendlyError(e))}
+    finally{setBusy(false)}
   }
   async function verify(e){
     e.preventDefault();
     if(!code.trim()||busy)return;
     setBusy(true);setErr("");
-    const{error}=await sbClient.auth.verifyOtp({email:email.trim().toLowerCase(),token:code.trim(),type:"email"});
-    setBusy(false);
-    if(error)setErr(error.message==="Token has expired or is invalid"?"That code isn't right or has expired — check the email or request a new code.":error.message);
+    try{
+      const{error}=await sbClient.auth.verifyOtp({email:email.trim().toLowerCase(),token:code.replace(/\s/g,""),type:"email"});
+      if(error)throw error;
+    }catch(e){setErr(friendlyError(e))}
+    finally{setBusy(false)}
   }
   return(
     <div className="auth-wrap">
       <div className="auth-card">
         <div style={{fontSize:"2rem",marginBottom:8}}>🤝</div>
         <div className="auth-title">Together Apart</div>
-        <div className="auth-sub">
-          {HAD_INVITE
-            ?"You've been invited to a shared co-parenting calendar. Sign in with your email to join."
-            :"Sign in with your email so your calendar syncs safely between you and your co-parent."}
-        </div>
         {stage==="email"?(
-          <form onSubmit={sendCode}>
-            <input className="auth-input" type="email" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)} autoFocus/>
-            <button className="btn btn-accent" style={{width:"100%",justifyContent:"center"}} disabled={busy}>{busy?"Sending…":"Email me a code"}</button>
-          </form>
+          <>
+            <div className="auth-sub">Sign in or create an account with your email. Your schedule is only visible to the people you allow.</div>
+            <form onSubmit={sendLink}>
+              <input className="auth-input" type="email" autoComplete="email" placeholder="you@example.com" value={email} onChange={e=>setEmail(e.target.value)} autoFocus/>
+              <button className="btn btn-accent" style={{width:"100%",justifyContent:"center"}} disabled={busy}>{busy?"Sending…":"Email me a sign-in link"}</button>
+            </form>
+          </>
         ):(
-          <form onSubmit={verify}>
-            <div className="auth-sub">We sent a 6-digit code to <strong>{email}</strong>. Enter it below.</div>
-            <input className="auth-input" inputMode="numeric" autoComplete="one-time-code" placeholder="123456" value={code} onChange={e=>setCode(e.target.value)} autoFocus/>
-            <button className="btn btn-accent" style={{width:"100%",justifyContent:"center"}} disabled={busy}>{busy?"Checking…":"Sign in"}</button>
-            <button type="button" className="btn btn-ghost btn-xs" style={{marginTop:8}} onClick={()=>{setStage("email");setCode("");setErr("")}}>Use a different email</button>
-          </form>
+          <>
+            <div className="auth-sub">📬 We sent an email to <strong>{email}</strong>.<br/>Tap the link in it <strong>on this device</strong> to sign in.</div>
+            <form onSubmit={verify} style={{marginTop:6}}>
+              <div className="auth-note" style={{marginTop:0,marginBottom:8}}>Opened the email somewhere else? Enter the 6-digit code from the email instead:</div>
+              <input className="auth-input" inputMode="numeric" autoComplete="one-time-code" placeholder="123456" value={code} onChange={e=>setCode(e.target.value)}/>
+              <button className="btn btn-accent" style={{width:"100%",justifyContent:"center"}} disabled={busy||!code.trim()}>{busy?"Checking…":"Sign in with code"}</button>
+            </form>
+            <div style={{display:"flex",gap:8,justifyContent:"center",marginTop:10,flexWrap:"wrap"}}>
+              <button type="button" className="btn btn-ghost btn-xs" onClick={sendLink} disabled={busy}>Send again</button>
+              <button type="button" className="btn btn-ghost btn-xs" onClick={()=>{setStage("email");setCode("");setErr("")}}>Use a different email</button>
+            </div>
+          </>
         )}
         {err&&<div className="auth-err">{err}</div>}
-        <div className="auth-note">No password needed — we email you a one-time code each time you sign in.</div>
+        <div className="auth-note">No password needed — we email you a sign-in link each time.</div>
       </div>
     </div>
   );
 }
-
-function ShareView({assignees,syncStatus,calendarId,session,members,lastSync,onSignOut,onExport,onImport}){
+/* ═══════════════════════════════════════════════
+   ONBOARDING: create a schedule or join with a code
+═══════════════════════════════════════════════ */
+function OnboardingView({session,pending,hasLocalData,onCreate,onJoin,onCancelRequest,onRefresh,onBack}){
+  const [name,setName]=useState("");
+  const [useLocal,setUseLocal]=useState(hasLocalData);
+  const [code,setCode]=useState("");
+  const [myName,setMyName]=useState("");
+  const [busy,setBusy]=useState("");
+  const [err,setErr]=useState("");
+  const [msg,setMsg]=useState("");
+  function fmtCode(v){
+    const c=v.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,8);
+    return c.length>4?c.slice(0,4)+"-"+c.slice(4):c;
+  }
+  async function create(e){
+    e.preventDefault();if(!name.trim()||busy)return;
+    setBusy("create");setErr("");
+    try{await onCreate(name.trim(),useLocal)}catch(e){setErr(friendlyError(e))}finally{setBusy("")}
+  }
+  async function join(e){
+    e.preventDefault();if(code.replace("-","").length!==8||busy)return;
+    setBusy("join");setErr("");setMsg("");
+    try{
+      const r=await onJoin(code,myName.trim());
+      setCode("");
+      setMsg(r&&r.status==="active"?`You already have access to “${r.calendar_name}”.`:`Request sent for “${r?r.calendar_name:"the schedule"}”. You'll get access as soon as the owner approves.`);
+    }catch(e){setErr(friendlyError(e))}finally{setBusy("")}
+  }
+  return(
+    <div className="onb-wrap">
+      <div className="onb-head">
+        <div style={{fontSize:"1.8rem"}}>🤝</div>
+        <div className="auth-title">Welcome to Together Apart</div>
+        <div className="auth-sub" style={{marginBottom:0}}>Signed in as <strong>{session.user.email}</strong></div>
+      </div>
+      {pending.length>0&&(
+        <div className="onb-card">
+          <div className="share-title">⏳ Waiting for approval</div>
+          {pending.map(p=>(
+            <div key={p.calendar_id} className="member-row" style={{alignItems:"center"}}>
+              <span>{p.name||"A schedule"} — the owner still needs to approve you.</span>
+              <button className="btn btn-ghost btn-xs" onClick={()=>onCancelRequest(p.calendar_id)}>Cancel</button>
+            </div>
+          ))}
+          <button className="btn btn-ghost btn-xs" style={{marginTop:8}} onClick={onRefresh}>↻ Check again</button>
+        </div>
+      )}
+      <div className="onb-grid">
+        <form className="onb-card" onSubmit={create}>
+          <div className="share-title">✨ Start a new schedule</div>
+          <div className="share-sub">You'll be the owner: you decide who can see it and what they can do.</div>
+          <input className="auth-input" style={{textAlign:"left"}} placeholder="e.g. Noah & Lina's schedule" value={name} onChange={e=>setName(e.target.value)} maxLength={80}/>
+          {hasLocalData&&(
+            <label className="filter-check" style={{marginBottom:10,width:"100%"}}>
+              <input type="checkbox" checked={useLocal} onChange={e=>setUseLocal(e.target.checked)}/>
+              Start from the schedule already on this device
+            </label>
+          )}
+          <button className="btn btn-accent" style={{width:"100%",justifyContent:"center"}} disabled={!!busy||!name.trim()}>{busy==="create"?"Creating…":"Create schedule"}</button>
+        </form>
+        <form className="onb-card" onSubmit={join}>
+          <div className="share-title">🔑 Join with a code</div>
+          <div className="share-sub">Got a code from a parent? Enter it here. The owner approves you before you see anything.</div>
+          <input className="auth-input code-input" placeholder="XXXX-XXXX" value={code} onChange={e=>setCode(fmtCode(e.target.value))} autoCapitalize="characters" autoComplete="off" spellCheck={false}/>
+          <input className="auth-input" style={{textAlign:"left"}} placeholder="Your name (shown to the owner)" value={myName} onChange={e=>setMyName(e.target.value)} maxLength={60}/>
+          <button className="btn btn-accent" style={{width:"100%",justifyContent:"center"}} disabled={!!busy||code.replace("-","").length!==8}>{busy==="join"?"Sending…":"Request access"}</button>
+          {msg&&<div className="onb-msg">{msg}</div>}
+        </form>
+      </div>
+      {err&&<div className="auth-err" style={{textAlign:"center"}}>{err}</div>}
+      <div style={{textAlign:"center",marginTop:16,display:"flex",gap:8,justifyContent:"center"}}>
+        {onBack&&<button className="btn btn-ghost btn-xs" onClick={onBack}>← Back to my schedule</button>}
+        <button className="btn btn-ghost btn-xs" onClick={()=>sbClient.auth.signOut()}>Sign out</button>
+      </div>
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
+   MEMBERS & SHARING VIEW
+═══════════════════════════════════════════════ */
+function MembersView({cal,role,session,assignees,syncStatus,lastSync,members,onReloadMembers,onLeft,onRenamed,onExport,onImport,canEdit,notify}){
+  const isOwner=role==="owner";
+  const [joinCode,setJoinCode]=useState("");
+  const [copied,setCopied]=useState("");
+  const [busy,setBusy]=useState(false);
+  const [err,setErr]=useState("");
+  const [approveRole,setApproveRole]=useState({});
+  const [feedToken,setFeedToken]=useState(null);
+  const [nameDraft,setNameDraft]=useState(cal.name);
+  const fileRef=useRef(null);
   const [selected,setSelected]=useState(()=>{
     const saved=loadLS("ta_share_filter",null);
     if(saved)return saved;
@@ -1594,74 +1729,148 @@ function ShareView({assignees,syncStatus,calendarId,session,members,lastSync,onS
     Object.values(assignees).filter(a=>a.id!=="none").forEach(a=>{def[a.id]=true});
     return def;
   });
-  const [copied,setCopied]=useState(false);
-  const [copiedInvite,setCopiedInvite]=useState(false);
-  const fileRef=useRef(null);
   useEffect(()=>saveLS("ta_share_filter",selected),[selected]);
-  function toggle(key){setSelected(p=>({...p,[key]:!p[key]}))}
-  const inviteUrl=`${location.origin}${location.pathname}?cal=${calendarId}`;
-  function copyInvite(){
-    navigator.clipboard.writeText(inviteUrl).then(()=>{setCopiedInvite(true);setTimeout(()=>setCopiedInvite(false),2000)});
+  useEffect(()=>{setNameDraft(cal.name)},[cal.name]);
+  useEffect(()=>{
+    let off=false;
+    if(isOwner)sbClient.rpc("get_join_code",{p_cal:cal.id}).then(({data})=>{if(!off&&data)setJoinCode(data)});
+    sbClient.rpc("my_feed_token",{p_cal:cal.id}).then(({data})=>{if(!off)setFeedToken(data||null)});
+    return()=>{off=true};
+  },[cal.id,isOwner]);
+  function flash(k){setCopied(k);setTimeout(()=>setCopied(""),2000)}
+  async function run(fn,okMsg){
+    setBusy(true);setErr("");
+    try{const{error}=await fn();if(error)throw error;if(okMsg)notify(okMsg);await onReloadMembers();}
+    catch(e){setErr(friendlyError(e))}
+    finally{setBusy(false)}
   }
+  async function newCode(){
+    if(!confirm("Create a new code? The current code stops working immediately. People who already have access keep it."))return;
+    setBusy(true);setErr("");
+    try{const{data,error}=await sbClient.rpc("regenerate_join_code",{p_cal:cal.id});if(error)throw error;setJoinCode(data);notify("New code created — the old one no longer works")}
+    catch(e){setErr(friendlyError(e))}finally{setBusy(false)}
+  }
+  async function shareCode(){
+    const text=`Join our schedule “${cal.name}” in Together Apart: open ${location.origin} , sign in, choose “Join with a code” and enter ${joinCode}`;
+    if(navigator.share){try{await navigator.share({title:"Together Apart",text});return}catch{}}
+    copyText(text,()=>flash("msg"));
+  }
+  async function rename(){
+    if(!nameDraft.trim()||nameDraft.trim()===cal.name)return;
+    await run(()=>sbClient.rpc("rename_calendar",{p_cal:cal.id,p_name:nameDraft.trim()}),"Schedule renamed");
+    onRenamed();
+  }
+  async function leave(){
+    if(!confirm(`Leave “${cal.name}”? You'll lose access until the owner approves you again.`))return;
+    setBusy(true);
+    try{const{error}=await sbClient.rpc("leave_calendar",{p_cal:cal.id});if(error)throw error;onLeft()}
+    catch(e){setErr(friendlyError(e))}finally{setBusy(false)}
+  }
+  const pending=members.filter(m=>m.status==="pending");
+  const active=members.filter(m=>m.status==="active");
+  const me=session.user.id;
   const includeParam=Object.entries(selected).filter(([,v])=>v).map(([k])=>k).join(",");
-  const webcalUrl=calendarId&&includeParam
-    ?`webcal://niujbgjfumehoswcodpw.supabase.co/functions/v1/ics-feed?calendar_id=${calendarId}&include=${includeParam}&months=6`
-    :"";
-  function copyUrl(){
-    if(!webcalUrl)return;
-    navigator.clipboard.writeText(webcalUrl).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),2000)});
-  }
-  function openUrl(){if(webcalUrl)window.open(webcalUrl.replace("webcal://","https://"),"_blank")}
+  const webcalUrl=feedToken&&includeParam
+    ?`webcal://niujbgjfumehoswcodpw.supabase.co/functions/v1/ics-feed?token=${feedToken}&include=${includeParam}&months=6`:"";
+  const who=m=>m.display_name?`${m.display_name} (${m.email})`:m.email;
   return(
     <div className="share-card">
       <div className="share-section">
-        <div className="share-title">☁️ Cloud Sync</div>
-        <div className="share-sub">Changes sync live between everyone in this calendar — edits appear on the other phone within seconds.</div>
+        <div className="share-title">☁️ Sync</div>
         <span className={`sync-status ${syncStatus}`}>
           {syncStatus==="ok"?"✅ Synced":syncStatus==="pending"?"⏳ Syncing…":syncStatus==="offline"?"📴 Offline — will sync when back online":"❌ Sync error — retrying"}
         </span>
         {lastSync&&<span style={{marginLeft:8,fontSize:".68rem",color:"var(--text-muted)"}}>Last synced {new Date(lastSync).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}</span>}
+        <div className="share-sub" style={{marginTop:8,marginBottom:0}}>Only the people listed below can see this schedule. You are <strong>{ROLE_LABEL[role]}</strong>.</div>
       </div>
-      <div className="share-section">
-        <div className="share-title">👨‍👩‍👧 Invite your co-parent</div>
-        <div className="share-sub">Send this link to your co-parent. When they open it and sign in, you'll both see and edit the same calendar.</div>
-        <div className="invite-box">
-          <div className="invite-url">{inviteUrl}</div>
-          <button className="btn btn-accent btn-xs" onClick={copyInvite}>{copiedInvite?"Copied!":"Copy"}</button>
-        </div>
-        {members.length>0&&(
-          <div style={{marginTop:12}}>
-            <div style={{fontSize:".72rem",fontWeight:600,color:"var(--text-muted)",textTransform:"uppercase",letterSpacing:".05em",marginBottom:4}}>In this calendar</div>
-            {members.map((m,i)=>(
-              <div key={i} className="member-row">
-                <span>{m.email}{session&&m.email===session.user.email?" (you)":""}</span>
-                <span style={{color:"var(--text-muted)"}}>joined {new Date(m.joined_at).toLocaleDateString()}</span>
-              </div>
-            ))}
+      {isOwner&&(
+        <div className="share-section">
+          <div className="share-title">🏷 Schedule name</div>
+          <div style={{display:"flex",gap:8}}>
+            <input className="tbl-label-input" style={{borderColor:"var(--border)"}} value={nameDraft} onChange={e=>setNameDraft(e.target.value)} maxLength={80}/>
+            <button className="btn btn-ghost btn-xs" disabled={busy||nameDraft.trim()===cal.name} onClick={rename}>Save</button>
           </div>
-        )}
+        </div>
+      )}
+      {isOwner&&(
+        <div className="share-section">
+          <div className="share-title">🔑 Join code</div>
+          <div className="share-sub">Share this code with your co-parent or caregivers. Entering it only sends <em>you</em> a request — nobody sees anything until you approve them.</div>
+          <div className="code-box">
+            <span className="code-big">{joinCode||"…"}</span>
+            <button className="btn btn-accent btn-xs" disabled={!joinCode} onClick={shareCode}>{copied==="msg"?"Copied!":"Share"}</button>
+            <button className="btn btn-ghost btn-xs" disabled={!joinCode} onClick={()=>copyText(joinCode,()=>flash("code"))}>{copied==="code"?"Copied!":"Copy code"}</button>
+            <button className="btn btn-ghost btn-xs" disabled={busy} onClick={newCode}>New code</button>
+          </div>
+        </div>
+      )}
+      {isOwner&&pending.length>0&&(
+        <div className="share-section">
+          <div className="share-title">🙋 Requests to join ({pending.length})</div>
+          {pending.map(m=>(
+            <div key={m.user_id} className="req-row">
+              <div style={{flex:1,minWidth:160}}>
+                <div style={{fontWeight:500}}>{m.display_name||m.email}</div>
+                {m.display_name&&<div style={{fontSize:".7rem",color:"var(--text-muted)"}}>{m.email}</div>}
+              </div>
+              <select className="role-select" value={approveRole[m.user_id]||"caregiver"} onChange={e=>setApproveRole(p=>({...p,[m.user_id]:e.target.value}))}>
+                <option value="parent">Parent — can edit everything</option>
+                <option value="caregiver">Caregiver — view + appointments</option>
+              </select>
+              <button className="btn btn-accent btn-xs" disabled={busy} onClick={()=>run(()=>sbClient.rpc("approve_member",{p_cal:cal.id,p_user:m.user_id,p_role:approveRole[m.user_id]||"caregiver"}),"Access approved")}>Approve</button>
+              <button className="btn btn-ghost btn-xs" disabled={busy} onClick={()=>run(()=>sbClient.rpc("remove_member",{p_cal:cal.id,p_user:m.user_id}),"Request declined")}>Decline</button>
+            </div>
+          ))}
+        </div>
+      )}
+      <div className="share-section">
+        <div className="share-title">👥 People with access</div>
+        {active.map(m=>(
+          <div key={m.user_id} className="req-row">
+            <div style={{flex:1,minWidth:160}}>
+              <div style={{fontWeight:500}}>{m.display_name||m.email}{m.user_id===me?" (you)":""}</div>
+              {m.display_name&&<div style={{fontSize:".7rem",color:"var(--text-muted)"}}>{m.email}</div>}
+            </div>
+            {isOwner&&m.user_id!==me?(
+              <>
+                <select className="role-select" value={m.role} disabled={busy}
+                  onChange={e=>run(()=>sbClient.rpc("set_member_role",{p_cal:cal.id,p_user:m.user_id,p_role:e.target.value}),"Role updated")}>
+                  <option value="parent">Parent</option>
+                  <option value="caregiver">Caregiver</option>
+                </select>
+                <button className="btn btn-ghost btn-xs" disabled={busy} title="Make this person the owner"
+                  onClick={()=>{if(confirm(`Make ${who(m)} the owner? You'll become a parent and can no longer manage access.`))run(()=>sbClient.rpc("transfer_ownership",{p_cal:cal.id,p_user:m.user_id}),"Ownership transferred")}}>Make owner</button>
+                <button className="btn btn-danger btn-xs" disabled={busy}
+                  onClick={()=>{if(confirm(`Remove ${who(m)}? They lose access immediately, including their calendar subscription.`))run(()=>sbClient.rpc("remove_member",{p_cal:cal.id,p_user:m.user_id}),"Access removed")}}>Remove</button>
+              </>
+            ):(
+              <span className={`role-badge ${m.role}`}>{ROLE_LABEL[m.role]}</span>
+            )}
+          </div>
+        ))}
+        {!isOwner&&<button className="btn btn-ghost btn-xs" style={{marginTop:10}} disabled={busy} onClick={leave}>Leave this schedule</button>}
+        {err&&<div className="auth-err">{err}</div>}
       </div>
       <div className="share-section">
         <div className="share-title">📅 Subscribe in your calendar app</div>
-        <div className="share-sub">Choose what to include, then add the link to Outlook, Google Calendar, or Apple Calendar.</div>
+        <div className="share-sub">Your personal, private link. Don't share it — it stops working if you're removed from the schedule.</div>
         <div className="filter-checks">
           {Object.values(assignees).filter(a=>a.id!=="none").map(a=>(
             <label key={a.id} className="filter-check" style={{borderColor:selected[a.id]?a.fg:"var(--border)"}}>
-              <input type="checkbox" checked={!!selected[a.id]} onChange={()=>toggle(a.id)}/>
+              <input type="checkbox" checked={!!selected[a.id]} onChange={()=>setSelected(p=>({...p,[a.id]:!p[a.id]}))}/>
               <span style={{color:a.fg}}>{a.label}</span>
             </label>
           ))}
           <label className="filter-check" style={{borderColor:selected.appointments?"var(--accent)":"var(--border)"}}>
-            <input type="checkbox" checked={!!selected.appointments} onChange={()=>toggle("appointments")}/>
+            <input type="checkbox" checked={!!selected.appointments} onChange={()=>setSelected(p=>({...p,appointments:!p.appointments}))}/>
             📌 Appointments
           </label>
         </div>
-        {webcalUrl?(
+        {webcalUrl&&(
           <>
             <div className="webcal-box">
               <div className="webcal-url">{webcalUrl}</div>
-              <button className="btn btn-accent btn-xs" onClick={copyUrl}>{copied?"Copied!":"Copy"}</button>
-              <button className="btn btn-ghost btn-xs" onClick={openUrl}>Test</button>
+              <button className="btn btn-accent btn-xs" onClick={()=>copyText(webcalUrl,()=>flash("feed"))}>{copied==="feed"?"Copied!":"Copy"}</button>
             </div>
             <div className="cal-instructions">
               <strong>Outlook:</strong> Add calendar → From internet → paste URL<br/>
@@ -1669,24 +1878,22 @@ function ShareView({assignees,syncStatus,calendarId,session,members,lastSync,onS
               <strong>Apple:</strong> File → New Calendar Subscription → paste URL
             </div>
           </>
-        ):(
-          <div style={{fontSize:".75rem",color:"var(--text-muted)"}}>Waiting for first sync… make a change in the calendar to trigger it.</div>
         )}
       </div>
       <div className="share-section">
         <div className="share-title">💾 Backup</div>
-        <div className="share-sub">Download a copy of all your calendar data, or restore from a previous backup.</div>
+        <div className="share-sub">Download a copy of this schedule{canEdit?", or restore one from a file":""}.</div>
         <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
           <button className="btn btn-accent btn-xs" onClick={onExport}>⬇ Export backup</button>
-          <button className="btn btn-ghost btn-xs" onClick={()=>fileRef.current&&fileRef.current.click()}>⬆ Restore from file</button>
+          {canEdit&&<button className="btn btn-ghost btn-xs" onClick={()=>fileRef.current&&fileRef.current.click()}>⬆ Restore from file</button>}
           <input ref={fileRef} type="file" accept="application/json,.json" style={{display:"none"}}
             onChange={e=>{const f=e.target.files[0];if(f)onImport(f);e.target.value="";}}/>
         </div>
       </div>
       <div className="share-section">
         <div className="share-title">👤 Account</div>
-        <div className="share-sub">Signed in as <strong>{session?session.user.email:"…"}</strong></div>
-        <button className="btn btn-ghost btn-xs" onClick={onSignOut}>Sign out</button>
+        <div className="share-sub">Signed in as <strong>{session.user.email}</strong></div>
+        <button className="btn btn-ghost btn-xs" onClick={()=>sbClient.auth.signOut()}>Sign out</button>
       </div>
     </div>
   );
@@ -1694,16 +1901,16 @@ function ShareView({assignees,syncStatus,calendarId,session,members,lastSync,onS
 /* ═══════════════════════════════════════════════
    APP
 ═══════════════════════════════════════════════ */
+function defaultAnchor(){
+  const d=new Date();const dow=d.getDay();
+  d.setDate(d.getDate()-(dow===0?6:dow-1));
+  return d.toISOString().slice(0,10);
+}
 function App(){
   const today=new Date();
   const [tab,setTab]=useState("calendar");
   const [year,setYear]=useState(today.getFullYear());
   const [month,setMonth]=useState(today.getMonth());
-  function defaultAnchor(){
-    const d=new Date(today);const dow=d.getDay();
-    d.setDate(d.getDate()-(dow===0?6:dow-1));
-    return d.toISOString().slice(0,10);
-  }
   const [timeBlocks,setTimeBlocks]=useState(()=>loadLS("ta_blocks",DEFAULT_BLOCKS));
   const [assignees,setAssignees]=useState(()=>loadLS("ta_assignees",DEFAULT_ASSIGNEES));
   const [templates,setTemplates]=useState(()=>loadLS("ta_templates2",null));
@@ -1711,31 +1918,20 @@ function App(){
   const [anchorDate,setAnchorDate]=useState(()=>loadLS("ta_anchor",defaultAnchor()));
   const [holidayCalKey,setHolidayCalKey]=useState(()=>loadLS("ta_holidayCal","none"));
   const [appointments,setAppointments]=useState(()=>loadLS("ta_appointments",{}));
-  // Supabase sync
-  const [calendarId,setCalendarId]=useState(()=>{
-    const p=new URLSearchParams(location.search).get("cal");
-    if(p&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(p)){
-      const prev=loadLS("ta_calendar_id",null);
-      if(prev!==p){
-        // Joining someone else's calendar: adopt it and let the cloud copy win
-        saveLS("ta_calendar_id",p);
-        saveLS("ta_updated_at",null);
-      }
-      history.replaceState(null,"",location.pathname);
-      return p;
-    }
-    let id=loadLS("ta_calendar_id",null);
-    if(!id){id=crypto.randomUUID();saveLS("ta_calendar_id",id);}
-    return id;
-  });
-  const [syncStatus,setSyncStatus]=useState("pending");
+  // Auth + memberships
   const [session,setSession]=useState(undefined); // undefined = loading, null = signed out
-  const [remoteReady,setRemoteReady]=useState(false);
+  const [memberships,setMemberships]=useState(null); // null = loading
+  const [activeCalId,setActiveCalId]=useState(()=>loadLS("ta_active_cal",null));
+  const [showOnboarding,setShowOnboarding]=useState(false);
   const [members,setMembers]=useState([]);
+  // Sync
+  const [syncStatus,setSyncStatus]=useState("pending");
+  const [remoteReady,setRemoteReady]=useState(false);
   const [lastSync,setLastSync]=useState(null);
   const [retryTick,setRetryTick]=useState(0);
   const lastRemoteRef=useRef(null);
   const retryTimer=useRef(null);
+  const initRef=useRef(null); // {cal, useLocal} right after creating a schedule
   const [toast,setToast]=useState(null);
   const toastTimer=useRef(null);
   function notify(msg,undo){
@@ -1743,18 +1939,17 @@ function App(){
     setToast({msg,undo});
     toastTimer.current=setTimeout(()=>setToast(null),7000);
   }
-  function snap(o,ap,as,tb,wt,ad){return JSON.stringify([o,ap,as,tb,wt,ad])}
-  function applyRemote(row){
-    lastRemoteRef.current=snap(row.overrides??{},row.appointments??{},row.assignees??assignees,row.time_blocks??timeBlocks,row.week_template??safeTemplates,row.anchor_date??anchorDate);
-    if(row.overrides)setOverrides(row.overrides);
-    if(row.appointments)setAppointments(row.appointments);
-    if(row.assignees)setAssignees(row.assignees);
-    if(row.time_blocks)setTimeBlocks(row.time_blocks);
-    if(row.week_template)setTemplates(row.week_template);
-    if(row.anchor_date)setAnchorDate(row.anchor_date);
-    if(row.updated_at){saveLS("ta_updated_at",row.updated_at);setLastSync(row.updated_at);}
-    setSyncStatus("ok");
-  }
+  const hasLocalData=useMemo(()=>{
+    const ov=loadLS("ta_overrides2",{}),ap=loadLS("ta_appointments",{}),tp=loadLS("ta_templates2",null);
+    const tplUsed=!!tp&&Object.values(tp).some(w=>Object.values(w||{}).some(d=>Object.values(d||{}).some(v=>v&&v!=="none")));
+    return Object.keys(ov).length>0||Object.keys(ap).length>0||!!tplUsed;
+  },[]);
+  const activeList=(memberships||[]).filter(m=>m.status==="active");
+  const pendingList=(memberships||[]).filter(m=>m.status==="pending");
+  const active=activeList.find(m=>m.calendar_id===activeCalId)||activeList[0]||null;
+  const calId=active?active.calendar_id:null;
+  const role=active?active.role:null;
+  const canEdit=role==="owner"||role==="parent";
   const safeTemplates=useMemo(()=>{
     if(!templates)return emptyTemplates(timeBlocks);
     const t=JSON.parse(JSON.stringify(templates));
@@ -1767,7 +1962,27 @@ function App(){
     });
     return t;
   },[templates,timeBlocks]);
-  // Persist to localStorage
+  function snap(o,ap,as,tb,wt,ad){return JSON.stringify([o,ap,as,tb,wt,ad])}
+  function nonEmptyObj(o){return o&&typeof o==="object"&&Object.keys(o).length>0}
+  function applyRemote(row){
+    const ov=row.overrides||{};
+    const ap=row.appointments||{};
+    const as=nonEmptyObj(row.assignees)?row.assignees:DEFAULT_ASSIGNEES;
+    const tb=Array.isArray(row.time_blocks)&&row.time_blocks.length?row.time_blocks:DEFAULT_BLOCKS;
+    const wt=nonEmptyObj(row.week_template)?row.week_template:null;
+    const ad=row.anchor_date||defaultAnchor();
+    // safeTemplates will be derived from wt; compute the same value for the echo check
+    let st=wt?JSON.parse(JSON.stringify(wt)):emptyTemplates(tb);
+    ["week1","week2"].forEach(wk=>{
+      if(!st[wk])st[wk]=emptyWeekTpl(tb);
+      for(let d=0;d<7;d++){if(!st[wk][d])st[wk][d]={};tb.forEach(b=>{if(st[wk][d][b.id]==null)st[wk][d][b.id]="none"})}
+    });
+    lastRemoteRef.current=snap(ov,ap,as,tb,st,ad);
+    setOverrides(ov);setAppointments(ap);setAssignees(as);setTimeBlocks(tb);setTemplates(wt);setAnchorDate(ad);
+    if(row.updated_at)setLastSync(row.updated_at);
+    setSyncStatus("ok");
+  }
+  // Persist the open schedule to this device (offline cache)
   useEffect(()=>saveLS("ta_blocks",timeBlocks),[timeBlocks]);
   useEffect(()=>saveLS("ta_assignees",assignees),[assignees]);
   useEffect(()=>saveLS("ta_templates2",safeTemplates),[safeTemplates]);
@@ -1775,7 +1990,8 @@ function App(){
   useEffect(()=>saveLS("ta_anchor",anchorDate),[anchorDate]);
   useEffect(()=>saveLS("ta_holidayCal",holidayCalKey),[holidayCalKey]);
   useEffect(()=>saveLS("ta_appointments",appointments),[appointments]);
-  // Auth session + online/offline detection
+  useEffect(()=>{if(calId)saveLS("ta_active_cal",calId)},[calId]);
+  // Auth session + online detection
   useEffect(()=>{
     sbClient.auth.getSession().then(({data})=>setSession(data.session??null));
     const{data:sub}=sbClient.auth.onAuthStateChange((_e,s)=>setSession(s));
@@ -1783,56 +1999,96 @@ function App(){
     window.addEventListener("online",onOnline);
     return()=>{sub.subscription.unsubscribe();window.removeEventListener("online",onOnline);};
   },[]);
-  // On sign-in: join calendar, pull cloud copy, subscribe to live changes
+  // Load my memberships (which schedules I may see)
+  async function loadMemberships(){
+    const uid=(await sbClient.auth.getUser()).data.user?.id;
+    if(!uid){setMemberships([]);return;}
+    const{data,error}=await sbClient.from("calendar_members")
+      .select("calendar_id,role,status,joined_at,calendars(name)").eq("user_id",uid).order("joined_at");
+    if(error){setMemberships(m=>m||[]);setSyncStatus(navigator.onLine?"error":"offline");return;}
+    const pendingNames=loadLS("ta_pending_names",{});
+    setMemberships((data||[]).map(r=>({calendar_id:r.calendar_id,role:r.role,status:r.status,
+      name:r.calendars?r.calendars.name:(pendingNames[r.calendar_id]||null)})));
+  }
   useEffect(()=>{
-    if(!session){setRemoteReady(false);return;}
+    if(!session){setMemberships(null);return;}
+    if(location.hash.includes("access_token"))history.replaceState(null,"",location.pathname);
+    loadMemberships();
+    // Approval / removal / role change for me arrives live
+    const ch=sbClient.channel("me-"+session.user.id)
+      .on("postgres_changes",{event:"*",schema:"public",table:"calendar_members",filter:"user_id=eq."+session.user.id},()=>loadMemberships())
+      .subscribe();
+    return()=>{sbClient.removeChannel(ch)};
+  },[session?.user?.id]);
+  // Members of the open schedule
+  async function loadMembers(){
+    if(!calId)return;
+    const{data}=await sbClient.from("calendar_members")
+      .select("user_id,email,display_name,role,status,joined_at").eq("calendar_id",calId).order("joined_at");
+    if(data)setMembers(data);
+  }
+  // Open a schedule: pull its data and subscribe to live changes
+  useEffect(()=>{
+    setRemoteReady(false);setMembers([]);
+    if(!session||!calId)return;
     let cancelled=false;
     (async()=>{
       try{
-        await sbClient.rpc("join_calendar",{cal:calendarId});
-        const{data,error}=await sbClient.from("calendar_data").select("*").eq("calendar_id",calendarId).maybeSingle();
-        if(cancelled)return;
-        if(error)throw error;
-        const localTs=loadLS("ta_updated_at",null);
-        if(data&&(!localTs||new Date(data.updated_at)>=new Date(localTs)))applyRemote(data);
-        setRemoteReady(true);
-        const{data:m}=await sbClient.from("calendar_members").select("email,joined_at").eq("calendar_id",calendarId).order("joined_at");
-        if(!cancelled&&m)setMembers(m);
+        const init=initRef.current&&initRef.current.cal===calId?initRef.current:null;
+        if(init){
+          initRef.current=null;
+          if(!init.useLocal){
+            setOverrides({});setAppointments({});setAssignees(DEFAULT_ASSIGNEES);setTimeBlocks(DEFAULT_BLOCKS);setTemplates(null);setAnchorDate(defaultAnchor());
+          }
+          lastRemoteRef.current=null; // force first push of this schedule's content
+          saveLS("ta_cache_cal",calId);saveLS("ta_dirty",false);
+        }else{
+          const{data,error}=await sbClient.from("calendar_data").select("*").eq("calendar_id",calId).maybeSingle();
+          if(cancelled)return;
+          if(error)throw error;
+          const localIsThis=loadLS("ta_cache_cal",null)===calId;
+          if(localIsThis&&loadLS("ta_dirty",false)){
+            lastRemoteRef.current=null; // unsynced offline edits on this device: push them
+          }else if(data){
+            applyRemote(data);
+          }
+          saveLS("ta_cache_cal",calId);
+        }
+        if(!cancelled)setRemoteReady(true);
+        loadMembers();
       }catch{
-        if(!cancelled){setRemoteReady(true);setSyncStatus(navigator.onLine?"error":"offline");}
+        if(!cancelled)setSyncStatus(navigator.onLine?"error":"offline");
       }
     })();
-    const ch=sbClient.channel("cal-"+calendarId)
-      .on("postgres_changes",{event:"*",schema:"public",table:"calendar_data",filter:"calendar_id=eq."+calendarId},
+    const ch=sbClient.channel("cal-"+calId)
+      .on("postgres_changes",{event:"*",schema:"public",table:"calendar_data",filter:"calendar_id=eq."+calId},
         p=>{if(p.new&&p.new.device_id!==DEVICE_ID)applyRemote(p.new)})
+      .on("postgres_changes",{event:"*",schema:"public",table:"calendar_members",filter:"calendar_id=eq."+calId},()=>loadMembers())
       .subscribe();
     return()=>{cancelled=true;sbClient.removeChannel(ch);};
-  },[session?.user?.id,calendarId]);
-  // Push local changes to Supabase (debounced 2s, retries when offline)
+  },[session?.user?.id,calId]);
+  // Push local changes (debounced 2s, retries when offline).
+  // Caregivers only send appointments; the database refuses anything else from them.
   const syncTimer=useRef(null);
   useEffect(()=>{
-    if(!session||!remoteReady)return;
+    if(!session||!remoteReady||!calId)return;
     const current=snap(overrides,appointments,assignees,timeBlocks,safeTemplates,anchorDate);
-    if(current===lastRemoteRef.current)return; // change came from the cloud — nothing to push
+    if(current===lastRemoteRef.current)return;
+    saveLS("ta_dirty",true);
     setSyncStatus("pending");
     clearTimeout(syncTimer.current);
     syncTimer.current=setTimeout(async()=>{
       const now=new Date().toISOString();
       try{
-        const payload={
-          calendar_id:calendarId,
-          overrides,appointments,
-          assignees,
-          time_blocks:timeBlocks,
-          week_template:safeTemplates,
-          anchor_date:anchorDate,
-          updated_at:now,
-          updated_by:session.user.email,
-          device_id:DEVICE_ID
-        };
-        const{error}=await sbClient.from("calendar_data").upsert(payload,{onConflict:"calendar_id"});
+        const base={updated_at:now,updated_by:session.user.email,device_id:DEVICE_ID};
+        const payload=canEdit
+          ?{...base,overrides,appointments,assignees,time_blocks:timeBlocks,week_template:safeTemplates,anchor_date:anchorDate}
+          :{...base,appointments};
+        const{data,error}=await sbClient.from("calendar_data").update(payload).eq("calendar_id",calId).select("calendar_id");
         if(error)throw error;
-        saveLS("ta_updated_at",now);setLastSync(now);setSyncStatus("ok");
+        if(!data||!data.length){loadMemberships();throw new Error("no access");}
+        lastRemoteRef.current=current;
+        saveLS("ta_dirty",false);setLastSync(now);setSyncStatus("ok");
       }catch{
         setSyncStatus(navigator.onLine?"error":"offline");
         clearTimeout(retryTimer.current);
@@ -1840,10 +2096,31 @@ function App(){
       }
     },2000);
     return()=>clearTimeout(syncTimer.current);
-  },[overrides,appointments,assignees,timeBlocks,safeTemplates,anchorDate,session,remoteReady,retryTick]);
+  },[overrides,appointments,assignees,timeBlocks,safeTemplates,anchorDate,session,remoteReady,calId,canEdit,retryTick]);
+  // Create / join / switch
+  async function createSchedule(name,useLocal){
+    const{data,error}=await sbClient.rpc("create_calendar",{p_name:name});
+    if(error)throw error;
+    initRef.current={cal:data,useLocal};
+    await loadMemberships();
+    setActiveCalId(data);setShowOnboarding(false);setTab(useLocal?"calendar":"template");
+    notify(useLocal?"Schedule created from this device":"Schedule created — start by setting up your fortnight template");
+  }
+  async function joinSchedule(code,displayName){
+    const{data,error}=await sbClient.rpc("request_join",{p_code:code,p_display_name:displayName||null});
+    if(error)throw error;
+    const r=data&&data[0];
+    if(r)saveLS("ta_pending_names",{...loadLS("ta_pending_names",{}),[r.calendar_id]:r.calendar_name});
+    await loadMemberships();
+    return r;
+  }
+  async function cancelRequest(cal){
+    await sbClient.rpc("leave_calendar",{p_cal:cal});
+    loadMemberships();
+  }
   // Backup: export / import
   function exportData(){
-    const data={app:"together-apart",version:7,exported_at:new Date().toISOString(),calendar_id:calendarId,
+    const data={app:"together-apart",version:8,exported_at:new Date().toISOString(),schedule:active&&active.name,
       time_blocks:timeBlocks,assignees,week_template:safeTemplates,overrides,anchor_date:anchorDate,
       holiday_cal:holidayCalKey,appointments};
     const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
@@ -1854,11 +2131,13 @@ function App(){
     setTimeout(()=>URL.revokeObjectURL(a.href),1000);
   }
   function importData(file){
+    if(!canEdit)return;
     const reader=new FileReader();
     reader.onload=()=>{
       try{
-        const d=JSON.parse(reader.result);
+        const d=JSON.parse(String(reader.result));
         if(d.app!=="together-apart")throw new Error("not a backup");
+        if(!confirm("Replace this schedule with the backup? Everyone with access will see the restored version."))return;
         if(d.time_blocks)setTimeBlocks(d.time_blocks);
         if(d.assignees)setAssignees(d.assignees);
         if(d.week_template)setTemplates(d.week_template);
@@ -1866,7 +2145,7 @@ function App(){
         if(d.anchor_date)setAnchorDate(d.anchor_date);
         if(d.holiday_cal)setHolidayCalKey(d.holiday_cal);
         if(d.appointments)setAppointments(d.appointments);
-        alert("Backup restored ✔ It will sync automatically.");
+        notify("Backup restored — syncing now");
       }catch{alert("Sorry, that file doesn't look like a Together Apart backup.")}
     };
     reader.readAsText(file);
@@ -1900,21 +2179,34 @@ function App(){
       return next;
     });
   }
-  const TABS=[
+  const TABS=canEdit?[
     {id:"calendar",label:"📅 Calendar"},
     {id:"template",label:"🗂 Templates"},
     {id:"blocks",label:"⏱ Time Blocks"},
     {id:"people",label:"👥 People"},
     {id:"holidays",label:"🏖 Holidays"},
-    {id:"share",label:"🔗 Share"},
+    {id:"share",label:"🔐 Access & sharing"},
+  ]:[
+    {id:"calendar",label:"📅 Calendar"},
+    {id:"holidays",label:"🏖 Holidays"},
+    {id:"share",label:"🔐 Access & sharing"},
   ];
-  if(session===undefined)return(
+  const currentTab=TABS.some(t=>t.id===tab)?tab:"calendar";
+  const pendingCount=role==="owner"?members.filter(m=>m.status==="pending").length:0;
+  const loadingScreen=(
     <div className="app">
       <div style={{textAlign:"center",padding:"80px 20px",color:"var(--text-muted)",fontSize:".85rem"}}>Loading…</div>
     </div>
   );
-  if(!session)return(
-    <div className="app"><SignInView/></div>
+  if(session===undefined)return loadingScreen;
+  if(!session)return <div className="app"><SignInView/></div>;
+  if(memberships===null)return loadingScreen;
+  if(!active||showOnboarding)return(
+    <div className="app">
+      <OnboardingView session={session} pending={pendingList} hasLocalData={hasLocalData}
+        onCreate={createSchedule} onJoin={joinSchedule} onCancelRequest={cancelRequest} onRefresh={loadMemberships}
+        onBack={active?()=>setShowOnboarding(false):null}/>
+    </div>
   );
   return(
     <div className="app">
@@ -1923,47 +2215,59 @@ function App(){
           <span className="brand-logo">🤝</span>
           <div>
             <h1 className="brand-title">Together Apart</h1>
-            <p className="brand-sub">Co-parenting calendar</p>
+            <select className="cal-switch" value={calId} aria-label="Switch schedule"
+              onChange={e=>{if(e.target.value==="__new"){setShowOnboarding(true)}else{setActiveCalId(e.target.value)}}}>
+              {activeList.map(m=>(<option key={m.calendar_id} value={m.calendar_id}>{m.name||"Schedule"} · {ROLE_LABEL[m.role]}</option>))}
+              <option value="__new">＋ Create or join another schedule…</option>
+            </select>
           </div>
         </div>
         <Legend assignees={assignees}/>
       </header>
+      {!canEdit&&(
+        <div className="role-banner">👀 You're a caregiver here: you can see the schedule and add appointments. Custody changes are made by the parents.</div>
+      )}
       <div className="tabs">
         {TABS.map(t=>(
-          <button key={t.id} className={`tab-btn${tab===t.id?" active":""}`}
-            onClick={()=>setTab(t.id)}>{t.label}</button>
+          <button key={t.id} className={`tab-btn${currentTab===t.id?" active":""}`}
+            onClick={()=>setTab(t.id)}>{t.label}{t.id==="share"&&pendingCount>0&&<span className="tab-dot">{pendingCount}</span>}</button>
         ))}
       </div>
-      {tab==="calendar"&&(
+      {currentTab==="calendar"&&(
         <CalendarView year={year} month={month} setYear={setYear} setMonth={setMonth}
           timeBlocks={timeBlocks} assignees={assignees}
           weekTemplate={safeTemplates} overrides={overrides}
           anchorDate={anchorDate}
-          onSetAssignee={handleSetAssignee} onSetNote={handleSetNote}
+          onSetAssignee={canEdit?handleSetAssignee:null} onSetNote={canEdit?handleSetNote:null}
           holidayCalKey={holidayCalKey}
           appointments={appointments} onSaveAppt={handleSaveAppt} onDeleteAppt={handleDeleteAppt}/>
       )}
-      {tab==="template"&&(
+      {currentTab==="template"&&(
         <TemplateEditor timeBlocks={timeBlocks} assignees={assignees}
           weekTemplate={safeTemplates} setWeekTemplate={setTemplates}
           year={year} month={month}
           overrides={overrides} setOverrides={setOverrides}
           anchorDate={anchorDate} setAnchorDate={setAnchorDate}/>
       )}
-      {tab==="blocks"&&<TimeBlocksEditor timeBlocks={timeBlocks} setTimeBlocks={setTimeBlocks} notify={notify}/>}
-      {tab==="people"&&<AssigneesEditor assignees={assignees} setAssignees={setAssignees} notify={notify}/>}
+      {currentTab==="blocks"&&<TimeBlocksEditor timeBlocks={timeBlocks} setTimeBlocks={setTimeBlocks} notify={notify}/>}
+      {currentTab==="people"&&<AssigneesEditor assignees={assignees} setAssignees={setAssignees} notify={notify}/>}
+      {currentTab==="holidays"&&<HolidaySettingsView holidayCalKey={holidayCalKey} setHolidayCalKey={setHolidayCalKey}/>}
+      {currentTab==="share"&&(
+        <MembersView cal={{id:calId,name:active.name||"Schedule"}} role={role} session={session}
+          assignees={assignees} syncStatus={syncStatus} lastSync={lastSync}
+          members={members} onReloadMembers={async()=>{await loadMembers();await loadMemberships();}}
+          onLeft={()=>{setActiveCalId(null);saveLS("ta_active_cal",null);loadMemberships();setTab("calendar")}}
+          onRenamed={loadMemberships}
+          onExport={exportData} onImport={importData} canEdit={canEdit} notify={notify}/>
+      )}
       {toast&&(
         <div className="toast" role="status">
           <span>{toast.msg}</span>
           {toast.undo&&<button onClick={()=>{toast.undo();setToast(null);clearTimeout(toastTimer.current)}}>Undo</button>}
         </div>
       )}
-      {tab==="holidays"&&<HolidaySettingsView holidayCalKey={holidayCalKey} setHolidayCalKey={setHolidayCalKey}/>}
-      {tab==="share"&&<ShareView assignees={assignees} syncStatus={syncStatus} calendarId={calendarId}
-        session={session} members={members} lastSync={lastSync}
-        onSignOut={()=>sbClient.auth.signOut()} onExport={exportData} onImport={importData}/>}
       <footer style={{textAlign:"center",marginTop:20,fontSize:".7rem",color:"var(--text-light)"}}>
-        Synced as {session.user.email} · Together Apart v7
+        Signed in as {session.user.email} · Together Apart v8
       </footer>
     </div>
   );
