@@ -297,6 +297,8 @@ button{font-family:'DM Sans',sans-serif}
 .auth-sub{font-size:.8rem;color:var(--text-muted);margin-bottom:18px;line-height:1.5}
 .auth-input{width:100%;padding:10px 12px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-size:.9rem;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none;margin-bottom:10px;text-align:center}
 .auth-err{font-size:.75rem;color:#c0392b;margin-top:8px}
+.auth-or{display:flex;align-items:center;gap:10px;margin:16px 0 10px;color:var(--text-muted);font-size:.75rem}
+.auth-or::before,.auth-or::after{content:"";flex:1;height:1px;background:var(--border)}
 .auth-note{font-size:.7rem;color:var(--text-muted);margin-top:14px;line-height:1.5}
 /* ── Invite / members ── */
 .invite-box{display:flex;gap:8px;align-items:center;background:var(--bg);border:1px dashed var(--border-strong);border-radius:var(--r-sm);padding:8px 10px}
@@ -701,7 +703,13 @@ function getWeekParity(y,m,d,anchorStr){
   }catch{return 1}
 }
 // Demo mode (?demo): no login, everything stays on this device. Each browser tab is one "person".
-const DEMO=(()=>{try{return new URLSearchParams(location.search).has("demo")||/demo/i.test(location.pathname)}catch{return false}})();
+// Demo is remembered on this device (handy for the home-screen app), until you choose "Leave demo".
+const DEMO=(()=>{try{
+  const q=new URLSearchParams(location.search);
+  if(q.has("real")){localStorage.removeItem("ta_demo_on");return false}
+  if(q.has("demo")||/demo/i.test(location.pathname)){localStorage.setItem("ta_demo_on","1");return true}
+  return localStorage.getItem("ta_demo_on")==="1";
+}catch{return false}})();
 function demoUid(){try{return sessionStorage.getItem("ta_demo_uid")||"anon"}catch{return"anon"}}
 function lsKey(k){return DEMO?`demo:${demoUid()}:${k}`:k}
 function loadLS(k,fb){try{const v=localStorage.getItem(lsKey(k));return v?JSON.parse(v):fb}catch{return fb}}
@@ -1952,6 +1960,7 @@ function demoSwitchUser(id){
   try{if(id)sessionStorage.setItem("ta_demo_uid",id);else sessionStorage.removeItem("ta_demo_uid")}catch{}
   location.href=location.pathname+"?demo";
 }
+function demoLeave(){location.href=location.pathname+"?real"}
 function demoEmptyRow(id){
   return{calendar_id:id,overrides:{},appointments:{},assignees:{},time_blocks:[],week_template:{},anchor_date:"",settings:{},updated_at:new Date().toISOString(),updated_by:null,device_id:null};
 }
@@ -2176,7 +2185,10 @@ function DemoSignIn(){
           <input className="auth-input" placeholder="…or start as a new person: any@email.test" value={email} onChange={e=>setEmail(e.target.value)}/>
           <button className="btn btn-ghost" style={{width:"100%",justifyContent:"center"}} disabled={!email.trim()}>Start as new person</button>
         </form>
-        <button className="btn btn-ghost btn-xs" style={{marginTop:14}} onClick={()=>{if(confirm("Delete all demo data on this device?"))demoReset()}}>Reset demo</button>
+        <div style={{display:"flex",gap:8,justifyContent:"center",marginTop:14,flexWrap:"wrap"}}>
+          <button className="btn btn-ghost btn-xs" onClick={()=>{if(confirm("Delete all demo data on this device?"))demoReset()}}>Reset demo</button>
+          <button className="btn btn-ghost btn-xs" onClick={demoLeave}>Leave demo · real sign-in</button>
+        </div>
       </div>
     </div>
   );
@@ -2197,6 +2209,7 @@ function DemoBar(){
           <hr/>
           <button className="demo-item" onClick={()=>{if(confirm("Replace demo data with the sample family?"))demoSeedFamily()}}>👨‍👩‍👧 Load sample family</button>
           <button className="demo-item" onClick={()=>{if(confirm("Delete all demo data on this device?"))demoReset()}}>🗑 Reset demo</button>
+          <button className="demo-item" onClick={demoLeave}>🚪 Leave demo (real sign-in)</button>
         </div>
       )}
       <button className="demo-pill" onClick={()=>setOpen(o=>!o)}>🧪 DEMO · {cur?cur.email:"nobody"} ▾</button>
@@ -2514,6 +2527,9 @@ function SignInView(){
         )}
         {err&&<div className="auth-err">{err}</div>}
         <div className="auth-note">No password needed — we email you a sign-in link each time.</div>
+        <div className="auth-or"><span>or</span></div>
+        <button type="button" className="btn btn-ghost" style={{width:"100%",justifyContent:"center"}} onClick={()=>{location.href=location.pathname+"?demo"}}>🧪 Try it without an account (demo)</button>
+        <div className="auth-note" style={{marginTop:6}}>The demo keeps everything on this device. Nothing is shared.</div>
       </div>
     </div>
   );
