@@ -2,18 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
 <title>Together Apart · Co-Parenting Calendar</title>
 <!-- PWA -->
 <link rel="manifest" href="/manifest.json"/>
-<meta name="theme-color" content="#b8956a"/>
+<meta name="theme-color" content="#1f6f9f"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
 <meta name="apple-mobile-web-app-title" content="Together Apart"/>
 <link rel="apple-touch-icon" href="/icon-192.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone@7.23.10/babel.min.js"></script>
@@ -22,14 +22,15 @@
 /* ── Reset ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#f7f5f2;--surface:#fff;--surface2:#faf8f6;
-  --border:#e8e3dc;--border-strong:#cec8bf;
-  --text:#332e28;--text-muted:#9b9189;--text-light:#c2bbb2;
-  --accent:#b8956a;--accent-light:#f0e6d8;
+  --bg:#f2f7fa;--surface:#fff;--surface2:#f7fafc;
+  --border:#dde7ee;--border-strong:#c3d3de;
+  --text:#13293d;--text-muted:#5f7486;--text-light:#a9b8c4;
+  --accent:#1f6f9f;--accent-light:#e3f2f6;
+  --hero1:#1f6f9f;--hero2:#3fb7c4;--coral:#f08a6c;--navy:#13293d;
   --w1:#e8f0fb;--w1-text:#2d5fa6;--w1-border:#b5cef5;
   --w2:#fef3e2;--w2-text:#8a5a0a;--w2-border:#f5d898;
-  --weekend-bg:#f5f2ee;
-  --today-bg:#b8956a;--today-fg:#fff;
+  --weekend-bg:#eef4f7;
+  --today-bg:#1f6f9f;--today-fg:#fff;
   --r-sm:8px;--r-md:12px;--r-lg:18px;--r-xl:24px;
   --shadow-sm:0 1px 4px rgba(0,0,0,.06);
   --shadow-md:0 4px 20px rgba(0,0,0,.09);
@@ -43,7 +44,7 @@ button{font-family:'DM Sans',sans-serif}
 .app-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
 .brand{display:flex;align-items:center;gap:10px}
 .brand-logo{font-size:1.8rem;line-height:1}
-.brand-title{font-family:'Lora',serif;font-size:1.4rem;font-weight:600;line-height:1.1;color:var(--text)}
+.brand-title{font-family:'DM Sans',sans-serif;letter-spacing:-.01em;font-size:1.4rem;font-weight:600;line-height:1.1;color:var(--text)}
 .brand-sub{font-size:.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-top:1px}
 /* ── Tabs ── */
 .tabs{display:flex;gap:3px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:3px;margin-bottom:16px;width:fit-content;flex-wrap:wrap}
@@ -52,7 +53,7 @@ button{font-family:'DM Sans',sans-serif}
 /* ── Card ── */
 .card{background:var(--surface);border-radius:var(--r-xl);box-shadow:var(--shadow-md);border:1px solid var(--border);overflow:hidden}
 .section-head{padding:16px 18px;border-bottom:1px solid var(--border);background:var(--surface2)}
-.section-title{font-family:'Lora',serif;font-size:1rem;font-weight:600}
+.section-title{font-family:'DM Sans',sans-serif;letter-spacing:-.01em;font-size:1rem;font-weight:600}
 .section-sub{font-size:.75rem;color:var(--text-muted);margin-top:2px}
 .section-body{padding:16px 18px}
 /* ── Btn system ── */
@@ -68,7 +69,7 @@ button{font-family:'DM Sans',sans-serif}
 /* ── Calendar nav ── */
 .cal-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);background:var(--surface2);flex-wrap:wrap;gap:8px}
 .cal-nav-left{display:flex;align-items:center;gap:10px}
-.cal-title{font-family:'Lora',serif;font-size:1.1rem;font-weight:600}
+.cal-title{font-family:'DM Sans',sans-serif;letter-spacing:-.01em;font-size:1.1rem;font-weight:600}
 .cal-nav-right{display:flex;align-items:center;gap:6px}
 .week-badge{font-size:.7rem;padding:3px 9px;border-radius:99px;font-weight:600;letter-spacing:.03em}
 .week-badge.w1{background:var(--w1);color:var(--w1-text);border:1px solid var(--w1-border)}
@@ -84,7 +85,7 @@ button{font-family:'DM Sans',sans-serif}
 .day-row.is-today .date-cell{background:var(--today-bg);border-radius:var(--r-sm);color:var(--today-fg)}
 .day-row.is-today .date-dow{color:rgba(255,255,255,.65)}
 .date-cell{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 4px;user-select:none}
-.date-num{font-family:'Lora',serif;font-size:.95rem;font-weight:600;line-height:1}
+.date-num{font-family:'DM Sans',sans-serif;letter-spacing:-.01em;font-size:.95rem;font-weight:600;line-height:1}
 .date-dow{font-size:.56rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-top:1px}
 /* week stripe on date cell */
 .day-row.wk1 .date-cell{border-left:3px solid var(--w1-border)}
@@ -141,7 +142,7 @@ button{font-family:'DM Sans',sans-serif}
   border-radius:var(--r-lg);box-shadow:var(--shadow-lg);
   padding:14px;width:260px
 }
-.note-popover h4{font-family:'Lora',serif;font-size:.9rem;font-weight:600;margin-bottom:8px;color:var(--text)}
+.note-popover h4{font-family:'DM Sans',sans-serif;letter-spacing:-.01em;font-size:.9rem;font-weight:600;margin-bottom:8px;color:var(--text)}
 .note-popover textarea{
   width:100%;height:80px;padding:8px 10px;border:1px solid var(--border-strong);
   border-radius:var(--r-sm);font-family:'DM Sans',sans-serif;font-size:.8rem;
@@ -269,7 +270,7 @@ button{font-family:'DM Sans',sans-serif}
 /* appointment modal */
 .appt-modal-backdrop{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;padding:16px}
 .appt-modal{background:var(--surface);border-radius:var(--r-xl);box-shadow:var(--shadow-lg);padding:20px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:12px}
-.appt-modal h3{font-family:'Lora',serif;font-size:1rem;font-weight:600;color:var(--text)}
+.appt-modal h3{font-family:'DM Sans',sans-serif;letter-spacing:-.01em;font-size:1rem;font-weight:600;color:var(--text)}
 .appt-modal label{font-size:.75rem;color:var(--text-muted);display:block;margin-bottom:3px}
 .appt-modal input[type=text],.appt-modal input[type=time]{width:100%;padding:7px 10px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-family:'DM Sans',sans-serif;font-size:.85rem;background:var(--bg);color:var(--text);outline:none}
 .appt-modal input:focus{border-color:var(--accent)}
@@ -282,7 +283,7 @@ button{font-family:'DM Sans',sans-serif}
 .share-card{background:var(--surface);border-radius:var(--r-xl);box-shadow:var(--shadow-md);border:1px solid var(--border);overflow:hidden;display:flex;flex-direction:column;gap:0}
 .share-section{padding:16px 18px;border-bottom:1px solid var(--border)}
 .share-section:last-child{border-bottom:none}
-.share-title{font-family:'Lora',serif;font-size:.95rem;font-weight:600;margin-bottom:4px}
+.share-title{font-family:'DM Sans',sans-serif;letter-spacing:-.01em;font-size:.95rem;font-weight:600;margin-bottom:4px}
 .share-sub{font-size:.75rem;color:var(--text-muted);margin-bottom:12px}
 .sync-status{display:inline-flex;align-items:center;gap:5px;font-size:.72rem;padding:3px 8px;border-radius:99px;border:1px solid var(--border)}
 .sync-status.ok{background:#d5f0e0;color:#276645;border-color:#80d0a8}
@@ -292,7 +293,7 @@ button{font-family:'DM Sans',sans-serif}
 /* ── Auth ── */
 .auth-wrap{max-width:420px;margin:40px auto 0}
 .auth-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);box-shadow:var(--shadow-md);padding:28px 24px;text-align:center}
-.auth-title{font-family:'Lora',serif;font-size:1.15rem;font-weight:600;margin-bottom:6px}
+.auth-title{font-family:'DM Sans',sans-serif;letter-spacing:-.01em;font-size:1.15rem;font-weight:600;margin-bottom:6px}
 .auth-sub{font-size:.8rem;color:var(--text-muted);margin-bottom:18px;line-height:1.5}
 .auth-input{width:100%;padding:10px 12px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-size:.9rem;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);outline:none;margin-bottom:10px;text-align:center}
 .auth-err{font-size:.75rem;color:#c0392b;margin-top:8px}
@@ -321,6 +322,145 @@ button{font-family:'DM Sans',sans-serif}
 .cal-switch{margin-top:2px;max-width:260px;border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:.72rem;color:var(--text-muted);padding:0;cursor:pointer;text-transform:uppercase;letter-spacing:.06em}
 .role-banner{font-size:.76rem;background:#f0efed;border:1px solid var(--border);border-radius:var(--r-md);padding:8px 12px;margin-bottom:12px;color:#6b645c}
 .tab-dot{display:inline-block;margin-left:5px;min-width:16px;height:16px;line-height:16px;border-radius:99px;background:#c0392b;color:#fff;font-size:.62rem;text-align:center;padding:0 4px}
+/* ── v8.2: setup wizard, role tour, demo ── */
+.wiz-backdrop{position:fixed;inset:0;z-index:300;background:rgba(51,46,40,.45);display:flex;align-items:center;justify-content:center;padding:16px}
+.wiz-card{background:var(--surface);border-radius:var(--r-xl);box-shadow:var(--shadow-lg);width:100%;max-width:520px;max-height:calc(100vh - 32px);overflow:auto;padding:22px 22px 18px}
+.tour-card{max-width:420px}
+.wiz-progress{display:flex;gap:5px;margin-bottom:10px}
+.wiz-dot{flex:1;height:4px;border-radius:99px;background:var(--border)}
+.wiz-dot.on{background:var(--accent)}
+.wiz-step-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);margin-bottom:10px}
+.wiz-body{min-height:170px}
+.wiz-emoji{font-size:2.4rem;text-align:center;margin:6px 0 4px}
+.wiz-title{font-family:'DM Sans',sans-serif;letter-spacing:-.01em;font-size:1.2rem;font-weight:600;margin-bottom:6px}
+.wiz-text{font-size:.84rem;color:#5d554c;line-height:1.55;margin-bottom:12px}
+.wiz-row{display:flex;gap:8px;align-items:center}
+.wiz-input{text-align:left!important}
+.wiz-label{display:flex;align-items:center;gap:8px;font-size:.78rem;font-weight:600;margin:6px 0 4px}
+.wiz-swatch{width:14px;height:14px;border-radius:50%;border:1px solid;display:inline-block}
+.wiz-presets{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-bottom:12px}
+.wiz-preset{text-align:left;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--r-md);background:var(--bg);cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--text)}
+.wiz-preset.on{border-color:var(--accent);background:var(--accent-light)}
+.wiz-preset-name{font-weight:600;font-size:.84rem}
+.wiz-preset-desc{font-size:.72rem;color:var(--text-muted);margin-top:2px;line-height:1.4}
+.wiz-strip-label{font-size:.68rem;color:var(--text-muted);margin-bottom:4px}
+.wiz-strip{display:grid;grid-template-columns:repeat(14,1fr);gap:3px;margin-bottom:10px}
+.wiz-day{border-radius:6px;padding:4px 0;display:flex;flex-direction:column;align-items:center;font-size:.6rem;line-height:1.2}
+.wiz-day b{font-size:.75rem}
+.wiz-day.gap{margin-left:6px}
+.wiz-options{display:flex;flex-direction:column;gap:6px}
+.wiz-tips{font-size:.82rem;line-height:1.55;padding-left:18px;color:#5d554c}
+.wiz-tips li{margin-bottom:6px}
+.wiz-actions{display:flex;justify-content:space-between;gap:10px;margin-top:16px;padding-top:12px;border-top:1px solid var(--border)}
+.kids-line{font-size:.78rem;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:3px 10px}
+.help-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--border-strong);background:var(--surface);color:var(--text-muted);font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif}
+.help-btn:hover{border-color:var(--accent);color:var(--text)}
+.demo-bar{position:fixed;right:14px;bottom:14px;z-index:250;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.demo-pill{background:#5c3080;color:#fff;border:none;border-radius:99px;padding:7px 12px;font-size:.72rem;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;box-shadow:var(--shadow-md)}
+.demo-menu{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--shadow-lg);padding:8px;min-width:250px;display:flex;flex-direction:column}
+.demo-menu hr{border:none;border-top:1px solid var(--border);margin:6px 0}
+.demo-menu-title{font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);padding:2px 6px 6px}
+.demo-item{text-align:left;background:none;border:none;padding:7px 8px;border-radius:var(--r-sm);font-size:.78rem;font-family:'DM Sans',sans-serif;color:var(--text);cursor:pointer}
+.demo-item:hover{background:var(--bg)}
+.demo-item.on{background:#e8d9f5;font-weight:600}
+@media (max-width:520px){.wiz-strip{gap:2px}.wiz-day{font-size:.5rem}.wiz-card{padding:18px 16px 14px}}
+/* ── v8.3: Oceaan, Today screen, agenda list, phone layout ── */
+.btn-accent{background:var(--accent);color:#fff}
+.app.on-today .app-header{display:none}
+.tabs{align-items:center}
+.tab-btn{display:inline-flex;align-items:center;gap:6px;position:relative}
+.tab-ico{font-size:1rem;line-height:1}
+.tab-btn.active{color:var(--accent);font-weight:700}
+.sub-tabs{display:flex;gap:6px;overflow-x:auto;margin:-6px 0 14px;padding-bottom:2px;scrollbar-width:none}
+.sub-tabs::-webkit-scrollbar{display:none}
+.sub-tab{flex:none;padding:7px 14px;border-radius:99px;border:1px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:600;color:var(--text-muted);cursor:pointer}
+.sub-tab.active{background:var(--navy);border-color:var(--navy);color:#fff}
+/* Today */
+.today{position:relative;padding-bottom:80px}
+.today-hero{background:linear-gradient(135deg,var(--hero1),var(--hero2));color:#fff;border-radius:28px;padding:20px 20px 64px}
+.today-hero-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.today-hello{font-size:1.45rem;font-weight:800;letter-spacing:-.02em}
+.today-switch{display:flex;align-items:center;gap:8px;margin-top:4px}
+.today-switch .cal-switch{color:rgba(255,255,255,.88);font-weight:600}
+.today-switch .cal-switch option{color:var(--text)}
+.help-btn.light{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.45);color:#fff}
+.today-kids{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.today-kid{background:rgba(255,255,255,.24);border-radius:99px;padding:4px 12px 4px 4px;display:inline-flex;align-items:center;gap:7px;font-size:.85rem;font-weight:700}
+.today-kid i{width:30px;height:30px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:1rem}
+.today-card{background:var(--surface);border-radius:26px;padding:18px;margin:-46px 12px 0;position:relative;box-shadow:0 10px 28px rgba(31,111,159,.18)}
+.today-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted)}
+.today-who{display:flex;align-items:center;gap:12px;margin-top:8px}
+.who-badge{width:50px;height:50px;border-radius:17px;display:flex;align-items:center;justify-content:center;font-size:1.35rem;font-weight:800;flex:none}
+.today-who-name{font-size:1.3rem;font-weight:800;letter-spacing:-.01em}
+.today-who-sub{font-size:.8rem;color:var(--text-muted);margin-top:1px}
+.today-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.today-stat{background:var(--accent-light);border-radius:16px;padding:10px;text-align:center;color:var(--accent)}
+.today-stat b{display:block;font-size:1.1rem;font-weight:800}
+.today-stat span{font-size:.74rem;font-weight:600}
+.today-hol{margin-top:10px;font-size:.8rem;font-weight:600;background:#fff4e0;color:#7a4f00;border-radius:12px;padding:8px 10px}
+.today-sec{font-size:.92rem;font-weight:800;margin:20px 4px 10px}
+.today-week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.today-day{border:none;border-radius:16px;padding:8px 0 7px;display:flex;flex-direction:column;align-items:center;gap:1px;font-family:'DM Sans',sans-serif;cursor:pointer;min-height:68px}
+.today-day span{font-size:.66rem;font-weight:700;opacity:.9}
+.today-day b{font-size:1.05rem;font-weight:800}
+.today-day em{font-style:normal;font-size:.66rem;font-weight:800;opacity:.95}
+.today-day.now{outline:3px solid var(--navy);outline-offset:2px}
+.today-legend{display:flex;gap:14px;flex-wrap:wrap;margin:10px 4px 0;font-size:.8rem;font-weight:600;color:var(--text-muted)}
+.today-legend span{display:inline-flex;align-items:center;gap:6px}
+.today-legend i{width:20px;height:20px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:.66rem;font-weight:800}
+.today-appt{width:100%;display:flex;align-items:center;gap:12px;background:var(--surface);border:none;border-radius:18px;padding:12px;margin-bottom:8px;box-shadow:var(--shadow-sm);font-family:'DM Sans',sans-serif;text-align:left;cursor:pointer;color:var(--text)}
+.today-appt i{width:38px;height:38px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-style:normal;flex:none}
+.today-appt-title{font-size:.92rem;font-weight:700}
+.today-appt small{font-size:.76rem;color:var(--text-muted);font-weight:600}
+.today-empty{font-size:.85rem;color:var(--text-muted);background:var(--surface);border-radius:16px;padding:14px}
+.today-fab{position:fixed;right:20px;bottom:28px;width:58px;height:58px;border-radius:20px;border:none;background:var(--coral);color:#1f1f1f;font-size:1.8rem;font-weight:600;box-shadow:0 10px 22px rgba(240,138,108,.45);cursor:pointer;z-index:120}
+/* Agenda list */
+.agenda{display:flex;flex-direction:column}
+.agenda-row{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border:none;border-bottom:1px solid var(--border);background:var(--surface);text-align:left;font-family:'DM Sans',sans-serif;color:var(--text);cursor:pointer;min-height:60px}
+.agenda-row.monday{border-top:2px solid var(--border-strong)}
+.agenda-row.now{background:var(--accent-light)}
+.agenda-date{width:40px;flex:none;text-align:center}
+.agenda-date small{display:block;font-size:.66rem;font-weight:700;color:var(--text-muted);text-transform:uppercase}
+.agenda-date b{font-size:1.2rem;font-weight:800}
+.agenda-row.now .agenda-date b{color:#fff;background:var(--accent);border-radius:50%;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;font-size:1rem}
+.agenda-main{flex:1;min-width:0}
+.agenda-bar{display:flex;gap:2px;height:20px;border-radius:7px;overflow:hidden;margin-top:2px}
+.agenda-bar i{flex:1;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:.62rem;font-weight:800}
+.agenda-who{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:6px;font-size:.86rem}
+.agenda-appts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.agenda-chip{font-size:.72rem;font-weight:600;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:2px 8px;color:var(--text)}
+.agenda-chip.handover{background:#fff4e0;border-color:#f3d39a;color:#7a4f00}
+.agenda-chip.hol{background:var(--accent-light);border-color:#bfe0ea;color:var(--accent)}
+.agenda-go{color:var(--text-light);font-size:1.3rem;align-self:center}
+/* Phone layout */
+@media (max-width:760px){
+  body{font-size:15px}
+  .app{padding:12px 12px calc(96px + env(safe-area-inset-bottom))}
+  .app-header{margin-bottom:10px}
+  .tabs{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:150;width:auto;margin:0;
+    background:var(--navy);border:none;border-radius:22px;padding:6px;justify-content:space-around;flex-wrap:nowrap;box-shadow:0 10px 30px rgba(19,41,61,.35)}
+  .tab-btn{flex:1;flex-direction:column;gap:2px;padding:6px 0;min-height:52px;justify-content:center;color:#8aa3b6;border-radius:16px;font-size:.68rem}
+  .tab-btn.active{background:rgba(255,255,255,.1);color:#fff;box-shadow:none}
+  .tab-ico{font-size:1.25rem}
+  .tab-dot{position:absolute;top:4px;right:calc(50% - 22px);margin:0}
+  .btn{min-height:44px;padding:10px 16px;font-size:.88rem}
+  .btn-xs{min-height:38px;padding:7px 12px;font-size:.8rem}
+  .btn-icon{width:40px;height:40px}
+  input,select,textarea{font-size:16px!important}
+  .card,.share-card{border-radius:20px}
+  .cal-nav{padding:12px}
+  .view-selector{order:2;width:100%;display:flex}
+  .view-btn{flex:1;min-height:38px}
+  .toast{bottom:calc(92px + env(safe-area-inset-bottom))}
+  .demo-bar{bottom:calc(150px + env(safe-area-inset-bottom));right:10px}
+  .today-fab{bottom:calc(92px + env(safe-area-inset-bottom));right:18px}
+  .today-hero{border-radius:0 0 30px 30px;margin:-12px -12px 0;padding:calc(18px + env(safe-area-inset-top)) 18px 64px}
+  .wiz-backdrop{align-items:flex-end;padding:0}
+  .wiz-card{border-radius:24px 24px 0 0;max-height:92vh;padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+  .appt-modal-backdrop{align-items:flex-end}
+}
+@media (min-width:761px){.today{max-width:560px;margin:0 auto}.today-fab{position:absolute;bottom:0;right:0}}
+
 .filter-checks{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
 .filter-check{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;border:1.5px solid var(--border);cursor:pointer;font-size:.75rem;user-select:none;transition:border-color .15s}
 .filter-check input{accent-color:var(--accent)}
@@ -351,12 +491,13 @@ const MONTH_NAMES=["January","February","March","April","May","June","July","Aug
 const DAY_NAMES_SHORT=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const DAY_NAMES_FULL=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const BLOCK_ICONS_OPTS=["🌅","🌤","☀️","🍽️","🌆","🌙","🎒","🏠","⭐","🎯","🏥","🏫","🚗","🎨"];
+// Okabe-Ito based: distinguishable with colour-blindness; every person also shows a name/initial
 const PALETTE=[
-  {bg:"#f2d9e0",fg:"#8c3f56"},{bg:"#d6e8f5",fg:"#2d6492"},
-  {bg:"#d5f0e0",fg:"#276645"},{bg:"#fde8c8",fg:"#7a4f10"},
-  {bg:"#e8d9f5",fg:"#5c3080"},{bg:"#fdf0c8",fg:"#6b5a0a"},
-  {bg:"#d9eef5",fg:"#1e6070"},{bg:"#f5ddd9",fg:"#7a2e1a"},
-  {bg:"#e8f5d9",fg:"#3a6122"},{bg:"#f5e8d9",fg:"#6b440a"},
+  {bg:"#cc79a7",fg:"#1f1f1f"},{bg:"#56b4e9",fg:"#10263a"},
+  {bg:"#009e73",fg:"#06241b"},{bg:"#f0e442",fg:"#3a3500"},
+  {bg:"#6f5aa8",fg:"#ffffff"},{bg:"#d55e00",fg:"#000000"},
+  {bg:"#666666",fg:"#ffffff"},{bg:"#8b5a2b",fg:"#ffffff"},
+  {bg:"#b7d4ea",fg:"#163a57"},{bg:"#f3c9a1",fg:"#5a3410"},
 ];
 /* ═══════════════════════════════════════════════
    HOLIDAY CALENDARS
@@ -505,10 +646,10 @@ function getHolidayDuration(start,end){
 }
 
 const DEFAULT_ASSIGNEES={
-  none: {id:"none",label:"—",bg:"#f0ede8",fg:"#b0a99f",builtIn:true},
-  mommy:{id:"mommy",label:"Mommy",bg:"#f2d9e0",fg:"#8c3f56",builtIn:true},
-  daddy:{id:"daddy",label:"Daddy",bg:"#d6e8f5",fg:"#2d6492",builtIn:true},
-  school:{id:"school",label:"School",bg:"#d5f0e0",fg:"#276645",builtIn:true},
+  none: {id:"none",label:"—",bg:"#f4f6f8",fg:"#5f6b76",builtIn:true},
+  mommy:{id:"mommy",label:"Mommy",bg:"#1d5fa8",fg:"#ffffff",builtIn:true},
+  daddy:{id:"daddy",label:"Daddy",bg:"#e69f00",fg:"#1f1f1f",builtIn:true},
+  school:{id:"school",label:"School",bg:"#7bc4ad",fg:"#082a22",builtIn:true},
 };
 const DEFAULT_BLOCKS=[
   {id:"morning",label:"Morning",icon:"🌤"},
@@ -559,8 +700,12 @@ function getWeekParity(y,m,d,anchorStr){
     return diffWeeks%2===0?1:2;
   }catch{return 1}
 }
-function loadLS(k,fb){try{const v=localStorage.getItem(k);return v?JSON.parse(v):fb}catch{return fb}}
-function saveLS(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
+// Demo mode (?demo): no login, everything stays on this device. Each browser tab is one "person".
+const DEMO=(()=>{try{return new URLSearchParams(location.search).has("demo")||/demo/i.test(location.pathname)}catch{return false}})();
+function demoUid(){try{return sessionStorage.getItem("ta_demo_uid")||"anon"}catch{return"anon"}}
+function lsKey(k){return DEMO?`demo:${demoUid()}:${k}`:k}
+function loadLS(k,fb){try{const v=localStorage.getItem(lsKey(k));return v?JSON.parse(v):fb}catch{return fb}}
+function saveLS(k,v){try{localStorage.setItem(lsKey(k),JSON.stringify(v))}catch{}}
 // Merge: override > template > none
 function resolveCell(dateStr,blockId,weekTemplate,overrides,weekParity){
   const tplWeek=weekParity===1?weekTemplate.week1:weekTemplate.week2;
@@ -763,21 +908,24 @@ const APPT_COLORS=[
 /* ═══════════════════════════════════════════════
    APPOINTMENT MODAL
 ═══════════════════════════════════════════════ */
-function AppointmentModal({dateLabel,appt,onSave,onDelete,onClose}){
+function AppointmentModal({dateLabel,appt,onSave,onDelete,onClose,pickDate}){
   const [title,setTitle]=useState(appt?.title||"");
+  const [dk,setDk]=useState(pickDate||"");
   const [time,setTime]=useState(appt?.time||"");
   const [colorIdx,setColorIdx]=useState(appt?.colorIdx??0);
   const c=APPT_COLORS[colorIdx];
   function handleSave(){
     if(!title.trim())return;
-    onSave({id:appt?.id||("a_"+Date.now()),title:title.trim(),time,colorIdx});
+    onSave({id:appt?.id||("a_"+Date.now()),title:title.trim(),time,colorIdx},pickDate?dk:undefined);
     onClose();
   }
   return(
     <div className="appt-modal-backdrop" onClick={onClose}>
       <div className="appt-modal" onClick={e=>e.stopPropagation()}>
         <h3>{appt?"Edit appointment":"New appointment"}</h3>
-        <div style={{color:"var(--text-muted)",fontSize:".78rem",marginTop:-6}}>📅 {dateLabel}</div>
+        {pickDate?(
+          <div><label>Day</label><input type="date" value={dk} onChange={e=>setDk(e.target.value)}/></div>
+        ):(<div style={{color:"var(--text-muted)",fontSize:".78rem",marginTop:-6}}>📅 {dateLabel}</div>)}
         <div>
           <label>Title</label>
           <input type="text" placeholder="e.g. Doctor, School play…"
@@ -1155,11 +1303,12 @@ function YearViewPanel({year,timeBlocks,assignees,weekTemplate,overrides,anchorD
 ═══════════════════════════════════════════════ */
 function CalendarView({year,month,setYear,setMonth,timeBlocks,assignees,weekTemplate,
                        overrides,anchorDate,onSetAssignee,onSetNote,holidayCalKey,
-                       appointments,onSaveAppt,onDeleteAppt}){
-  const [view,setView]=useState(()=>loadLS("ta_calview","month"));
+                       appointments,onSaveAppt,onDeleteAppt,openDay}){
+  const [view,setView]=useState(()=>loadLS("ta_calview",(typeof window!=="undefined"&&window.innerWidth<760)?"list":"month"));
   const [day,setDay]=useState(()=>new Date().getDate());
   const [activePickerKey,setActivePickerKey]=useState(null);
   const [activeNoteKey,setActiveNoteKey]=useState(null);
+  useEffect(()=>{if(openDay){setYear(openDay.y);setMonth(openDay.m);setDay(openDay.d);setView("day")}},[openDay]);
   // Week start (Monday) for week view
   const weekStart=useMemo(()=>{
     const d=new Date(year,month,day);
@@ -1179,7 +1328,7 @@ function CalendarView({year,month,setYear,setMonth,timeBlocks,assignees,weekTemp
     }else if(view==="week"){
       const d=new Date(weekStart);d.setDate(d.getDate()+dir*7);
       setYear(d.getFullYear());setMonth(d.getMonth());setDay(d.getDate());
-    }else if(view==="month"){
+    }else if(view==="month"||view==="list"){
       let nm=month+dir,ny=year;
       if(nm<0){nm=11;ny--}if(nm>11){nm=0;ny++}
       setYear(ny);setMonth(nm);
@@ -1195,7 +1344,7 @@ function CalendarView({year,month,setYear,setMonth,timeBlocks,assignees,weekTemp
       const wEnd=new Date(weekStart);wEnd.setDate(wEnd.getDate()+6);
       return`${weekStart.getDate()} ${MONTH_NAMES[weekStart.getMonth()].slice(0,3)} – ${wEnd.getDate()} ${MONTH_NAMES[wEnd.getMonth()].slice(0,3)} ${wEnd.getFullYear()}`;
     }
-    if(view==="month")return`${MONTH_NAMES[month]} ${year}`;
+    if(view==="month"||view==="list")return`${MONTH_NAMES[month]} ${year}`;
     return`${year}`;
   }
   const wp1=view==="month"?getWeekParity(year,month,1,anchorDate):null;
@@ -1208,7 +1357,7 @@ function CalendarView({year,month,setYear,setMonth,timeBlocks,assignees,weekTemp
         </div>
         <div className="cal-nav-right" style={{gap:6,flexWrap:"wrap"}}>
           <div className="view-selector">
-            {["day","week","month","year"].map(v=>(
+            {["list","day","week","month","year"].map(v=>(
               <button key={v} className={`view-btn${view===v?" active":""}`}
                 onClick={()=>{setView(v);saveLS("ta_calview",v);}}>{v.charAt(0).toUpperCase()+v.slice(1)}</button>
             ))}
@@ -1218,6 +1367,11 @@ function CalendarView({year,month,setYear,setMonth,timeBlocks,assignees,weekTemp
           <button className="btn-icon" onClick={()=>navigate(1)} aria-label="Next">›</button>
         </div>
       </div>
+      {view==="list"&&(
+        <AgendaList year={year} month={month} timeBlocks={timeBlocks} assignees={assignees}
+          weekTemplate={weekTemplate} overrides={overrides} anchorDate={anchorDate}
+          holidayCalKey={holidayCalKey} appointments={appointments} onGoDay={goDay}/>
+      )}
       {view==="month"&&(<>
         <div className="cal-grid-head" style={{gridTemplateColumns:`72px repeat(${timeBlocks.length},1fr)`,padding:"0 6px",display:"grid",borderBottom:"2px solid var(--border)",background:"var(--surface2)"}}>
           <div className="cal-grid-head-cell">Date</div>
@@ -1545,14 +1699,746 @@ function Legend({assignees}){
 /* ═══════════════════════════════════════════════
    SHARE VIEW
 ═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   COLOUR-BLIND SAFE COLOURS
+   Parents = blue vs orange (stays distinct for protan/deutan/tritan vision);
+   text colour per background meets WCAG AA (4.5:1). Older schedules are upgraded on load.
+═══════════════════════════════════════════════ */
+const OLD_BUILTIN_BG={mommy:["#f2d9e0"],daddy:["#d6e8f5"],school:["#d5f0e0","#cfe9e1"],none:["#f0ede8","#eef1f4"]};
+const OLD_PALETTE_BG=["#f2d9e0","#d6e8f5","#d5f0e0","#fde8c8","#e8d9f5","#fdf0c8","#d9eef5","#f5ddd9","#e8f5d9","#f5e8d9"];
+function upgradeAssignees(as){
+  if(!as||typeof as!=="object")return as;
+  let changed=false;const out={};
+  for(const [id,a] of Object.entries(as)){
+    let n=a;
+    if(a&&DEFAULT_ASSIGNEES[id]&&OLD_BUILTIN_BG[id]&&OLD_BUILTIN_BG[id].includes(String(a.bg).toLowerCase())){
+      n={...a,bg:DEFAULT_ASSIGNEES[id].bg,fg:DEFAULT_ASSIGNEES[id].fg};
+    }else if(a&&!a.builtIn){
+      const i=OLD_PALETTE_BG.indexOf(String(a.bg).toLowerCase());
+      if(i>=0&&PALETTE[i])n={...a,...PALETTE[i]};
+    }
+    if(n!==a)changed=true;
+    out[id]=n;
+  }
+  return changed?out:as;
+}
+/* ═══════════════════════════════════════════════
+   DAY HELPERS (who has the children on a day)
+═══════════════════════════════════════════════ */
+const KID_AVATARS=["🦁","🦋","🐻","🦊","🐢","🐳","🦉","🐰"];
+function parseKey(dStr){const [y,m,d]=dStr.split("-").map(Number);return[y,m-1,d]}
+function keyOf(date){return dateKey(date.getFullYear(),date.getMonth(),date.getDate())}
+function dayInfo(dStr,ctx){
+  const [y,m,d]=parseKey(dStr);
+  const wp=getWeekParity(y,m,d,ctx.anchorDate);
+  const segments=ctx.timeBlocks.map(b=>{
+    const {assigneeId}=resolveCell(dStr,b.id,ctx.weekTemplate,ctx.overrides,wp);
+    return{block:b,id:assigneeId,a:ctx.assignees[assigneeId]||ctx.assignees.none||DEFAULT_ASSIGNEES.none};
+  });
+  const counts={};
+  segments.forEach(s=>{if(s.id!=="none"&&s.id!=="school")counts[s.id]=(counts[s.id]||0)+1});
+  const top=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
+  const mainId=top?top[0]:(segments.find(s=>s.id!=="none")||{}).id||"none";
+  return{segments,mainId,main:ctx.assignees[mainId]||ctx.assignees.none||DEFAULT_ASSIGNEES.none};
+}
+function initialOf(a){return(a&&a.id!=="none"&&a.label?a.label.trim().charAt(0).toUpperCase():"·")}
+function firstNameFromEmail(email){
+  const p=String(email||"").split("@")[0].split(/[._\-+0-9]/)[0];
+  return p?p.charAt(0).toUpperCase()+p.slice(1):"there";
+}
+function niceDate(dStr,withDow=true){
+  const [y,m,d]=parseKey(dStr);const dt=new Date(y,m,d);
+  return`${withDow?DAY_NAMES_SHORT[dt.getDay()]+" ":""}${d} ${MONTH_NAMES[m].slice(0,3)}`;
+}
+/* ═══════════════════════════════════════════════
+   TODAY VIEW (home screen, design B)
+═══════════════════════════════════════════════ */
+function TodayView({session,calName,children,assignees,timeBlocks,weekTemplate,overrides,anchorDate,
+                    appointments,holidayCalKey,onOpenDay,onSaveAppt,headerExtras}){
+  const ctx={assignees,timeBlocks,weekTemplate,overrides,anchorDate};
+  const today=new Date();const todayKey=keyOf(today);
+  const info=dayInfo(todayKey,ctx);
+  const [addOpen,setAddOpen]=useState(false);
+  // next handover: first day whose main person differs from today's
+  const handover=useMemo(()=>{
+    for(let i=1;i<=60;i++){
+      const dt=new Date(today);dt.setDate(dt.getDate()+i);
+      const k=keyOf(dt);const di=dayInfo(k,ctx);
+      if(di.mainId!==info.mainId&&di.mainId!=="none")return{key:k,days:i,to:di.main};
+    }
+    return null;
+  },[assignees,timeBlocks,weekTemplate,overrides,anchorDate,todayKey]);
+  // this week Mon..Sun
+  const monday=new Date(today);monday.setDate(today.getDate()-((today.getDay()+6)%7));
+  const week=Array.from({length:7},(_,i)=>{const dt=new Date(monday);dt.setDate(monday.getDate()+i);const k=keyOf(dt);return{k,dt,info:dayInfo(k,ctx)}});
+  const usedIds=[...new Set(week.map(w=>w.info.mainId).filter(id=>id!=="none"))];
+  // within-day switches today (e.g. evening with the other parent)
+  const switches=info.segments.filter(s=>s.id!==info.mainId&&s.id!=="none"&&s.id!=="school");
+  // holidays
+  const holToday=getHolidayForDate(todayKey,holidayCalKey);
+  const nextHol=useMemo(()=>{
+    const cal=HOLIDAY_CALENDARS[holidayCalKey];if(!cal)return null;
+    const h=cal.holidays.filter(x=>x.start>todayKey).sort((a,b)=>a.start<b.start?-1:1)[0];
+    if(!h)return null;
+    const [y,m,d]=parseKey(h.start);const days=Math.round((new Date(y,m,d)-new Date(today.getFullYear(),today.getMonth(),today.getDate()))/864e5);
+    return days<=45?{...h,days}:null;
+  },[holidayCalKey,todayKey]);
+  // upcoming appointments (14 days)
+  const upcoming=[];
+  for(let i=0;i<14;i++){
+    const dt=new Date(today);dt.setDate(dt.getDate()+i);const k=keyOf(dt);
+    (appointments[k]||[]).slice().sort((a,b)=>(a.time||"99").localeCompare(b.time||"99")).forEach(ap=>upcoming.push({k,ap,i}));
+  }
+  const kids=children||[];
+  const who=info.main;
+  return(
+    <div className="today">
+      <div className="today-hero">
+        <div className="today-hero-row">
+          <div>
+            <div className="today-hello">Hi {firstNameFromEmail(session.user.email)} 👋</div>
+            {headerExtras}
+          </div>
+        </div>
+        {kids.length>0&&(
+          <div className="today-kids">
+            {kids.map((k,i)=>(<span key={k.id} className="today-kid"><i>{KID_AVATARS.at(i%KID_AVATARS.length)}</i>{k.name}</span>))}
+          </div>
+        )}
+      </div>
+      <div className="today-card">
+        <div className="today-label">Today · {niceDate(todayKey)}</div>
+        <div className="today-who">
+          <span className="who-badge" style={{background:who.bg,color:who.fg}} aria-hidden="true">{initialOf(who)}</span>
+          <div>
+            <div className="today-who-name">{info.mainId==="none"?"Nothing planned yet":`With ${who.label}`}</div>
+            {switches.length>0&&<div className="today-who-sub">{switches.map(s=>`${s.block.label}: ${s.a.label}`).join(" · ")}</div>}
+          </div>
+        </div>
+        <div className="today-stats">
+          <div className="today-stat">
+            {handover?(<><b>{handover.days===1?"Tomorrow":`${handover.days} days`}</b><span>until handover</span></>):(<><b>—</b><span>no handover in 2 months</span></>)}
+          </div>
+          <div className="today-stat">
+            {handover?(<><b>{niceDate(handover.key)}</b><span>to {handover.to.label}</span></>):(<><b>{who.label}</b><span>every day</span></>)}
+          </div>
+        </div>
+        {holToday?<div className="today-hol">🏖 {holToday.name} · until {niceDate(holToday.end,false)}</div>
+          :nextHol?<div className="today-hol">🏖 {nextHol.name} in {nextHol.days} days · {niceDate(nextHol.start,false)}</div>:null}
+      </div>
+      <div className="today-sec">This week</div>
+      <div className="today-week">
+        {week.map(w=>(
+          <button key={w.k} className={`today-day${w.k===todayKey?" now":""}`}
+            style={{background:w.info.main.bg,color:w.info.main.fg}}
+            onClick={()=>onOpenDay(w.dt.getFullYear(),w.dt.getMonth(),w.dt.getDate())}
+            aria-label={`${DAY_NAMES_FULL[w.dt.getDay()]} ${w.dt.getDate()}: ${w.info.main.label}`}>
+            <span>{["M","T","W","T","F","S","S"].at((w.dt.getDay()+6)%7)}</span>
+            <b>{w.dt.getDate()}</b>
+            <em>{initialOf(w.info.main)}</em>
+          </button>
+        ))}
+      </div>
+      {usedIds.length>0&&(
+        <div className="today-legend">
+          {usedIds.map(id=>{const a=assignees[id];return a?(<span key={id}><i style={{background:a.bg,color:a.fg}}>{initialOf(a)}</i>{a.label}</span>):null})}
+        </div>
+      )}
+      <div className="today-sec">Coming up</div>
+      {upcoming.length===0&&<div className="today-empty">No appointments in the next two weeks. Tap ＋ to add one.</div>}
+      {upcoming.slice(0,6).map(({k,ap,i})=>{
+        const c=APPT_COLORS[ap.colorIdx??0]||APPT_COLORS[0];
+        const [y,m,d]=parseKey(k);
+        return(
+          <button key={ap.id+k} className="today-appt" onClick={()=>onOpenDay(y,m,d)}>
+            <i style={{background:c.bg,color:c.fg}}>📌</i>
+            <div><div className="today-appt-title">{ap.title}</div>
+              <small>{i===0?"Today":i===1?"Tomorrow":niceDate(k)}{ap.time?` · ${ap.time}`:""}</small></div>
+          </button>
+        );
+      })}
+      <button className="today-fab" aria-label="Add appointment" onClick={()=>setAddOpen(true)}>＋</button>
+      {addOpen&&(
+        <AppointmentModal dateLabel="Choose a day below" appt={null} pickDate={todayKey}
+          onSave={(a,dk)=>onSaveAppt(dk||todayKey,a)} onDelete={()=>{}} onClose={()=>setAddOpen(false)}/>
+      )}
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
+   AGENDA LIST (calendar view made for phones)
+═══════════════════════════════════════════════ */
+function AgendaList({year,month,timeBlocks,assignees,weekTemplate,overrides,anchorDate,holidayCalKey,appointments,onGoDay}){
+  const ctx={assignees,timeBlocks,weekTemplate,overrides,anchorDate};
+  const todayKey=keyOf(new Date());
+  const days=getDaysInMonth(year,month);
+  return(
+    <div className="agenda">
+      {Array.from({length:days},(_,i)=>i+1).map(d=>{
+        const k=dateKey(year,month,d);const dt=new Date(year,month,d);
+        const info=dayInfo(k,ctx);
+        const hol=getHolidayForDate(k,holidayCalKey);
+        const appts=(appointments[k]||[]).slice().sort((a,b)=>(a.time||"99").localeCompare(b.time||"99"));
+        const prev=d>1?dayInfo(dateKey(year,month,d-1),ctx).mainId:null;
+        const isHandover=prev&&prev!==info.mainId&&info.mainId!=="none";
+        return(
+          <button key={d} className={`agenda-row${k===todayKey?" now":""}${dt.getDay()===1?" monday":""}`} onClick={()=>onGoDay(year,month,d)}>
+            <div className="agenda-date"><small>{DAY_NAMES_SHORT[dt.getDay()]}</small><b>{d}</b></div>
+            <div className="agenda-main">
+              <div className="agenda-bar" aria-hidden="true">
+                {info.segments.map(s=>(<i key={s.block.id} style={{background:s.a.bg,color:s.a.fg}} title={`${s.block.label}: ${s.a.label}`}>{initialOf(s.a)}</i>))}
+              </div>
+              <div className="agenda-who">
+                <strong>{info.mainId==="none"?"—":info.main.label}</strong>
+                {isHandover&&<span className="agenda-chip handover">🔁 Handover</span>}
+                {hol&&<span className="agenda-chip hol">🏖 {hol.name}</span>}
+              </div>
+              {appts.length>0&&(
+                <div className="agenda-appts">
+                  {appts.map(ap=>(<span key={ap.id} className="agenda-chip">📌 {ap.time?ap.time+" ":""}{ap.title}</span>))}
+                </div>
+              )}
+            </div>
+            <span className="agenda-go" aria-hidden="true">›</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 const SUPABASE_URL="https://niujbgjfumehoswcodpw.supabase.co";
 const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5pdWpiZ2pmdW1laG9zd2NvZHB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNTIyMTksImV4cCI6MjA5NzcyODIxOX0.X8lOXLRkdwm8TQR5U2LYsZXyZtbhOuap8A7eHg98AjU";
-const sbClient=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+/* ═══════════════════════════════════════════════
+   CUSTODY PRESETS (used by the setup wizard + demo family)
+   days: 14 letters, Monday week 1 … Sunday week 2. A = parent 1, B = parent 2
+═══════════════════════════════════════════════ */
+const CUSTODY_PRESETS=[
+  {id:"weekly",name:"Week on / week off",desc:"Each parent has the children for a full week, alternating.",days:"AAAAAAABBBBBBB"},
+  {id:"2255",name:"2-2-5-5",desc:"Fixed weekdays (parent 1: Mon–Tue, parent 2: Wed–Thu); weekends alternate.",days:"AABBAAAAABBBBB"},
+  {id:"223",name:"2-2-3",desc:"Two days, two days, three days — the pattern swaps every week.",days:"AABBAAABBAABBB"},
+  {id:"eow",name:"Every other weekend",desc:"Children live with parent 1; parent 2 has every other weekend (Fri–Sun).",days:"AAAABBBAAAAAAA"},
+  {id:"custom",name:"I'll set it up myself",desc:"Start with an empty fortnight and fill it in on the Templates tab.",days:null},
+];
+function buildPresetTemplate(presetId,blocks,opts){
+  const o=opts||{};
+  const p=CUSTODY_PRESETS.find(x=>x.id===presetId);
+  const t=emptyTemplates(blocks);
+  if(!p||!p.days)return t;
+  for(let i=0;i<14;i++){
+    const wk=i<7?"week1":"week2";
+    const dow=(i%7+1)%7; // 0 = Sunday
+    let who=p.days[i];
+    if(o.swap)who=who==="A"?"B":"A";
+    const id=who==="A"?"mommy":"daddy";
+    blocks.forEach(b=>{
+      const isSchool=o.school&&(i%7)<5&&(b.id==="daytime"||b.id==="lunch");
+      t[wk][dow][b.id]=isSchool?"school":id;
+    });
+  }
+  return t;
+}
+/* ═══════════════════════════════════════════════
+   DEMO BACKEND — mimics the Supabase API + its security rules, stored on this device
+═══════════════════════════════════════════════ */
+const DEMO_DB_KEY="ta_demo_db";
+function demoEmptyDb(){return{users:{},calendars:{},members:[],data:{}}}
+function demoLoad(){try{return JSON.parse(localStorage.getItem(DEMO_DB_KEY))||demoEmptyDb()}catch{return demoEmptyDb()}}
+function demoSave(db){try{localStorage.setItem(DEMO_DB_KEY,JSON.stringify(db))}catch{}}
+function demoClearDeviceCaches(){
+  try{Object.keys(localStorage).filter(k=>k.startsWith("demo:")).forEach(k=>localStorage.removeItem(k))}catch{}
+}
+function demoSwitchUser(id){
+  try{if(id)sessionStorage.setItem("ta_demo_uid",id);else sessionStorage.removeItem("ta_demo_uid")}catch{}
+  location.href=location.pathname+"?demo";
+}
+function demoEmptyRow(id){
+  return{calendar_id:id,overrides:{},appointments:{},assignees:{},time_blocks:[],week_template:{},anchor_date:"",settings:{},updated_at:new Date().toISOString(),updated_by:null,device_id:null};
+}
+function demoGenCode(db){
+  const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let c;
+  do{c="";for(let i=0;i<8;i++)c+=A[Math.floor(Math.random()*32)];c=c.slice(0,4)+"-"+c.slice(4)}
+  while(Object.values(db.calendars).some(k=>k.join_code===c));
+  return c;
+}
+function createDemoClient(){
+  const channels=new Set();
+  const me=()=>{try{return sessionStorage.getItem("ta_demo_uid")}catch{return null}};
+  const fail=m=>({data:null,error:{message:m}});
+  const roleOf=(db,cal,u)=>{const m=db.members.find(x=>x.calendar_id===cal&&x.user_id===u&&x.status==="active");return m?m.role:null};
+  const sessionOf=db=>{const u=db.users[me()];return u?{user:{id:u.id,email:u.email}}:null};
+  // Another tab (= another person) changed the shared demo database → deliver "realtime" events
+  window.addEventListener("storage",e=>{if(e.key===DEMO_DB_KEY){const db=demoLoad();channels.forEach(ch=>ch.fire(db))}});
+  class Channel{
+    constructor(){this.handlers=[]}
+    on(_evt,opts,cb){this.handlers.push({opts,cb});return this}
+    subscribe(){channels.add(this);return this}
+    fire(db){
+      this.handlers.forEach(({opts,cb})=>{
+        try{
+          if(opts.table==="calendar_data"){
+            const m=/calendar_id=eq\.(.+)$/.exec(opts.filter||"");
+            const row=m&&db.data[m[1]];
+            if(row&&roleOf(db,row.calendar_id,me()))cb({new:{...row}});
+          }else cb({});
+        }catch{}
+      });
+    }
+  }
+  async function runQuery(q){
+    const db=demoLoad();const u=me();
+    if(!u)return fail("not authenticated");
+    const match=r=>q.filters.every(([c,v])=>r[c]===v);
+    if(q.table==="calendar_members"){
+      const rows=db.members.filter(m=>m.user_id===u||(roleOf(db,m.calendar_id,u)&&(m.status==="active"||roleOf(db,m.calendar_id,u)==="owner")))
+        .filter(match).sort((a,b)=>a.joined_at<b.joined_at?-1:1)
+        .map(m=>{
+          const {feed_token,...rest}=m; // feed tokens are never readable, like in the real database
+          const out={...rest};
+          if(String(q.cols).includes("calendars("))out.calendars=roleOf(db,m.calendar_id,u)&&db.calendars[m.calendar_id]?{name:db.calendars[m.calendar_id].name}:null;
+          return out;
+        });
+      return{data:rows,error:null};
+    }
+    if(q.table==="calendar_data"){
+      const visible=Object.values(db.data).filter(r=>roleOf(db,r.calendar_id,u)).filter(match);
+      if(q.op==="update"){
+        for(const r of visible){
+          if(roleOf(db,r.calendar_id,u)==="caregiver"){
+            const forbidden=["overrides","assignees","time_blocks","week_template","anchor_date","settings"]
+              .some(k=>k in q.payload&&JSON.stringify(q.payload[k])!==JSON.stringify(r[k]));
+            if(forbidden)return fail("caregivers can only change appointments");
+          }
+          Object.assign(db.data[r.calendar_id],q.payload);
+        }
+        demoSave(db);
+        return{data:visible.map(r=>({calendar_id:r.calendar_id})),error:null};
+      }
+      const rows=visible.map(r=>({...r}));
+      return{data:q.single?(rows[0]||null):rows,error:null};
+    }
+    return fail("unknown table");
+  }
+  function from(table){
+    const q={table,filters:[],cols:"*",op:"select",payload:null,single:false};
+    const b={
+      select(c){if(q.op!=="update")q.cols=c||"*";return b},
+      eq(c,v){q.filters.push([c,v]);return b},
+      order(){return b},
+      maybeSingle(){q.single=true;return b},
+      update(p){q.op="update";q.payload=p;return b},
+      then(res,rej){return runQuery(q).then(res,rej)},
+    };
+    return b;
+  }
+  async function rpc(name,a){
+    const db=demoLoad();const u=me();
+    if(!u)return fail("not authenticated");
+    const mine=cal=>db.members.find(m=>m.calendar_id===cal&&m.user_id===u);
+    const isOwner=cal=>roleOf(db,cal,u)==="owner";
+    const now=new Date().toISOString();
+    const done=data=>{demoSave(db);return{data,error:null}};
+    switch(name){
+      case"create_calendar":{
+        const id=crypto.randomUUID();
+        db.calendars[id]={id,name:String(a.p_name||"").trim()||"Schedule",owner_id:u,join_code:demoGenCode(db),created_at:now};
+        db.members.push({calendar_id:id,user_id:u,email:db.users[u].email,display_name:null,role:"owner",status:"active",joined_at:now,approved_at:now,feed_token:crypto.randomUUID()});
+        db.data[id]=demoEmptyRow(id);
+        return done(id);
+      }
+      case"request_join":{
+        const norm=String(a.p_code||"").toUpperCase().replace(/[^A-Z0-9]/g,"");
+        const cal=Object.values(db.calendars).find(c=>c.join_code.replace("-","")===norm);
+        if(norm.length!==8||!cal)return fail("invalid code");
+        if(!mine(cal.id))db.members.push({calendar_id:cal.id,user_id:u,email:db.users[u].email,display_name:(a.p_display_name||"").trim()||null,role:"caregiver",status:"pending",joined_at:now,approved_at:null,feed_token:crypto.randomUUID()});
+        return done([{calendar_id:cal.id,calendar_name:cal.name,status:mine(cal.id).status}]);
+      }
+      case"approve_member":{
+        if(!isOwner(a.p_cal))return fail("only the owner can approve");
+        const m=db.members.find(x=>x.calendar_id===a.p_cal&&x.user_id===a.p_user&&x.status==="pending");
+        if(!m)return fail("no pending request");
+        Object.assign(m,{status:"active",role:a.p_role==="parent"?"parent":"caregiver",approved_at:now});
+        return done(null);
+      }
+      case"set_member_role":{
+        if(!isOwner(a.p_cal)||a.p_user===u)return fail("only the owner can change roles");
+        const m=db.members.find(x=>x.calendar_id===a.p_cal&&x.user_id===a.p_user&&x.status==="active");
+        if(m)m.role=a.p_role==="parent"?"parent":"caregiver";
+        return done(null);
+      }
+      case"remove_member":{
+        if(!isOwner(a.p_cal)||a.p_user===u)return fail("only the owner can remove people");
+        db.members=db.members.filter(x=>!(x.calendar_id===a.p_cal&&x.user_id===a.p_user));
+        return done(null);
+      }
+      case"leave_calendar":{
+        if(isOwner(a.p_cal))return fail("transfer ownership before leaving");
+        db.members=db.members.filter(x=>!(x.calendar_id===a.p_cal&&x.user_id===u));
+        return done(null);
+      }
+      case"get_join_code":return isOwner(a.p_cal)?{data:db.calendars[a.p_cal].join_code,error:null}:fail("only the owner can see the code");
+      case"regenerate_join_code":{
+        if(!isOwner(a.p_cal))return fail("only the owner can change the code");
+        db.calendars[a.p_cal].join_code=demoGenCode(db);
+        return done(db.calendars[a.p_cal].join_code);
+      }
+      case"rename_calendar":{
+        if(!isOwner(a.p_cal))return fail("only the owner can rename");
+        db.calendars[a.p_cal].name=String(a.p_name||"").trim();
+        return done(null);
+      }
+      case"transfer_ownership":{
+        if(!isOwner(a.p_cal))return fail("only the owner can transfer");
+        const t=db.members.find(x=>x.calendar_id===a.p_cal&&x.user_id===a.p_user&&x.status==="active");
+        if(!t)return fail("new owner must be an active member");
+        mine(a.p_cal).role="parent";t.role="owner";db.calendars[a.p_cal].owner_id=a.p_user;
+        return done(null);
+      }
+      case"my_feed_token":{const m=mine(a.p_cal);return{data:m&&m.status==="active"?m.feed_token:null,error:null}}
+      default:return fail("unknown function "+name);
+    }
+  }
+  return{
+    auth:{
+      async getSession(){return{data:{session:sessionOf(demoLoad())}}},
+      async getUser(){const s=sessionOf(demoLoad());return{data:{user:s?s.user:null}}},
+      onAuthStateChange(){return{data:{subscription:{unsubscribe(){}}}}},
+      async signInWithOtp({email}){
+        const db=demoLoad();const e=String(email||"").trim().toLowerCase();
+        let usr=Object.values(db.users).find(x=>x.email===e);
+        if(!usr){usr={id:crypto.randomUUID(),email:e};db.users[usr.id]=usr;demoSave(db)}
+        demoSwitchUser(usr.id);
+        return{error:null};
+      },
+      async verifyOtp(){return{error:null}},
+      async signOut(){demoSwitchUser(null)},
+    },
+    from,rpc,
+    channel(){return new Channel()},
+    removeChannel(ch){channels.delete(ch)},
+  };
+}
+function demoSeedFamily(){
+  const db=demoEmptyDb();const now=new Date();const iso=now.toISOString();
+  const mk=email=>{const u={id:crypto.randomUUID(),email};db.users[u.id]=u;return u};
+  const eda=mk("eda@demo.local"),alex=mk("alex@demo.local"),oma=mk("oma@demo.local"),sam=mk("sam@demo.local");
+  const cal=crypto.randomUUID();
+  db.calendars[cal]={id:cal,name:"Noah & Lina",owner_id:eda.id,join_code:demoGenCode(db),created_at:iso};
+  const mem=(u,role,status,display_name)=>db.members.push({calendar_id:cal,user_id:u.id,email:u.email,display_name,role,status,joined_at:iso,approved_at:status==="active"?iso:null,feed_token:crypto.randomUUID()});
+  mem(eda,"owner","active",null);mem(alex,"parent","active","Alex");mem(oma,"caregiver","active","Oma Rita");mem(sam,"caregiver","pending","Sam (babysitter)");
+  const as={...DEFAULT_ASSIGNEES,mommy:{...DEFAULT_ASSIGNEES.mommy,label:"Eda"},daddy:{...DEFAULT_ASSIGNEES.daddy,label:"Alex"}};
+  const d=k=>{const x=new Date(now);x.setDate(x.getDate()+k);return dateKey(x.getFullYear(),x.getMonth(),x.getDate())};
+  db.data[cal]={...demoEmptyRow(cal),
+    assignees:as,time_blocks:DEFAULT_BLOCKS,
+    week_template:buildPresetTemplate("2255",DEFAULT_BLOCKS,{school:true}),
+    anchor_date:defaultAnchor(),
+    appointments:{[d(3)]:[{id:"a1",title:"Dentist Noah",time:"15:30",colorIdx:0}],[d(6)]:[{id:"a2",title:"Swimming lesson Lina",time:"10:00",colorIdx:1}]},
+    settings:{children:[{id:"c1",name:"Noah",birthYear:"2017"},{id:"c2",name:"Lina",birthYear:"2020"}],holidayCal:"be-nl",onboarded:true},
+  };
+  demoSave(db);demoClearDeviceCaches();
+  demoSwitchUser(eda.id);
+}
+function demoReset(){
+  try{localStorage.removeItem(DEMO_DB_KEY)}catch{}
+  demoClearDeviceCaches();
+  demoSwitchUser(null);
+}
+const sbClient=DEMO?createDemoClient():supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 const DEVICE_ID=(()=>{
-  let id=null;try{id=localStorage.getItem("ta_device_id")}catch{}
-  if(!id){id=crypto.randomUUID();try{localStorage.setItem("ta_device_id",id)}catch{}}
+  // In demo mode every tab is a different "device", so changes from another tab are picked up.
+  const store=DEMO?sessionStorage:localStorage;
+  let id=null;try{id=store.getItem("ta_device_id")}catch{}
+  if(!id){id=crypto.randomUUID();try{store.setItem("ta_device_id",id)}catch{}}
   return id;
 })();
+/* ═══════════════════════════════════════════════
+   DEMO UI: sign-in replacement + floating "who am I" bar
+═══════════════════════════════════════════════ */
+function DemoSignIn(){
+  const [email,setEmail]=useState("");
+  const users=Object.values(demoLoad().users);
+  return(
+    <div className="auth-wrap">
+      <div className="auth-card">
+        <div style={{fontSize:"2rem",marginBottom:8}}>🧪</div>
+        <div className="auth-title">Together Apart · Demo</div>
+        <div className="auth-sub">No login and no emails: everything stays on this device. Each browser tab can be a different person, so you can test inviting and approving.</div>
+        <button className="btn btn-accent" style={{width:"100%",justifyContent:"center",marginBottom:10}} onClick={demoSeedFamily}>👨‍👩‍👧 Load sample family</button>
+        {users.length>0&&(
+          <div style={{marginBottom:12}}>
+            <div className="auth-note" style={{marginTop:0,marginBottom:6}}>Continue as:</div>
+            <div style={{display:"flex",gap:6,flexWrap:"wrap",justifyContent:"center"}}>
+              {users.map(u=>(<button key={u.id} className="btn btn-ghost btn-xs" onClick={()=>demoSwitchUser(u.id)}>{u.email}</button>))}
+            </div>
+          </div>
+        )}
+        <form onSubmit={e=>{e.preventDefault();if(email.trim())sbClient.auth.signInWithOtp({email})}}>
+          <input className="auth-input" placeholder="…or start as a new person: any@email.test" value={email} onChange={e=>setEmail(e.target.value)}/>
+          <button className="btn btn-ghost" style={{width:"100%",justifyContent:"center"}} disabled={!email.trim()}>Start as new person</button>
+        </form>
+        <button className="btn btn-ghost btn-xs" style={{marginTop:14}} onClick={()=>{if(confirm("Delete all demo data on this device?"))demoReset()}}>Reset demo</button>
+      </div>
+    </div>
+  );
+}
+function DemoBar(){
+  const [open,setOpen]=useState(false);
+  const db=demoLoad();const cur=db.users[demoUid()];
+  return(
+    <div className="demo-bar">
+      {open&&(
+        <div className="demo-menu">
+          <div className="demo-menu-title">Switch person (this tab)</div>
+          {Object.values(db.users).map(u=>(
+            <button key={u.id} className={`demo-item${cur&&u.id===cur.id?" on":""}`} onClick={()=>demoSwitchUser(u.id)}>{u.email}</button>
+          ))}
+          <button className="demo-item" onClick={()=>window.open(location.pathname+"?demo","_blank")}>↗ Open another person in a new tab</button>
+          <button className="demo-item" onClick={()=>demoSwitchUser(null)}>＋ New person</button>
+          <hr/>
+          <button className="demo-item" onClick={()=>{if(confirm("Replace demo data with the sample family?"))demoSeedFamily()}}>👨‍👩‍👧 Load sample family</button>
+          <button className="demo-item" onClick={()=>{if(confirm("Delete all demo data on this device?"))demoReset()}}>🗑 Reset demo</button>
+        </div>
+      )}
+      <button className="demo-pill" onClick={()=>setOpen(o=>!o)}>🧪 DEMO · {cur?cur.email:"nobody"} ▾</button>
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
+   SETUP WIZARD (owner, first time)
+═══════════════════════════════════════════════ */
+function SetupWizard({calId,calName,assignees,setAssignees,timeBlocks,setTemplates,setAnchorDate,
+                      holidayCalKey,setHolidayCalKey,settings,setSettings,onFinish,onLater}){
+  const [step,setStep]=useState(0);
+  const [kids,setKids]=useState(()=>(settings.children&&settings.children.length?settings.children:[{id:"c_"+Date.now(),name:"",birthYear:""}]));
+  const [p1,setP1]=useState(assignees.mommy?assignees.mommy.label:"Parent 1");
+  const [p2,setP2]=useState(assignees.daddy?assignees.daddy.label:"Parent 2");
+  const [preset,setPreset]=useState("weekly");
+  const [school,setSchool]=useState(true);
+  const [swap,setSwap]=useState(false);
+  const [hol,setHol]=useState(holidayCalKey||"none");
+  const [code,setCode]=useState("");
+  const [copied,setCopied]=useState(false);
+  useEffect(()=>{if(step===5&&!code)sbClient.rpc("get_join_code",{p_cal:calId}).then(({data})=>{if(data)setCode(data)})},[step]);
+  const STEPS=["Welcome","Children","Parents","Arrangement","Holidays","Invite","Done"];
+  const preview=useMemo(()=>{
+    const p=CUSTODY_PRESETS.find(x=>x.id===preset);
+    if(!p||!p.days)return null;
+    return p.days.split("").map(c=>swap?(c==="A"?"B":"A"):c);
+  },[preset,swap]);
+  function saveKids(){
+    const clean=kids.filter(k=>k.name.trim()).map(k=>({...k,name:k.name.trim()}));
+    setSettings(s=>({...s,children:clean}));
+  }
+  function saveParents(){
+    setAssignees(prev=>({...prev,
+      mommy:{...(prev.mommy||DEFAULT_ASSIGNEES.mommy),label:p1.trim()||"Parent 1"},
+      daddy:{...(prev.daddy||DEFAULT_ASSIGNEES.daddy),label:p2.trim()||"Parent 2"}}));
+  }
+  function saveArrangement(){
+    if(preset!=="custom")setTemplates(buildPresetTemplate(preset,timeBlocks,{school,swap}));
+    setAnchorDate(defaultAnchor());
+  }
+  function next(){
+    if(step===1)saveKids();
+    if(step===2)saveParents();
+    if(step===3)saveArrangement();
+    if(step===4)setHolidayCalKey(hol);
+    if(step===STEPS.length-1){onFinish(preset==="custom");return}
+    setStep(s=>s+1);
+  }
+  const A=p1.trim()||"Parent 1",B=p2.trim()||"Parent 2";
+  const kidNames=kids.filter(k=>k.name.trim()).map(k=>k.name.trim());
+  return(
+    <div className="wiz-backdrop">
+      <div className="wiz-card" role="dialog" aria-label="Setup assistant">
+        <div className="wiz-progress">
+          {STEPS.map((s,i)=>(<div key={s} className={`wiz-dot${i<=step?" on":""}`} title={s}/>))}
+        </div>
+        <div className="wiz-step-label">Step {step+1} of {STEPS.length} · {STEPS[step]}</div>
+        {step===0&&(
+          <div className="wiz-body">
+            <div className="wiz-emoji">👋</div>
+            <h2 className="wiz-title">Let's set up “{calName}”</h2>
+            <p className="wiz-text">Five short steps and your schedule is ready: your children, the two parents, your co-parenting arrangement, school holidays, and inviting your co-parent. You can change everything later.</p>
+          </div>
+        )}
+        {step===1&&(
+          <div className="wiz-body">
+            <h2 className="wiz-title">👧 Who are the children?</h2>
+            <p className="wiz-text">Their names appear at the top of the schedule. Birth year is optional.</p>
+            {kids.map((k,i)=>(
+              <div key={k.id} className="wiz-row">
+                <input className="auth-input wiz-input" placeholder={i===0?"e.g. Noah":"Name"} value={k.name}
+                  onChange={e=>setKids(p=>p.map(x=>x.id===k.id?{...x,name:e.target.value}:x))} autoFocus={i===0}/>
+                <input className="auth-input wiz-input" style={{maxWidth:110}} inputMode="numeric" placeholder="Year" value={k.birthYear||""}
+                  onChange={e=>setKids(p=>p.map(x=>x.id===k.id?{...x,birthYear:e.target.value.replace(/\D/g,"").slice(0,4)}:x))}/>
+                {kids.length>1&&<button className="btn btn-danger btn-xs" onClick={()=>setKids(p=>p.filter(x=>x.id!==k.id))}>✕</button>}
+              </div>
+            ))}
+            <button className="btn btn-ghost btn-xs" onClick={()=>setKids(p=>[...p,{id:"c_"+Date.now(),name:"",birthYear:""}])}>＋ Add another child</button>
+          </div>
+        )}
+        {step===2&&(
+          <div className="wiz-body">
+            <h2 className="wiz-title">👫 The two parents</h2>
+            <p className="wiz-text">These names are used for the colours in the calendar. Use first names or “Mom” and “Dad” — whatever feels right.</p>
+            <label className="wiz-label"><span className="wiz-swatch" style={{background:(assignees.mommy||DEFAULT_ASSIGNEES.mommy).bg,borderColor:(assignees.mommy||DEFAULT_ASSIGNEES.mommy).fg}}/>Parent 1</label>
+            <input className="auth-input wiz-input" value={p1} onChange={e=>setP1(e.target.value)} maxLength={30}/>
+            <label className="wiz-label"><span className="wiz-swatch" style={{background:(assignees.daddy||DEFAULT_ASSIGNEES.daddy).bg,borderColor:(assignees.daddy||DEFAULT_ASSIGNEES.daddy).fg}}/>Parent 2</label>
+            <input className="auth-input wiz-input" value={p2} onChange={e=>setP2(e.target.value)} maxLength={30}/>
+          </div>
+        )}
+        {step===3&&(
+          <div className="wiz-body">
+            <h2 className="wiz-title">📆 Your co-parenting arrangement</h2>
+            <p className="wiz-text">Pick the pattern closest to your agreement. It repeats every two weeks; single days can always be changed in the calendar.</p>
+            <div className="wiz-presets">
+              {CUSTODY_PRESETS.map(p=>(
+                <button key={p.id} className={`wiz-preset${preset===p.id?" on":""}`} onClick={()=>setPreset(p.id)}>
+                  <div className="wiz-preset-name">{p.name}</div>
+                  <div className="wiz-preset-desc">{p.desc.replace("parent 1",A).replace("parent 2",B)}</div>
+                </button>
+              ))}
+            </div>
+            {preview&&(
+              <>
+                <div className="wiz-strip-label">This week · next week</div>
+                <div className="wiz-strip">
+                  {preview.map((c,i)=>{
+                    const a=c==="A"?(assignees.mommy||DEFAULT_ASSIGNEES.mommy):(assignees.daddy||DEFAULT_ASSIGNEES.daddy);
+                    return(<div key={i} className={`wiz-day${i===7?" gap":""}`} style={{background:a.bg,color:a.fg}} title={c==="A"?A:B}>
+                      <span>{["M","T","W","T","F","S","S"][i%7]}</span><b>{(c==="A"?A:B).slice(0,1)}</b>
+                    </div>);
+                  })}
+                </div>
+                <div className="wiz-options">
+                  <label className="filter-check"><input type="checkbox" checked={school} onChange={e=>setSchool(e.target.checked)}/> School or daycare on weekdays (daytime &amp; lunch)</label>
+                  <label className="filter-check"><input type="checkbox" checked={swap} onChange={e=>setSwap(e.target.checked)}/> {B} starts this week (instead of {A})</label>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+        {step===4&&(
+          <div className="wiz-body">
+            <h2 className="wiz-title">🏖 School holidays</h2>
+            <p className="wiz-text">Choose the school calendar your children follow. Holidays then show up as markers in the calendar, so you can plan who has the children when.</p>
+            <select className="hol-select" style={{width:"100%"}} value={hol} onChange={e=>setHol(e.target.value)}>
+              {Object.entries(HOLIDAY_CALENDARS).map(([k,v])=>(<option key={k} value={k}>{v.emoji} {v.label}</option>))}
+            </select>
+          </div>
+        )}
+        {step===5&&(
+          <div className="wiz-body">
+            <h2 className="wiz-title">💌 Invite your co-parent</h2>
+            <p className="wiz-text">Send this code to your co-parent (and later to grandparents or the babysitter). They install the app, sign in and enter the code. <strong>Nobody sees anything until you approve them</strong> — you also choose whether they're a parent or a caregiver.</p>
+            <div className="code-box" style={{justifyContent:"center"}}>
+              <span className="code-big" style={{textAlign:"center"}}>{code||"…"}</span>
+              <button className="btn btn-accent btn-xs" disabled={!code} onClick={()=>copyText(`Join “${calName}” in Together Apart: open ${location.origin} , sign in, choose “Join with a code” and enter ${code}`,()=>{setCopied(true);setTimeout(()=>setCopied(false),2000)})}>{copied?"Copied!":"Copy invite"}</button>
+            </div>
+            <p className="wiz-text" style={{marginTop:10,fontSize:".75rem"}}>You can find the code later under 🔐 Access &amp; sharing.</p>
+          </div>
+        )}
+        {step===6&&(
+          <div className="wiz-body">
+            <div className="wiz-emoji">🎉</div>
+            <h2 className="wiz-title">All set{kidNames.length?` for ${kidNames.join(" & ")}`:""}!</h2>
+            <ul className="wiz-tips">
+              <li><strong>Tap a block</strong> in the calendar to change who has the children on that day.</li>
+              <li><strong>＋</strong> on a day adds an appointment (doctor, swimming, birthday party…).</li>
+              <li><strong>Templates</strong> holds your two-week pattern{preset==="custom"?" — we'll open it now so you can fill it in":""}.</li>
+              <li><strong>🔐 Access &amp; sharing</strong> is where you approve people and manage who sees what.</li>
+            </ul>
+          </div>
+        )}
+        <div className="wiz-actions">
+          {step>0?<button className="btn btn-ghost" onClick={()=>setStep(s=>s-1)}>← Back</button>:<button className="btn btn-ghost" onClick={onLater}>Later</button>}
+          <button className="btn btn-accent" onClick={next}>{step===0?"Let's start":step===STEPS.length-1?"Go to my schedule":"Next →"}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
+   ROLE TOUR (invited parents & caregivers; also via the ? button)
+═══════════════════════════════════════════════ */
+function RoleTour({role,calName,onClose}){
+  const [i,setI]=useState(0);
+  const common={
+    read:{e:"🎨",t:"Reading the calendar",x:"Every day is split into blocks (morning, daytime, evening…). The colour shows who has the children. A dashed border means it comes from the regular two-week pattern; a solid colour means that day was changed."},
+    appt:{e:"📌",t:"Appointments",x:"Tap ＋ on a day to add an appointment — doctor, swimming lesson, school party. Everyone with access sees it immediately."},
+    feed:{e:"📲",t:"In your own calendar app",x:"Under 🔐 Access & sharing you'll find your personal link to show this schedule in Google, Outlook or Apple Calendar. It's private: don't share it."},
+  };
+  const slides=role==="caregiver"?[
+    {e:"👋",t:`Welcome to “${calName}”`,x:"You've been added as a caregiver. You can see when the children are with whom, and add appointments. The parents take care of the custody schedule itself."},
+    common.read,common.appt,common.feed,
+    {e:"💬",t:"Something not right?",x:"If a day looks wrong, let one of the parents know — they can change it. Only the owner of the schedule decides who has access."},
+  ]:role==="parent"?[
+    {e:"👋",t:`Welcome to “${calName}”`,x:"You've been added as a parent. You can see and change everything in the schedule. The owner manages who has access."},
+    common.read,
+    {e:"✏️",t:"Changing a day",x:"Tap a block to choose who has the children — handy for a swap or a holiday. Tap ＋ / ✏️ inside a block to add a note, like “pick-up at 17:30”."},
+    common.appt,
+    {e:"🗂",t:"The regular pattern",x:"The Templates tab holds the repeating two-week arrangement. Changing it affects all future days that weren't changed by hand."},
+    common.feed,
+  ]:[
+    {e:"🤝",t:"Quick tour",x:"You're the owner of this schedule: you decide who can see it and what they can do."},
+    common.read,
+    {e:"✏️",t:"Changing a day",x:"Tap a block to choose who has the children. Tap ＋ / ✏️ inside a block to add a note."},
+    common.appt,
+    {e:"🔐",t:"Access & sharing",x:"Share your join code, approve requests, choose Parent or Caregiver, and remove people at any time. A new code makes the old one stop working."},
+  ];
+  const s=slides[i];const last=i===slides.length-1;
+  return(
+    <div className="wiz-backdrop">
+      <div className="wiz-card tour-card" role="dialog" aria-label="How to use the app">
+        <div className="wiz-progress">{slides.map((_,k)=>(<div key={k} className={`wiz-dot${k<=i?" on":""}`}/>))}</div>
+        <div className="wiz-body" style={{textAlign:"center"}}>
+          <div className="wiz-emoji">{s.e}</div>
+          <h2 className="wiz-title">{s.t}</h2>
+          <p className="wiz-text">{s.x}</p>
+        </div>
+        <div className="wiz-actions">
+          {i>0?<button className="btn btn-ghost" onClick={()=>setI(i-1)}>← Back</button>:<button className="btn btn-ghost" onClick={onClose}>Skip</button>}
+          <button className="btn btn-accent" onClick={()=>last?onClose():setI(i+1)}>{last?"Got it":"Next →"}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════════
+   CHILDREN EDITOR (People tab)
+═══════════════════════════════════════════════ */
+function ChildrenEditor({settings,setSettings,notify}){
+  const kids=settings.children||[];
+  const [name,setName]=useState("");
+  const [year,setYear]=useState("");
+  function setKids(fn){setSettings(s=>({...s,children:fn(s.children||[])}))}
+  function add(){if(!name.trim())return;setKids(p=>[...p,{id:"c_"+Date.now(),name:name.trim(),birthYear:year}]);setName("");setYear("")}
+  function remove(k){const before=kids;setKids(p=>p.filter(x=>x.id!==k.id));notify(`“${k.name}” removed`,()=>setSettings(s=>({...s,children:before})))}
+  return(
+    <div className="card" style={{marginBottom:14}}>
+      <div className="section-head"><div className="section-title">Children</div><div className="section-sub">Shown at the top of the schedule for everyone with access.</div></div>
+      <div className="section-body">
+        {kids.map(k=>(
+          <div key={k.id} className="tbl-row">
+            <span style={{fontSize:"1.1rem"}}>🧒</span>
+            <input className="tbl-label-input" value={k.name} onChange={e=>setKids(p=>p.map(x=>x.id===k.id?{...x,name:e.target.value}:x))}/>
+            <input className="tbl-label-input" style={{maxWidth:80,flex:"none"}} placeholder="Year" value={k.birthYear||""}
+              onChange={e=>setKids(p=>p.map(x=>x.id===k.id?{...x,birthYear:e.target.value.replace(/\D/g,"").slice(0,4)}:x))}/>
+            <button className="btn btn-danger btn-xs" title="Remove" onClick={()=>remove(k)}>✕</button>
+          </div>
+        ))}
+        <div className="tbl-add-row">
+          <span style={{fontSize:"1.1rem"}}>🧒</span>
+          <input className="tbl-label-input" placeholder="Child's name…" value={name} onChange={e=>setName(e.target.value)} onKeyDown={e=>e.key==="Enter"&&add()}/>
+          <input className="tbl-label-input" style={{maxWidth:80,flex:"none",minWidth:0}} placeholder="Year" value={year} onChange={e=>setYear(e.target.value.replace(/\D/g,"").slice(0,4))}/>
+          <button className="btn btn-accent btn-xs" onClick={add}>Add</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const ROLE_LABEL={owner:"Owner",parent:"Parent",caregiver:"Caregiver"};
 function friendlyError(e){
   const m=String(e&&e.message||e||"");
@@ -1569,6 +2455,7 @@ function copyText(t,done){
    SIGN-IN VIEW  (email link, with 6-digit code as backup)
 ═══════════════════════════════════════════════ */
 function SignInView(){
+  if(DEMO)return <DemoSignIn/>;
   const [email,setEmail]=useState("");
   const [code,setCode]=useState("");
   const [stage,setStage]=useState("email");
@@ -1712,7 +2599,7 @@ function OnboardingView({session,pending,hasLocalData,onCreate,onJoin,onCancelRe
 /* ═══════════════════════════════════════════════
    MEMBERS & SHARING VIEW
 ═══════════════════════════════════════════════ */
-function MembersView({cal,role,session,assignees,syncStatus,lastSync,members,onReloadMembers,onLeft,onRenamed,onExport,onImport,canEdit,notify}){
+function MembersView({cal,role,session,assignees,syncStatus,lastSync,members,onReloadMembers,onLeft,onRenamed,onExport,onImport,canEdit,notify,onOpenWizard}){
   const isOwner=role==="owner";
   const [joinCode,setJoinCode]=useState("");
   const [copied,setCopied]=useState("");
@@ -1790,6 +2677,7 @@ function MembersView({cal,role,session,assignees,syncStatus,lastSync,members,onR
             <input className="tbl-label-input" style={{borderColor:"var(--border)"}} value={nameDraft} onChange={e=>setNameDraft(e.target.value)} maxLength={80}/>
             <button className="btn btn-ghost btn-xs" disabled={busy||nameDraft.trim()===cal.name} onClick={rename}>Save</button>
           </div>
+          <button className="btn btn-ghost btn-xs" style={{marginTop:10}} onClick={onOpenWizard}>🪄 Run the setup assistant again</button>
         </div>
       )}
       {isOwner&&(
@@ -1853,7 +2741,7 @@ function MembersView({cal,role,session,assignees,syncStatus,lastSync,members,onR
       </div>
       <div className="share-section">
         <div className="share-title">📅 Subscribe in your calendar app</div>
-        <div className="share-sub">Your personal, private link. Don't share it — it stops working if you're removed from the schedule.</div>
+        <div className="share-sub">Your personal, private link. Don't share it — it stops working if you're removed from the schedule.{DEMO?" (Demo: this link doesn't work, because demo data never leaves your device.)":""}</div>
         <div className="filter-checks">
           {Object.values(assignees).filter(a=>a.id!=="none").map(a=>(
             <label key={a.id} className="filter-check" style={{borderColor:selected[a.id]?a.fg:"var(--border)"}}>
@@ -1908,16 +2796,22 @@ function defaultAnchor(){
 }
 function App(){
   const today=new Date();
-  const [tab,setTab]=useState("calendar");
+  const [tab,setTab]=useState("today");
+  const [setupTab,setSetupTab]=useState("template");
+  const [openDay,setOpenDay]=useState(null);
   const [year,setYear]=useState(today.getFullYear());
   const [month,setMonth]=useState(today.getMonth());
   const [timeBlocks,setTimeBlocks]=useState(()=>loadLS("ta_blocks",DEFAULT_BLOCKS));
-  const [assignees,setAssignees]=useState(()=>loadLS("ta_assignees",DEFAULT_ASSIGNEES));
+  const [assignees,setAssignees]=useState(()=>upgradeAssignees(loadLS("ta_assignees",DEFAULT_ASSIGNEES)));
   const [templates,setTemplates]=useState(()=>loadLS("ta_templates2",null));
   const [overrides,setOverrides]=useState(()=>loadLS("ta_overrides2",{}));
   const [anchorDate,setAnchorDate]=useState(()=>loadLS("ta_anchor",defaultAnchor()));
   const [holidayCalKey,setHolidayCalKey]=useState(()=>loadLS("ta_holidayCal","none"));
   const [appointments,setAppointments]=useState(()=>loadLS("ta_appointments",{}));
+  const [settings,setSettings]=useState(()=>loadLS("ta_settings",{}));
+  const [showWizard,setShowWizard]=useState(false);
+  const [showTour,setShowTour]=useState(false);
+  const holidayRef=useRef(holidayCalKey);holidayRef.current=holidayCalKey;
   // Auth + memberships
   const [session,setSession]=useState(undefined); // undefined = loading, null = signed out
   const [memberships,setMemberships]=useState(null); // null = loading
@@ -1962,12 +2856,13 @@ function App(){
     });
     return t;
   },[templates,timeBlocks]);
-  function snap(o,ap,as,tb,wt,ad){return JSON.stringify([o,ap,as,tb,wt,ad])}
+  function snap(o,ap,as,tb,wt,ad,se){return JSON.stringify([o,ap,as,tb,wt,ad,se])}
+  const settingsOut=useMemo(()=>({...settings,holidayCal:holidayCalKey}),[settings,holidayCalKey]);
   function nonEmptyObj(o){return o&&typeof o==="object"&&Object.keys(o).length>0}
   function applyRemote(row){
     const ov=row.overrides||{};
     const ap=row.appointments||{};
-    const as=nonEmptyObj(row.assignees)?row.assignees:DEFAULT_ASSIGNEES;
+    const as=upgradeAssignees(nonEmptyObj(row.assignees)?row.assignees:DEFAULT_ASSIGNEES);
     const tb=Array.isArray(row.time_blocks)&&row.time_blocks.length?row.time_blocks:DEFAULT_BLOCKS;
     const wt=nonEmptyObj(row.week_template)?row.week_template:null;
     const ad=row.anchor_date||defaultAnchor();
@@ -1977,8 +2872,12 @@ function App(){
       if(!st[wk])st[wk]=emptyWeekTpl(tb);
       for(let d=0;d<7;d++){if(!st[wk][d])st[wk][d]={};tb.forEach(b=>{if(st[wk][d][b.id]==null)st[wk][d][b.id]="none"})}
     });
-    lastRemoteRef.current=snap(ov,ap,as,tb,st,ad);
+    const rs=nonEmptyObj(row.settings)?row.settings:{};
+    const hc=rs.holidayCal||holidayRef.current||"none";
+    const se={...rs,holidayCal:hc};
+    lastRemoteRef.current=snap(ov,ap,as,tb,st,ad,se);
     setOverrides(ov);setAppointments(ap);setAssignees(as);setTimeBlocks(tb);setTemplates(wt);setAnchorDate(ad);
+    setSettings(rs);setHolidayCalKey(hc);
     if(row.updated_at)setLastSync(row.updated_at);
     setSyncStatus("ok");
   }
@@ -1990,6 +2889,7 @@ function App(){
   useEffect(()=>saveLS("ta_anchor",anchorDate),[anchorDate]);
   useEffect(()=>saveLS("ta_holidayCal",holidayCalKey),[holidayCalKey]);
   useEffect(()=>saveLS("ta_appointments",appointments),[appointments]);
+  useEffect(()=>saveLS("ta_settings",settings),[settings]);
   useEffect(()=>{if(calId)saveLS("ta_active_cal",calId)},[calId]);
   // Auth session + online detection
   useEffect(()=>{
@@ -2038,7 +2938,7 @@ function App(){
         if(init){
           initRef.current=null;
           if(!init.useLocal){
-            setOverrides({});setAppointments({});setAssignees(DEFAULT_ASSIGNEES);setTimeBlocks(DEFAULT_BLOCKS);setTemplates(null);setAnchorDate(defaultAnchor());
+            setOverrides({});setAppointments({});setAssignees(DEFAULT_ASSIGNEES);setTimeBlocks(DEFAULT_BLOCKS);setTemplates(null);setAnchorDate(defaultAnchor());setSettings({});
           }
           lastRemoteRef.current=null; // force first push of this schedule's content
           saveLS("ta_cache_cal",calId);saveLS("ta_dirty",false);
@@ -2072,8 +2972,12 @@ function App(){
   const syncTimer=useRef(null);
   useEffect(()=>{
     if(!session||!remoteReady||!calId)return;
-    const current=snap(overrides,appointments,assignees,timeBlocks,safeTemplates,anchorDate);
+    const current=snap(overrides,appointments,assignees,timeBlocks,safeTemplates,anchorDate,settingsOut);
     if(current===lastRemoteRef.current)return;
+    if(!canEdit&&lastRemoteRef.current){
+      // caregivers: only appointments are ever sent, so ignore local-only differences elsewhere
+      try{const prev=JSON.parse(lastRemoteRef.current);if(JSON.stringify(prev[1])===JSON.stringify(appointments))return;}catch{}
+    }
     saveLS("ta_dirty",true);
     setSyncStatus("pending");
     clearTimeout(syncTimer.current);
@@ -2082,7 +2986,7 @@ function App(){
       try{
         const base={updated_at:now,updated_by:session.user.email,device_id:DEVICE_ID};
         const payload=canEdit
-          ?{...base,overrides,appointments,assignees,time_blocks:timeBlocks,week_template:safeTemplates,anchor_date:anchorDate}
+          ?{...base,overrides,appointments,assignees,time_blocks:timeBlocks,week_template:safeTemplates,anchor_date:anchorDate,settings:settingsOut}
           :{...base,appointments};
         const{data,error}=await sbClient.from("calendar_data").update(payload).eq("calendar_id",calId).select("calendar_id");
         if(error)throw error;
@@ -2096,14 +3000,21 @@ function App(){
       }
     },2000);
     return()=>clearTimeout(syncTimer.current);
-  },[overrides,appointments,assignees,timeBlocks,safeTemplates,anchorDate,session,remoteReady,calId,canEdit,retryTick]);
+  },[overrides,appointments,assignees,timeBlocks,safeTemplates,anchorDate,settingsOut,session,remoteReady,calId,canEdit,retryTick]);
+  // First-time guidance: setup wizard for a new owner, role tour for invited people
+  useEffect(()=>{
+    if(!remoteReady||!calId||!role)return;
+    if(role==="owner"){
+      if(!settings.onboarded&&!loadLS("ta_wiz_later_"+calId,false))setShowWizard(true);
+    }else if(!loadLS("ta_tour_"+calId,false))setShowTour(true);
+  },[remoteReady,calId,role]);
   // Create / join / switch
   async function createSchedule(name,useLocal){
     const{data,error}=await sbClient.rpc("create_calendar",{p_name:name});
     if(error)throw error;
     initRef.current={cal:data,useLocal};
     await loadMemberships();
-    setActiveCalId(data);setShowOnboarding(false);setTab(useLocal?"calendar":"template");
+    setActiveCalId(data);setShowOnboarding(false);setTab("today");
     notify(useLocal?"Schedule created from this device":"Schedule created — start by setting up your fortnight template");
   }
   async function joinSchedule(code,displayName){
@@ -2122,7 +3033,7 @@ function App(){
   function exportData(){
     const data={app:"together-apart",version:8,exported_at:new Date().toISOString(),schedule:active&&active.name,
       time_blocks:timeBlocks,assignees,week_template:safeTemplates,overrides,anchor_date:anchorDate,
-      holiday_cal:holidayCalKey,appointments};
+      holiday_cal:holidayCalKey,appointments,settings};
     const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
     const a=document.createElement("a");
     a.href=URL.createObjectURL(blob);
@@ -2139,12 +3050,13 @@ function App(){
         if(d.app!=="together-apart")throw new Error("not a backup");
         if(!confirm("Replace this schedule with the backup? Everyone with access will see the restored version."))return;
         if(d.time_blocks)setTimeBlocks(d.time_blocks);
-        if(d.assignees)setAssignees(d.assignees);
+        if(d.assignees)setAssignees(upgradeAssignees(d.assignees));
         if(d.week_template)setTemplates(d.week_template);
         if(d.overrides)setOverrides(d.overrides);
         if(d.anchor_date)setAnchorDate(d.anchor_date);
         if(d.holiday_cal)setHolidayCalKey(d.holiday_cal);
         if(d.appointments)setAppointments(d.appointments);
+        if(d.settings)setSettings(d.settings);
         notify("Backup restored — syncing now");
       }catch{alert("Sorry, that file doesn't look like a Together Apart backup.")}
     };
@@ -2179,19 +3091,28 @@ function App(){
       return next;
     });
   }
-  const TABS=canEdit?[
-    {id:"calendar",label:"📅 Calendar"},
-    {id:"template",label:"🗂 Templates"},
-    {id:"blocks",label:"⏱ Time Blocks"},
-    {id:"people",label:"👥 People"},
-    {id:"holidays",label:"🏖 Holidays"},
-    {id:"share",label:"🔐 Access & sharing"},
-  ]:[
-    {id:"calendar",label:"📅 Calendar"},
-    {id:"holidays",label:"🏖 Holidays"},
-    {id:"share",label:"🔐 Access & sharing"},
+  const TABS=[
+    {id:"today",icon:"🏠",label:"Today"},
+    {id:"calendar",icon:"📅",label:"Calendar"},
+    ...(canEdit?[{id:"setup",icon:"🧩",label:"Setup"}]:[]),
+    {id:"share",icon:"👥",label:"Family"},
   ];
-  const currentTab=TABS.some(t=>t.id===tab)?tab:"calendar";
+  const SETUP_TABS=[
+    {id:"template",label:"Fortnight pattern"},
+    {id:"blocks",label:"Time blocks"},
+    {id:"people",label:"Children & people"},
+    {id:"holidays",label:"Holidays"},
+  ];
+  const mainTab=TABS.some(t=>t.id===tab)?tab:"today";
+  const currentTab=mainTab==="setup"?setupTab:mainTab;
+  const goDayFromToday=(y,m,d)=>{setOpenDay({y,m,d,t:Date.now()});setTab("calendar")};
+  const scheduleSwitch=(
+    <select className="cal-switch" value={calId} aria-label="Switch schedule"
+      onChange={e=>{if(e.target.value==="__new"){setShowOnboarding(true)}else{setActiveCalId(e.target.value)}}}>
+      {activeList.map(m=>(<option key={m.calendar_id} value={m.calendar_id}>{m.name||"Schedule"} · {ROLE_LABEL[m.role]}</option>))}
+      <option value="__new">＋ Create or join another schedule…</option>
+    </select>
+  );
   const pendingCount=role==="owner"?members.filter(m=>m.status==="pending").length:0;
   const loadingScreen=(
     <div className="app">
@@ -2206,33 +3127,46 @@ function App(){
       <OnboardingView session={session} pending={pendingList} hasLocalData={hasLocalData}
         onCreate={createSchedule} onJoin={joinSchedule} onCancelRequest={cancelRequest} onRefresh={loadMemberships}
         onBack={active?()=>setShowOnboarding(false):null}/>
+      {DEMO&&<DemoBar/>}
     </div>
   );
   return(
-    <div className="app">
+    <div className={`app${mainTab==="today"?" on-today":""}`}>
       <header className="app-header">
         <div className="brand">
           <span className="brand-logo">🤝</span>
           <div>
             <h1 className="brand-title">Together Apart</h1>
-            <select className="cal-switch" value={calId} aria-label="Switch schedule"
-              onChange={e=>{if(e.target.value==="__new"){setShowOnboarding(true)}else{setActiveCalId(e.target.value)}}}>
-              {activeList.map(m=>(<option key={m.calendar_id} value={m.calendar_id}>{m.name||"Schedule"} · {ROLE_LABEL[m.role]}</option>))}
-              <option value="__new">＋ Create or join another schedule…</option>
-            </select>
+            {scheduleSwitch}
           </div>
         </div>
         <Legend assignees={assignees}/>
+        <div style={{display:"flex",gap:8,alignItems:"center",flexWrap:"wrap"}}>
+          {(settings.children||[]).length>0&&<span className="kids-line">🧒 {(settings.children||[]).map(k=>k.name).join(" · ")}</span>}
+          <button className="help-btn" title="How does this work?" onClick={()=>setShowTour(true)}>?</button>
+        </div>
       </header>
       {!canEdit&&(
         <div className="role-banner">👀 You're a caregiver here: you can see the schedule and add appointments. Custody changes are made by the parents.</div>
       )}
-      <div className="tabs">
+      <nav className="tabs" aria-label="Main">
         {TABS.map(t=>(
-          <button key={t.id} className={`tab-btn${currentTab===t.id?" active":""}`}
-            onClick={()=>setTab(t.id)}>{t.label}{t.id==="share"&&pendingCount>0&&<span className="tab-dot">{pendingCount}</span>}</button>
+          <button key={t.id} className={`tab-btn${mainTab===t.id?" active":""}`} aria-current={mainTab===t.id?"page":undefined}
+            onClick={()=>setTab(t.id)}><span className="tab-ico" aria-hidden="true">{t.icon}</span><span className="tab-lbl">{t.label}</span>{t.id==="share"&&pendingCount>0&&<span className="tab-dot">{pendingCount}</span>}</button>
         ))}
-      </div>
+      </nav>
+      {mainTab==="setup"&&(
+        <div className="sub-tabs" role="tablist">
+          {SETUP_TABS.map(t=>(<button key={t.id} role="tab" aria-selected={setupTab===t.id} className={`sub-tab${setupTab===t.id?" active":""}`} onClick={()=>setSetupTab(t.id)}>{t.label}</button>))}
+        </div>
+      )}
+      {currentTab==="today"&&(
+        <TodayView session={session} calName={active.name||"Schedule"} children={settings.children}
+          assignees={assignees} timeBlocks={timeBlocks} weekTemplate={safeTemplates} overrides={overrides}
+          anchorDate={anchorDate} appointments={appointments} holidayCalKey={holidayCalKey}
+          onOpenDay={goDayFromToday} onSaveAppt={handleSaveAppt}
+          headerExtras={<div className="today-switch">{scheduleSwitch}<button className="help-btn light" title="How does this work?" onClick={()=>setShowTour(true)}>?</button></div>}/>
+      )}
       {currentTab==="calendar"&&(
         <CalendarView year={year} month={month} setYear={setYear} setMonth={setMonth}
           timeBlocks={timeBlocks} assignees={assignees}
@@ -2240,7 +3174,7 @@ function App(){
           anchorDate={anchorDate}
           onSetAssignee={canEdit?handleSetAssignee:null} onSetNote={canEdit?handleSetNote:null}
           holidayCalKey={holidayCalKey}
-          appointments={appointments} onSaveAppt={handleSaveAppt} onDeleteAppt={handleDeleteAppt}/>
+          appointments={appointments} onSaveAppt={handleSaveAppt} onDeleteAppt={handleDeleteAppt} openDay={openDay}/>
       )}
       {currentTab==="template"&&(
         <TemplateEditor timeBlocks={timeBlocks} assignees={assignees}
@@ -2250,15 +3184,17 @@ function App(){
           anchorDate={anchorDate} setAnchorDate={setAnchorDate}/>
       )}
       {currentTab==="blocks"&&<TimeBlocksEditor timeBlocks={timeBlocks} setTimeBlocks={setTimeBlocks} notify={notify}/>}
+      {currentTab==="people"&&<ChildrenEditor settings={settings} setSettings={setSettings} notify={notify}/>}
       {currentTab==="people"&&<AssigneesEditor assignees={assignees} setAssignees={setAssignees} notify={notify}/>}
       {currentTab==="holidays"&&<HolidaySettingsView holidayCalKey={holidayCalKey} setHolidayCalKey={setHolidayCalKey}/>}
       {currentTab==="share"&&(
         <MembersView cal={{id:calId,name:active.name||"Schedule"}} role={role} session={session}
           assignees={assignees} syncStatus={syncStatus} lastSync={lastSync}
           members={members} onReloadMembers={async()=>{await loadMembers();await loadMemberships();}}
-          onLeft={()=>{setActiveCalId(null);saveLS("ta_active_cal",null);loadMemberships();setTab("calendar")}}
+          onLeft={()=>{setActiveCalId(null);saveLS("ta_active_cal",null);loadMemberships();setTab("today")}}
           onRenamed={loadMemberships}
-          onExport={exportData} onImport={importData} canEdit={canEdit} notify={notify}/>
+          onExport={exportData} onImport={importData} canEdit={canEdit} notify={notify}
+          onOpenWizard={()=>setShowWizard(true)}/>
       )}
       {toast&&(
         <div className="toast" role="status">
@@ -2266,8 +3202,19 @@ function App(){
           {toast.undo&&<button onClick={()=>{toast.undo();setToast(null);clearTimeout(toastTimer.current)}}>Undo</button>}
         </div>
       )}
+      {showWizard&&role==="owner"&&(
+        <SetupWizard calId={calId} calName={active.name||"your schedule"} assignees={assignees} setAssignees={setAssignees}
+          timeBlocks={timeBlocks} setTemplates={setTemplates} setAnchorDate={setAnchorDate}
+          holidayCalKey={holidayCalKey} setHolidayCalKey={setHolidayCalKey} settings={settings} setSettings={setSettings}
+          onLater={()=>{saveLS("ta_wiz_later_"+calId,true);setShowWizard(false)}}
+          onFinish={custom=>{setSettings(s=>({...s,onboarded:true}));setShowWizard(false);if(custom){setTab("setup");setSetupTab("template")}else setTab("today");notify("Your schedule is ready 🎉")}}/>
+      )}
+      {showTour&&!showWizard&&(
+        <RoleTour role={role} calName={active.name||"this schedule"} onClose={()=>{saveLS("ta_tour_"+calId,true);setShowTour(false)}}/>
+      )}
+      {DEMO&&<DemoBar/>}
       <footer style={{textAlign:"center",marginTop:20,fontSize:".7rem",color:"var(--text-light)"}}>
-        Signed in as {session.user.email} · Together Apart v8
+        {DEMO?"Demo mode · nothing leaves this device":"Signed in as "+session.user.email} · Together Apart v8
       </footer>
     </div>
   );
